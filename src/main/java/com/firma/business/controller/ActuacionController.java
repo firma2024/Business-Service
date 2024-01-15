@@ -7,7 +7,6 @@ import com.firma.business.service.data.DataService;
 import com.firma.business.service.integration.IntegrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
@@ -22,6 +21,7 @@ import java.util.Set;
 @Controller
 @RequestMapping("/api/actuacion")
 public class ActuacionController {
+
     @Autowired
     private DataService dataService;
     @Autowired
@@ -60,7 +60,7 @@ public class ActuacionController {
     }
 
     //@Scheduled(fixedRate = 50000)
-    @Scheduled(cron = "0 0 7-17 * * ?") //rango de 7:00 am a 5:00 pm cada hora
+    @Scheduled(cron = "0 0/30 7-9 * * ?") //rango de 7:00 am a 9:00 am cada 30 minutos
     public void sendEmailNewActuacion(){
         try {
             Set<Actuacion> actuaciones = dataService.findActuacionesNotSend();
