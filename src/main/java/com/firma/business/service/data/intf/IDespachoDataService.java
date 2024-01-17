@@ -7,7 +7,7 @@ import com.firma.business.payload.Despacho;
 import java.util.Set;
 
 public interface IDespachoDataService {
-    Set<Despacho> findAllDespachos() throws ErrorIntegrationServiceException;
+    Set<Despacho> findAllDespachosWithOutLink(Integer year) throws ErrorIntegrationServiceException;
 
     String updateDespacho(Despacho despacho) throws ErrorDataServiceException;
 }

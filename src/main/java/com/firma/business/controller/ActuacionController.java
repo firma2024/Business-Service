@@ -97,8 +97,6 @@ public class ActuacionController {
         }
     }
 
-    //@Scheduled(cron = "0 * 7-17 * * ?") // Ejecución cada minuto de 7:00 am a 5:00 pm
-
     @GetMapping("/get")
     public ResponseEntity <?> getActuacion(@RequestParam Integer id){
         try {

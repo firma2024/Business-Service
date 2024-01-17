@@ -21,9 +21,9 @@ public class DespachoDataService implements IDespachoDataService {
     private String apiUrl;
 
     @Override
-    public Set<Despacho> findAllDespachos() throws ErrorIntegrationServiceException {
+    public Set<Despacho> findAllDespachosWithOutLink(Integer year) throws ErrorIntegrationServiceException {
         ResponseEntity<Despacho []> responseEntity = restTemplate.getForEntity(
-                apiUrl + "/despacho/get/all/notlink",
+                apiUrl + "/despacho/get/all/notlink?year=" + year,
                 Despacho[].class
         );
 
