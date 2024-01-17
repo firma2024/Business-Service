@@ -51,7 +51,6 @@ public class ActuacionController {
             }
 
             String response = dataService.saveActuaciones(actuaciones);
-
             System.out.println(response);
 
         } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
