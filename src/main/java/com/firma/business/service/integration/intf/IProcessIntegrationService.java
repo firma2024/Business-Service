@@ -8,4 +8,6 @@ public interface IProcessIntegrationService {
     Proceso getProcess(String numberProcess) throws ErrorIntegrationServiceException;
 
     DespachoResponse findUrlDespacho(String nombre) throws ErrorIntegrationServiceException;
+
+    Proceso getAllProcess(String numberProcess) throws ErrorIntegrationServiceException;
 }

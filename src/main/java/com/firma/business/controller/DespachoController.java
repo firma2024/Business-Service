@@ -11,11 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-@Controller
+@RestController
 public class DespachoController {
 
     @Autowired
@@ -23,7 +24,7 @@ public class DespachoController {
     @Autowired
     private DataService dataService;
 
-    @Scheduled(fixedRate = 600000)
+    //@Scheduled(fixedRate = 600000)
     public void updateDespacho(){
         try {
             Integer year = LocalDate.now().getYear();

@@ -45,4 +45,18 @@ public class ProcessIntegrationService implements IProcessIntegrationService {
 
         return responseEntity.getBody();
     }
+
+    @Override
+    public Proceso getAllProcess(String numberProcess) throws ErrorIntegrationServiceException {
+        ResponseEntity <Proceso> responseEntity = restTemplate.getForEntity(
+                String.format("%sgetAllProcess/fileNumber=%s", apiUrl, numberProcess),
+                Proceso.class
+        );
+
+        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
+            throw new ErrorIntegrationServiceException("Error al obtener el proceso");
+        }
+
+        return responseEntity.getBody();
+    }
 }

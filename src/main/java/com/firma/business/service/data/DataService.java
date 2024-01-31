@@ -52,4 +52,8 @@ public class DataService {
     public String saveEnlace(EnlaceRequest enlaceRequest) throws ErrorDataServiceException{
         return enlaceService.saveEnlace(enlaceRequest);
     }
+
+    public String saveProcess(Proceso process) throws ErrorDataServiceException {
+        return processService.saveProcess(process);
+    }
 }

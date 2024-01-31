@@ -34,4 +34,8 @@ public class IntegrationService {
     public DespachoResponse findUrlDespacho(String nombre) throws ErrorIntegrationServiceException {
         return processIntegrationService.findUrlDespacho(nombre);
     }
+
+    public Proceso getAllProcess(String numberProcess) throws ErrorIntegrationServiceException {
+        return processIntegrationService.getAllProcess(numberProcess);
+    }
 }
