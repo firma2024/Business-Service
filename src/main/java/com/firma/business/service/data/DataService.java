@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -124,5 +123,29 @@ public class DataService {
                 .fileName("providencias_" + radicado + ".zip")
                 .build();
 
+    }
+
+    public PageableResponse<Proceso> getProcessByFilter(String fechaInicioStr, Integer firmaId, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
+        return processService.getProcessByFilter(fechaInicioStr, firmaId, fechaFinStr, estadosProceso, tipoProceso, page, size);
+    }
+
+    public PageableResponse<Proceso> getProcessByAbogado(Integer abogadoId, String fechaInicioStr, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
+        return processService.getProcessByAbogado(abogadoId, fechaInicioStr, fechaFinStr, estadosProceso, tipoProceso, page, size);
+    }
+
+    public PageableResponse<UsuarioResponse> getAbogadosByFirma(Integer firmaId, Integer page, Integer size) throws ErrorDataServiceException {
+        return usuarioDataService.getAbogadosByFirma(firmaId, page, size);
+    }
+
+    public PageableResponse<UsuarioResponse> getAbogadosByFilter(List<String> especialidades, Integer numProcesosInicial, Integer numProcesosFinal, Integer page, Integer size) throws ErrorDataServiceException {
+        return usuarioDataService.getAbogadosByFilter(especialidades, numProcesosInicial, numProcesosFinal, page, size);
+    }
+
+    public PageableResponse<Actuacion> getActuacionesFilter(Integer procesoId, String fechaInicioStr, String fechaFinStr, String estadoActuacion, Integer page, Integer size) throws ErrorDataServiceException {
+        return actuacionService.getActuacionesFilter(procesoId, fechaInicioStr, fechaFinStr, estadoActuacion, page, size);
+    }
+
+    public PageableResponse<Actuacion> getActuacionesByProcesoAbogado(Integer procesoId, String fechaInicioStr, String fechaFinStr, Boolean existeDoc, Integer page, Integer size) throws ErrorDataServiceException {
+        return actuacionService.getActuacionesByProcesoAbogado(procesoId, fechaInicioStr, fechaFinStr, existeDoc, page, size);
     }
 }

@@ -17,8 +17,9 @@ public class Actuacion {
     private String emailAbogado;
     private String fechaActuacion;
     private String fechaRegistro;
-    private boolean existDocument;
+    private boolean existeDocumento;
     private String tipoProceso;
     private String despacho;
     private String nameAbogado;
+    private String link;
 }

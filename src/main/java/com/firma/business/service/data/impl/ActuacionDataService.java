@@ -1,9 +1,11 @@
 package com.firma.business.service.data.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.Actuacion;
 import com.firma.business.payload.ActuacionDocumentResponse;
 import com.firma.business.payload.ActuacionRequest;
+import com.firma.business.payload.PageableResponse;
 import com.firma.business.service.data.intf.IActuacionDataService;
 import com.firma.business.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.List;
@@ -134,6 +137,61 @@ public class ActuacionDataService implements IActuacionDataService {
             throw new ErrorDataServiceException("Error al obtener los documentos");
         }
         return Set.of(responseEntity.getBody());
+    }
+
+    @Override
+    public PageableResponse<Actuacion> getActuacionesFilter(Integer procesoId, String fechaInicioStr, String fechaFinStr, String estadoActuacion, Integer page, Integer size) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/actuacion/jefe/get/all/filter")
+                .queryParam("procesoId", procesoId)
+                .queryParam("page", page)
+                .queryParam("size", size);
+
+        if (fechaInicioStr != null) {
+            builder.queryParam("fechaInicioStr", fechaInicioStr);
+        }
+        if (fechaFinStr != null) {
+            builder.queryParam("fechaFinStr", fechaFinStr);
+        }
+        if (estadoActuacion != null) {
+            builder.queryParam("estadoActuacion", estadoActuacion);
+        }
+
+        ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), Object.class);
+
+        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
+            throw new ErrorDataServiceException("Error al obtener las actuaciones");
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
+    }
+
+    @Override
+    public PageableResponse<Actuacion> getActuacionesByProcesoAbogado(Integer procesoId, String fechaInicioStr, String fechaFinStr, Boolean existeDoc, Integer page, Integer size) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/actuacion/get/all/abogado/filter")
+                .queryParam("procesoId", procesoId)
+                .queryParam("page", page)
+                .queryParam("size", size);
+
+        if (fechaInicioStr != null) {
+            builder.queryParam("fechaInicioStr", fechaInicioStr);
+        }
+        if (fechaFinStr != null) {
+            builder.queryParam("fechaFinStr", fechaFinStr);
+        }
+        if (existeDoc != null) {
+            builder.queryParam("existeDoc", existeDoc);
+        }
+
+        ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), Object.class);
+
+        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
+            throw new ErrorDataServiceException("Error al obtener las actuaciones");
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
+
     }
 
 

@@ -105,4 +105,35 @@ public class ActuacionController {
         }
     }
 
+    @GetMapping("/jefe/get/all/filter")
+    public ResponseEntity<?> getActuacionesFilter(@RequestParam Integer procesoId,
+                                                  @RequestParam(required = false) String fechaInicioStr,
+                                                  @RequestParam(required = false) String fechaFinStr,
+                                                  @RequestParam(required = false) String estadoActuacion,
+                                                  @RequestParam(defaultValue = "0") Integer page,
+                                                  @RequestParam(defaultValue = "2") Integer size){
+        try {
+            PageableResponse<Actuacion> response = dataService.getActuacionesFilter(procesoId, fechaInicioStr, fechaFinStr, estadoActuacion, page, size);
+            return ResponseEntity.ok(response);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/all/abogado/filter")
+    public ResponseEntity <?> getAllActuacionesByProcesoAbogado(@RequestParam Integer procesoId,
+                                                                @RequestParam(required = false) String fechaInicioStr,
+                                                                @RequestParam(required = false) String fechaFinStr,
+                                                                @RequestParam(required = false) Boolean existeDoc,
+                                                                @RequestParam(defaultValue = "0") Integer page,
+                                                                @RequestParam(defaultValue = "2") Integer size){
+
+        try {
+            PageableResponse<Actuacion> response = dataService.getActuacionesByProcesoAbogado(procesoId, fechaInicioStr, fechaFinStr, existeDoc, page, size);
+            return ResponseEntity.ok(response);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }
