@@ -3,6 +3,7 @@ package com.firma.business.service.data.intf;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.PageableResponse;
 import com.firma.business.payload.Proceso;
+import com.firma.business.payload.ProcesoJefeResponse;
 import com.firma.business.payload.ProcesoResponse;
 import org.springframework.http.ResponseEntity;
 
@@ -16,4 +17,8 @@ public interface IProcessDataService {
     PageableResponse<Proceso> getProcessByFilter(String fechaInicioStr, Integer firmaId, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException;
 
     PageableResponse<Proceso> getProcessByAbogado(Integer abogadoId, String fechaInicioStr, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException;
+    List<ProcesoResponse> getStateProcesses(String state, Integer firmaId) throws ErrorDataServiceException;
+    ProcesoJefeResponse getProcessById(Integer processId) throws ErrorDataServiceException;
+    String deleteProcess(Integer processId) throws ErrorDataServiceException;
+    String updateProcess(Proceso process) throws ErrorDataServiceException;
 }

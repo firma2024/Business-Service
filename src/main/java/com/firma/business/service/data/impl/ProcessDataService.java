@@ -2,10 +2,7 @@ package com.firma.business.service.data.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firma.business.exception.ErrorDataServiceException;
-import com.firma.business.payload.EnlaceRequest;
-import com.firma.business.payload.PageableResponse;
-import com.firma.business.payload.Proceso;
-import com.firma.business.payload.ProcesoResponse;
+import com.firma.business.payload.*;
 import com.firma.business.service.data.intf.IProcessDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -117,5 +114,73 @@ public class ProcessDataService implements IProcessDataService {
         ObjectMapper objectMapper = new ObjectMapper();
 
         return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
+    }
+
+    @Override
+    public List<ProcesoResponse> getStateProcesses(String state, Integer firmaId) throws ErrorDataServiceException {
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/proceso/get/all/estado")
+                .queryParam("name", state)
+                .queryParam("firmaId", firmaId);
+
+        ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoResponse[].class);
+
+        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
+            throw new ErrorDataServiceException("Error al obtener los procesos");
+        }
+
+        return List.of(Objects.requireNonNull(responseEntity.getBody()));
+
+    }
+
+    @Override
+    public ProcesoJefeResponse getProcessById(Integer processId) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/proceso/get/jefe")
+                .queryParam("procesoId", processId);
+
+        ResponseEntity<ProcesoJefeResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoJefeResponse.class);
+
+        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
+            throw  new ErrorDataServiceException("Error al obtener el proceso");
+        }
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public String deleteProcess(Integer processId) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/proceso/delete")
+                .queryParam("procesoId", processId);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, null, String.class);
+
+        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
+            throw new ErrorDataServiceException("Error al eliminar el proceso");
+        }
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public String updateProcess(Proceso process) throws ErrorDataServiceException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Proceso> requestEntity = new HttpEntity<>(process, headers);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/proceso/update");
+        builder.queryParam("procesoId", process.getIdProceso());
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.PUT,
+                requestEntity,
+                String.class
+        );
+
+        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
+            throw new ErrorDataServiceException("Error al actualizar el proceso");
+        }
+
+        return responseEntity.getBody();
     }
 }

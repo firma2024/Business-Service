@@ -3,6 +3,8 @@ package com.firma.business.service.data.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.PageableResponse;
+import com.firma.business.payload.Proceso;
+import com.firma.business.payload.UsuarioRequest;
 import com.firma.business.payload.UsuarioResponse;
 import com.firma.business.service.data.intf.IUsuarioDataService;
 import com.firma.business.utils.FileUtils;
@@ -112,5 +114,113 @@ public class UsuarioDataService implements IUsuarioDataService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
+    }
+
+    @Override
+    public String saveAbogado(UsuarioRequest userRequest) throws ErrorDataServiceException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<UsuarioRequest> requestEntity = new HttpEntity<>(userRequest, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                apiUrl + "/usuario/add/abogado",
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+        );
+
+        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
+            throw new ErrorDataServiceException("Error al guardar el proceso");
+        }
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public UsuarioResponse getAbogado(Integer abogadoId) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/usuario/get/abogado")
+                .queryParam("usuarioId", abogadoId);
+
+        ResponseEntity<UsuarioResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), UsuarioResponse.class);
+
+        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
+            throw new ErrorDataServiceException("Error al obtener el abogado");
+        }
+
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<UsuarioResponse> getAbogadosNames(Integer firmaId) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/usuario/get/all/names/abogados")
+                .queryParam("firmaId", firmaId);
+
+        ResponseEntity<UsuarioResponse[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), UsuarioResponse[].class);
+
+        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
+            throw new ErrorDataServiceException("Error al obtener los nombres de los abogados");
+        }
+
+
+        return List.of(responseEntity.getBody());
+    }
+
+    @Override
+    public String deleteUser(Integer userId) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/usuario/delete")
+                .queryParam("id", userId);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.DELETE,
+                null,
+                String.class
+        );
+
+        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
+            throw new ErrorDataServiceException("Error al eliminar el usuario");
+        }
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public UsuarioResponse getInfoJefe(Integer id) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/usuario/get/info/jefe")
+                .queryParam("id", id);
+
+        ResponseEntity<UsuarioResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), UsuarioResponse.class);
+
+        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
+            throw new ErrorDataServiceException("Error al obtener la información del jefe");
+        }
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public String updateInfoJefe(UsuarioRequest userRequest, Integer id) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/usuario/update/info/jefe")
+                .queryParam("id", id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<UsuarioRequest> requestEntity = new HttpEntity<>(userRequest, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.PUT,
+                requestEntity,
+                String.class
+        );
+
+        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
+            throw new ErrorDataServiceException("Error al actualizar la información del jefe");
+        }
+
+        return responseEntity.getBody();
     }
 }

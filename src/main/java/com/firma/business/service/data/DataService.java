@@ -30,6 +30,12 @@ public class DataService {
     private IEnlaceDataService enlaceService;
     @Autowired
     private IUsuarioDataService usuarioDataService;
+    @Autowired
+    private IFirmaDataService firmaDataService;
+    @Autowired
+    private ITipoProcesoDataService tipoProcesoDataService;
+    @Autowired
+    private IEstadoProcesoDataService estadoProcesoDataService;
 
     public List<ProcesoResponse> getProcess() throws ErrorDataServiceException {
         return processService.getProcess();
@@ -147,5 +153,57 @@ public class DataService {
 
     public PageableResponse<Actuacion> getActuacionesByProcesoAbogado(Integer procesoId, String fechaInicioStr, String fechaFinStr, Boolean existeDoc, Integer page, Integer size) throws ErrorDataServiceException {
         return actuacionService.getActuacionesByProcesoAbogado(procesoId, fechaInicioStr, fechaFinStr, existeDoc, page, size);
+    }
+
+    public Firma getFirmaById(Integer id) throws ErrorDataServiceException {
+        return firmaDataService.getFirmaById(id);
+    }
+
+    public List<ProcesoResponse> getStateProcesses(String state, Integer firmaId) throws ErrorDataServiceException {
+        return processService.getStateProcesses(state, firmaId);
+    }
+
+    public String saveAbogado(UsuarioRequest userRequest) throws ErrorDataServiceException {
+        return usuarioDataService.saveAbogado(userRequest);
+    }
+
+    public UsuarioResponse getAbogado(Integer abogadoId) throws ErrorDataServiceException {
+        return usuarioDataService.getAbogado(abogadoId);
+    }
+
+    public List<UsuarioResponse> getAbogadosNames(Integer firmaId) throws ErrorDataServiceException {
+        return usuarioDataService.getAbogadosNames(firmaId);
+    }
+
+    public ProcesoJefeResponse getProcessById(Integer processId) throws ErrorDataServiceException {
+        return processService.getProcessById(processId);
+    }
+
+    public List<TipoProceso> getAllTipoProceso() throws ErrorDataServiceException {
+        return tipoProcesoDataService.getTipoProcesos();
+    }
+
+    public List<EstadoProceso> getAllEstadoProceso() throws ErrorDataServiceException {
+        return estadoProcesoDataService.getEstadoProcesos();
+    }
+
+    public String deleteProcess(Integer processId) throws ErrorDataServiceException {
+        return processService.deleteProcess(processId);
+    }
+
+    public String updateProcess(Proceso process) throws ErrorDataServiceException {
+        return processService.updateProcess(process);
+    }
+
+    public String deleteUser(Integer userId) throws ErrorDataServiceException {
+        return usuarioDataService.deleteUser(userId);
+    }
+
+    public UsuarioResponse getInfoJefe(Integer id) throws ErrorDataServiceException {
+        return usuarioDataService.getInfoJefe(id);
+    }
+
+    public String updateInfoJefe(UsuarioRequest userRequest, Integer id) throws ErrorDataServiceException {
+        return usuarioDataService.updateInfoJefe(userRequest, id);
     }
 }

@@ -48,7 +48,7 @@ public class ProcessController {
         }
     }
 
-    @GetMapping("/get/filter")
+    @GetMapping("/get/all/filter")
     public ResponseEntity<?> getProcesosByFirmaFilter(@RequestParam(required = false) String fechaInicioStr,
                                                       @RequestParam Integer firmaId,
                                                       @RequestParam(required = false) String fechaFinStr,
@@ -82,6 +82,33 @@ public class ProcessController {
             PageableResponse<Proceso> response = dataService.getProcessByAbogado(abogadoId, fechaInicioStr, fechaFinStr, estadosProceso, tipoProceso, page, size);
             return ResponseEntity.ok(response);
 
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/jefe")
+    public ResponseEntity<?> getJefeProcess(@RequestParam Integer processId){
+        try {
+            return ResponseEntity.ok(dataService.getProcessById(processId));
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteProcess(@RequestParam Integer processId){
+        try {
+            return ResponseEntity.ok(dataService.deleteProcess(processId));
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateProcess(@RequestBody Proceso process){
+        try {
+            return ResponseEntity.ok(dataService.updateProcess(process));
         } catch (ErrorDataServiceException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
