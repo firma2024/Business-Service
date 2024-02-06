@@ -5,11 +5,12 @@ import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.payload.*;
 import com.firma.business.service.data.DataService;
 import com.firma.business.service.integration.IntegrationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,11 +25,13 @@ public class ActuacionController {
     private DataService dataService;
     @Autowired
     private IntegrationService integrationService;
+    private Logger loggerActuacion = LoggerFactory.getLogger(ActuacionController.class);
 
     //@Scheduled(fixedRate = 50000)
     @Scheduled(cron = "0 0 7 * * ?")
     public void findNewActuaciones() {
         try {
+            loggerActuacion.info("Buscando actuaciones nuevas");
             List <ProcesoResponse> process = dataService.getProcess();
             List<FindProcess> processFind = new ArrayList<>();
 
@@ -43,13 +46,13 @@ public class ActuacionController {
             }
             List<ActuacionRequest> actuaciones = integrationService.findNewActuacion(processFind);
 
-            if (actuaciones.size() == 0){
-                System.out.println("No hay actuaciones nuevas");
+            if (actuaciones.isEmpty()){
+                loggerActuacion.info("No hay actuaciones nuevas");
                 return;
             }
 
             String response = dataService.saveActuaciones(actuaciones);
-            System.out.println(response);
+            loggerActuacion.info(response);
 
         } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
             System.out.println(e.getMessage());
@@ -60,9 +63,10 @@ public class ActuacionController {
     @Scheduled(cron = "0 0/30 7-9 * * ?") //rango de 7:00 am a 9:00 am cada 30 minutos
     public void sendEmailNewActuacion(){
         try {
+            loggerActuacion.info("Enviando correos de actuaciones");
             Set<Actuacion> actuaciones = dataService.findActuacionesNotSend();
-            if (actuaciones.size() == 0){
-                System.out.println("No hay actuaciones que enviar");
+            if (actuaciones.isEmpty()){
+                loggerActuacion.info("No hay actuaciones para enviar");
                 return;
             }
 
@@ -86,8 +90,7 @@ public class ActuacionController {
             List<Integer> actSend =  integrationService.sendEmailActuacion(actuacionesEmail);
 
             String response = dataService.updateActuacionesSend(actSend);
-
-            System.out.println(response);
+            loggerActuacion.info(response);
 
         } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
             System.out.println(e.getMessage());

@@ -34,8 +34,9 @@ public class ProcessIntegrationService implements IProcessIntegrationService {
 
     @Override
     public DespachoResponse findUrlDespacho(String nombre) throws ErrorIntegrationServiceException {
+        String uri = String.format("%sgetUrl/despacho=%s", apiUrl, nombre);
         ResponseEntity<DespachoResponse> responseEntity = restTemplate.getForEntity(
-                String.format("%sgetUrl/despacho=%s", apiUrl, nombre),
+                uri,
                 DespachoResponse.class
         );
 
