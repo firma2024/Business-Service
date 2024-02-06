@@ -1,14 +1,12 @@
 package com.firma.business.controller;
 
 import com.firma.business.payload.PageableResponse;
+import com.firma.business.payload.UsuarioRequest;
 import com.firma.business.payload.UsuarioResponse;
 import com.firma.business.service.data.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,7 +17,7 @@ public class UsuarioController {
     @Autowired
     private DataService dataService;
 
-    @GetMapping("/get/abogados")
+    @GetMapping("/get/all/abogados")
     public ResponseEntity<?> getFirmaAbogados(@RequestParam Integer firmaId,
                                               @RequestParam(defaultValue = "0") Integer page,
                                               @RequestParam(defaultValue = "2") Integer size){
@@ -40,6 +38,66 @@ public class UsuarioController {
 
         try {
             PageableResponse<UsuarioResponse> response = dataService.getAbogadosByFilter(especialidades, numProcesosInicial, numProcesosFinal, page, size);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/add/abogado")
+    public ResponseEntity<?> addAbogado(@RequestBody UsuarioRequest userRequest){
+        try {
+            String response = dataService.saveAbogado(userRequest);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/abogado")
+    public ResponseEntity<?> getAbogado(@RequestParam Integer userId){
+        try {
+            UsuarioResponse response = dataService.getAbogado(userId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/all/names/abogados")
+    public ResponseEntity<?> getAbogadosNames(@RequestParam Integer firmaId){
+        try {
+            List<UsuarioResponse> response = dataService.getAbogadosNames(firmaId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteAbogado(@RequestParam Integer userId){
+        try {
+            String response = dataService.deleteUser(userId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/info/jefe")
+    public ResponseEntity <?> getPersonalInfo (@RequestParam Integer id){
+        try {
+            UsuarioResponse response = dataService.getInfoJefe(id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/update/info/jefe")
+    public ResponseEntity <?> updatePersonalInfo (@RequestBody UsuarioRequest userRequest, @RequestParam Integer id){
+        try {
+            String response = dataService.updateInfoJefe(userRequest, id);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

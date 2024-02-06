@@ -7,6 +7,8 @@ import com.firma.business.payload.DespachoResponse;
 import com.firma.business.payload.EnlaceRequest;
 import com.firma.business.service.data.DataService;
 import com.firma.business.service.integration.IntegrationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,10 +25,12 @@ public class DespachoController {
     private IntegrationService integrationService;
     @Autowired
     private DataService dataService;
+    private Logger loggerDespacho = LoggerFactory.getLogger(DespachoController.class);
 
-    //@Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 600000)
     public void updateDespacho(){
         try {
+            loggerDespacho.info("Buscando enlaces de despachos");
             Integer year = LocalDate.now().getYear();
             Set<Despacho> despachos = dataService.findAllDespachosWithOutLink(year);
 
@@ -39,7 +43,7 @@ public class DespachoController {
                         .fechaconsulta(LocalDate.now())
                         .build();
                 String response = dataService.saveEnlace(en);
-                System.out.println(response);
+                loggerDespacho.info(response);
             }
 
         } catch (ErrorIntegrationServiceException | ErrorDataServiceException e) {
