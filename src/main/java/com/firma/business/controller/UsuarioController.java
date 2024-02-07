@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuario")
@@ -98,6 +99,40 @@ public class UsuarioController {
     public ResponseEntity <?> updatePersonalInfo (@RequestBody UsuarioRequest userRequest, @RequestParam Integer id){
         try {
             String response = dataService.updateInfoJefe(userRequest, id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/name")
+    public ResponseEntity<?> getAbogadoName(@RequestParam String userName){
+        try {
+            UsuarioResponse user = dataService.getUserByUserName(userName);
+            Map<String, Object> response = Map.of(
+                    "id", user.getId(),
+                    "name", user.getNombres()
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/info/abogado")
+    public ResponseEntity <?> getPersonalInfoAbogado (@RequestParam Integer id){
+        try {
+            UsuarioResponse response = dataService.getInfoAbogado(id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/update/info/abogado")
+    public ResponseEntity <?> updatePersonalInfoAbogado (@RequestBody UsuarioRequest userRequest){
+        try {
+            String response = dataService.updateInfoAbogado(userRequest);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

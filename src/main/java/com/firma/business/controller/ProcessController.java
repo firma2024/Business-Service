@@ -114,4 +114,14 @@ public class ProcessController {
         }
     }
 
+
+    @GetMapping("/get/abogado")
+    public ResponseEntity<?> getAbogado(@RequestParam Integer processId){
+        try {
+            return ResponseEntity.ok(dataService.getProcessAbogado(processId));
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }

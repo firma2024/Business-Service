@@ -223,4 +223,50 @@ public class UsuarioDataService implements IUsuarioDataService {
 
         return responseEntity.getBody();
     }
+
+    @Override
+    public UsuarioResponse getUserByUserName(String userName) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/usuario/get/name")
+                .queryParam("userName", userName);
+
+        ResponseEntity<UsuarioResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), UsuarioResponse.class);
+
+        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
+            throw new ErrorDataServiceException("Error al obtener el usuario");
+        }
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public UsuarioResponse getInfoAbogado(Integer id) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/usuario/get/info/abogado")
+                .queryParam("id", id);
+
+        ResponseEntity<UsuarioResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), UsuarioResponse.class);
+
+        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
+            throw new ErrorDataServiceException("Error al obtener la información del abogado");
+        }
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public String updateInfoAbogado(UsuarioRequest userRequest) throws ErrorDataServiceException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<UsuarioRequest> requestEntity = new HttpEntity<>(userRequest, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                apiUrl + "/usuario/update/info/abogado",
+                HttpMethod.PUT,
+                requestEntity,
+                String.class
+        );
+
+        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
+            throw new ErrorDataServiceException("Error al actualizar la información del abogado");
+        }
+        return responseEntity.getBody();
+    }
 }

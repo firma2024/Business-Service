@@ -19,9 +19,9 @@ public class FirmaDataService implements IFirmaDataService {
     private String apiUrl;
 
     @Override
-    public Firma getFirmaById(Integer firmaId) throws ErrorDataServiceException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/firma/get/id")
-                .queryParam("firmaId", firmaId);
+    public Firma getFirmaByUser(String username) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/firma/get/user")
+                .queryParam("userName", username);
 
         ResponseEntity<Firma> responseEntity = restTemplate.getForEntity(builder.toUriString(), Firma.class);
 

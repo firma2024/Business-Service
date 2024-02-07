@@ -20,4 +20,8 @@ public interface IUsuarioDataService {
     String deleteUser(Integer userId) throws ErrorDataServiceException;
     UsuarioResponse getInfoJefe(Integer id) throws ErrorDataServiceException;
     String updateInfoJefe(UsuarioRequest userRequest, Integer id) throws ErrorDataServiceException;
+    UsuarioResponse getUserByUserName(String userName) throws ErrorDataServiceException;
+    UsuarioResponse getInfoAbogado(Integer id) throws ErrorDataServiceException;
+
+    String updateInfoAbogado(UsuarioRequest userRequest) throws ErrorDataServiceException;
 }

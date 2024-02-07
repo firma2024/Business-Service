@@ -23,13 +23,13 @@ public class FirmaController {
     private DataService dataService;
 
     @GetMapping("/get/jefe/init/info")
-    public ResponseEntity<?> getInitInfo(@RequestParam Integer firmaId){
+    public ResponseEntity<?> getInitInfo(@RequestParam String userName){
         try {
-            Firma firma = dataService.getFirmaById(firmaId);
-            List<ProcesoResponse> activeProcesses = dataService.getStateProcesses( "Activo",firmaId);
-            List<ProcesoResponse> inFavorProcesses = dataService.getStateProcesses("Finalizado a favor", firmaId);
-            List<ProcesoResponse> againstProcesses = dataService.getStateProcesses("Finalizado en contra", firmaId);
-            PageableResponse<?> users = dataService.getAbogadosByFirma(firmaId, null, null);
+            Firma firma = dataService.getFirmaByUser(userName);
+            List<ProcesoResponse> activeProcesses = dataService.getStateProcessesJefe( "Activo", firma.getId());
+            List<ProcesoResponse> inFavorProcesses = dataService.getStateProcessesJefe("Finalizado a favor", firma.getId());
+            List<ProcesoResponse> againstProcesses = dataService.getStateProcessesJefe("Finalizado en contra", firma.getId());
+            PageableResponse<?> users = dataService.getAbogadosByFirma(firma.getId(), null, null);
 
             Map<String, Object> response = Map.of(
                     "firma", firma,
@@ -45,5 +45,31 @@ public class FirmaController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/get/abogado/init/info")
+    public ResponseEntity<?> getInitInfoAbogado(@RequestParam String userName){
+        try {
+            Firma firma = dataService.getFirmaByUser(userName);
+            List<ProcesoResponse> activeProcesses = dataService.getStateProcessesAbogado("Activo", userName);
+            List<ProcesoResponse> inFavorProcesses = dataService.getStateProcessesAbogado("Finalizado a favor", userName);
+            List<ProcesoResponse> againstProcesses = dataService.getStateProcessesAbogado("Finalizado en contra", userName);
+
+            Map<String, Object> response = Map.of(
+                    "firma", firma,
+                    "activeProcesses", activeProcesses.size(),
+                    "inFavorProcesses", inFavorProcesses.size(),
+                    "againstProcesses", againstProcesses.size()
+            );
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    
+
+
 
 }

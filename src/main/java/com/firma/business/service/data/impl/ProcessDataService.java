@@ -117,7 +117,7 @@ public class ProcessDataService implements IProcessDataService {
     }
 
     @Override
-    public List<ProcesoResponse> getStateProcesses(String state, Integer firmaId) throws ErrorDataServiceException {
+    public List<ProcesoResponse> getStateProcessesJefe(String state, Integer firmaId) throws ErrorDataServiceException {
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/proceso/get/all/estado")
                 .queryParam("name", state)
@@ -181,6 +181,33 @@ public class ProcessDataService implements IProcessDataService {
             throw new ErrorDataServiceException("Error al actualizar el proceso");
         }
 
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<ProcesoResponse> getStateProcessesAbogado(String name, String userName) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/proceso/get/all/estado/abogado")
+                .queryParam("name", name)
+                .queryParam("userName", userName);
+
+        ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoResponse[].class);
+
+        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
+            throw new ErrorDataServiceException("Error al obtener los procesos");
+        }
+        return List.of(Objects.requireNonNull(responseEntity.getBody()));
+    }
+
+    @Override
+    public ProcesoAbogadoResponse getProcessAbogado(Integer processId) throws ErrorDataServiceException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/proceso/get/abogado")
+                .queryParam("procesoId", processId);
+
+        ResponseEntity<ProcesoAbogadoResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoAbogadoResponse.class);
+
+        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
+            throw new ErrorDataServiceException("Error al obtener el proceso");
+        }
         return responseEntity.getBody();
     }
 }

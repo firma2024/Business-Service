@@ -17,6 +17,8 @@ public class Actuacion {
     private String emailAbogado;
     private String fechaActuacion;
     private String fechaRegistro;
+    private String fechaInicia;
+    private String fechaFinaliza;
     private boolean existeDocumento;
     private String tipoProceso;
     private String despacho;

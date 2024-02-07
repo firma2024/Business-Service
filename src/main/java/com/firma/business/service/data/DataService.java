@@ -36,6 +36,8 @@ public class DataService {
     private ITipoProcesoDataService tipoProcesoDataService;
     @Autowired
     private IEstadoProcesoDataService estadoProcesoDataService;
+    @Autowired
+    private IAudienciaDataService audienciaDataService;
 
     public List<ProcesoResponse> getProcess() throws ErrorDataServiceException {
         return processService.getProcess();
@@ -155,12 +157,12 @@ public class DataService {
         return actuacionService.getActuacionesByProcesoAbogado(procesoId, fechaInicioStr, fechaFinStr, existeDoc, page, size);
     }
 
-    public Firma getFirmaById(Integer id) throws ErrorDataServiceException {
-        return firmaDataService.getFirmaById(id);
+    public Firma getFirmaByUser(String userName) throws ErrorDataServiceException {
+        return firmaDataService.getFirmaByUser(userName);
     }
 
-    public List<ProcesoResponse> getStateProcesses(String state, Integer firmaId) throws ErrorDataServiceException {
-        return processService.getStateProcesses(state, firmaId);
+    public List<ProcesoResponse> getStateProcessesJefe(String state, Integer firmaId) throws ErrorDataServiceException {
+        return processService.getStateProcessesJefe(state, firmaId);
     }
 
     public String saveAbogado(UsuarioRequest userRequest) throws ErrorDataServiceException {
@@ -205,5 +207,33 @@ public class DataService {
 
     public String updateInfoJefe(UsuarioRequest userRequest, Integer id) throws ErrorDataServiceException {
         return usuarioDataService.updateInfoJefe(userRequest, id);
+    }
+
+    public List<ProcesoResponse> getStateProcessesAbogado(String name, String userName) throws ErrorDataServiceException {
+        return processService.getStateProcessesAbogado(name, userName);
+    }
+
+    public UsuarioResponse getUserByUserName(String userName) throws ErrorDataServiceException {
+        return usuarioDataService.getUserByUserName(userName);
+    }
+
+    public ProcesoAbogadoResponse getProcessAbogado(Integer processId) throws ErrorDataServiceException {
+        return processService.getProcessAbogado(processId);
+    }
+
+    public String updateAudiencia(Integer id, String enlace) throws ErrorDataServiceException {
+        return audienciaDataService.updateAudiencia(id, enlace);
+    }
+
+    public String addAudiencia(AudienciaRequest audiencia) throws ErrorDataServiceException {
+        return audienciaDataService.addAudiencia(audiencia);
+    }
+
+    public UsuarioResponse getInfoAbogado(Integer id) throws ErrorDataServiceException {
+        return usuarioDataService.getInfoAbogado(id);
+    }
+
+    public String updateInfoAbogado(UsuarioRequest userRequest) throws ErrorDataServiceException {
+        return usuarioDataService.updateInfoAbogado(userRequest);
     }
 }

@@ -11,6 +11,7 @@ import java.util.Set;
 @Setter
 @Builder
 public class UsuarioRequest {
+    private Integer id;
     private String nombres;
     private String correo;
     private BigInteger telefono;
