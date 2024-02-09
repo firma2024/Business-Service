@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -27,97 +28,106 @@ public class StorageDataService implements IStorageDataService {
     private String apiUrl;
 
     @Override
-    public String uploadPhoto(MultipartFile file, Integer usuarioId) throws IOException, ErrorDataServiceException {
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("image", new FileSystemResource(FileUtils.convertMultiPartToFile(file)));
+    public String uploadPhoto(MultipartFile file, Integer usuarioId) throws ErrorDataServiceException {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        try{
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("image", new FileSystemResource(FileUtils.convertMultiPartToFile(file)));
 
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                apiUrl + "/storage/upload/photo?usuarioId=" + usuarioId,
-                HttpMethod.POST,
-                requestEntity,
-                String.class
-        );
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    apiUrl + "/storage/upload/photo?usuarioId=" + usuarioId,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
 
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorDataServiceException("Error al guardar la imagen");
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public byte[] downloadPhoto(Integer usuarioId) throws ErrorDataServiceException {
-        ResponseEntity<byte[]> responseEntity = restTemplate.exchange(
-                apiUrl + "/storage/download/photo?usuarioId=" + usuarioId,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<byte[]>() {
-                }
-        );
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorDataServiceException("Error al descargar la foto");
+        try {
+            ResponseEntity<byte[]> responseEntity = restTemplate.exchange(
+                    apiUrl + "/storage/download/photo?usuarioId=" + usuarioId,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<byte[]>() {
+                    }
+            );
+            return responseEntity.getBody();
+        } catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
         }
-        return responseEntity.getBody();
     }
 
     @Override
     public String uploadDocument(MultipartFile file, Integer actuacionId) throws ErrorDataServiceException, IOException {
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("doc", new FileSystemResource(FileUtils.convertMultiPartToFile(file)));
+        try{
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("doc", new FileSystemResource(FileUtils.convertMultiPartToFile(file)));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                apiUrl + "/storage/upload/document?actuacionId=" + actuacionId,
-                HttpMethod.POST,
-                requestEntity,
-                String.class
-        );
-
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorDataServiceException("Error al guardar el documento");
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    apiUrl + "/storage/upload/document?actuacionId=" + actuacionId,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+         catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public byte[] downloadDocument(Integer actuacionId) throws ErrorDataServiceException {
-        ResponseEntity<byte[]> responseEntity = restTemplate.exchange(
-                apiUrl + "/storage/download/document?actuacionId=" + actuacionId,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<byte[]>() {
-                }
-        );
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorDataServiceException("Error al descargar la foto");
+        try{
+            ResponseEntity<byte[]> responseEntity = restTemplate.exchange(
+                    apiUrl + "/storage/download/document?actuacionId=" + actuacionId,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<byte[]>() {
+                    }
+            );
+            return responseEntity.getBody();
         }
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public Set<ActuacionDocumentResponse> downloadAllDocuments(Integer procesoId) throws ErrorDataServiceException {
-        String url = apiUrl + "storage/download/all/documents?procesoId=" + procesoId;
-        ResponseEntity <ActuacionDocumentResponse[]> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                ActuacionDocumentResponse[].class
-        );
 
-        if (responseEntity.getStatusCode().is4xxClientError()) {
-            throw new ErrorDataServiceException("Error al obtener los documentos");
+        try{
+            String url = apiUrl + "storage/download/all/documents?procesoId=" + procesoId;
+            ResponseEntity <ActuacionDocumentResponse[]> responseEntity = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    ActuacionDocumentResponse[].class
+            );
+
+            return Set.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        return Set.of(responseEntity.getBody());
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+
     }
 }

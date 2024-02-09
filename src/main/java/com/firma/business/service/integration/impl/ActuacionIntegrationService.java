@@ -1,5 +1,6 @@
 package com.firma.business.service.integration.impl;
 
+import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.payload.Actuacion;
 import com.firma.business.payload.ActuacionEmail;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -26,42 +28,45 @@ public class ActuacionIntegrationService implements IActuacionIntegrationService
     @Override
     public List<ActuacionRequest> findNewActuacion(List<FindProcess> process) throws ErrorIntegrationServiceException {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        try{
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<List<FindProcess>> requestEntity = new HttpEntity<>(process, headers);
+            HttpEntity<List<FindProcess>> requestEntity = new HttpEntity<>(process, headers);
 
-        ResponseEntity<ActuacionRequest[]> responseEntity = restTemplate.exchange(
-                apiUrl + "find/actuaciones",
-                HttpMethod.POST,
-                requestEntity,
-                ActuacionRequest[].class
-        );
+            ResponseEntity<ActuacionRequest[]> responseEntity = restTemplate.exchange(
+                    apiUrl + "find/actuaciones",
+                    HttpMethod.POST,
+                    requestEntity,
+                    ActuacionRequest[].class
+            );
 
-        if (responseEntity.getStatusCode().is4xxClientError()) {
-            throw new ErrorIntegrationServiceException("Error al obtener las actuaciones");
+            return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        return List.of(responseEntity.getBody());
+        catch (Exception e) {
+            throw new ErrorIntegrationServiceException(e.getMessage());
+        }
     }
 
     @Override
     public List<Integer> sendEmailActuacion(List<ActuacionEmail> actuaciones) throws ErrorIntegrationServiceException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        try{
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<List<ActuacionEmail>> requestEntity = new HttpEntity<>(actuaciones, headers);
+            HttpEntity<List<ActuacionEmail>> requestEntity = new HttpEntity<>(actuaciones, headers);
 
-        ResponseEntity<Integer[]> responseEntity = restTemplate.exchange(
-                apiUrl + "send_email",
-                HttpMethod.POST,
-                requestEntity,
-                Integer[].class
-        );
+            ResponseEntity<Integer[]> responseEntity = restTemplate.exchange(
+                    apiUrl + "send_email",
+                    HttpMethod.POST,
+                    requestEntity,
+                    Integer[].class
+            );
 
-        if (responseEntity.getStatusCode().is4xxClientError()) {
-            throw new ErrorIntegrationServiceException("Error al enviar las actuaciones");
+            return List.of(responseEntity.getBody());
         }
-
-        return List.of(responseEntity.getBody());
+        catch (Exception e) {
+            throw new ErrorIntegrationServiceException(e.getMessage());
+        }
     }
 }

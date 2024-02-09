@@ -26,284 +26,305 @@ public class ProcessDataService implements IProcessDataService {
 
     @Override
     public List<ProcesoResponse> getProcess() throws ErrorDataServiceException {
-        ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(apiUrl + "/process/get/all", ProcesoResponse[].class);
-        if (responseEntity.getStatusCode().is4xxClientError()) {
-            throw new ErrorDataServiceException("Error al obtener los procesos");
+        try{
+            ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(apiUrl + "/process/get/all", ProcesoResponse[].class);
+            return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        return List.of(responseEntity.getBody());
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public String saveProcess(Proceso process) throws ErrorDataServiceException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        try{
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Proceso> requestEntity = new HttpEntity<>(process, headers);
+            HttpEntity<Proceso> requestEntity = new HttpEntity<>(process, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                apiUrl + "/process/save",
-                HttpMethod.POST,
-                requestEntity,
-                String.class
-        );
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    apiUrl + "/process/save",
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
 
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
             throw new ErrorDataServiceException("Error al guardar el proceso");
         }
-
-        return responseEntity.getBody();
     }
 
     @Override
     public PageableResponse<Proceso> getProcessByFilter(String fechaInicioStr, Integer firmaId, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/firma/filter")
-                .queryParam("firmaId", firmaId)
-                .queryParam("page", page)
-                .queryParam("size", size);
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/firma/filter")
+                    .queryParam("firmaId", firmaId)
+                    .queryParam("page", page)
+                    .queryParam("size", size);
 
-        if (fechaInicioStr != null) {
-            builder.queryParam("fechaInicioStr", fechaInicioStr);
-        }
-        if (fechaFinStr != null) {
-            builder.queryParam("fechaFinStr", fechaFinStr);
-        }
-        if (estadosProceso != null) {
-            builder.queryParam("estadosProceso", estadosProceso);
-        }
-        if (tipoProceso != null) {
-            builder.queryParam("tipoProceso", tipoProceso);
-        }
+            if (fechaInicioStr != null) {
+                builder.queryParam("fechaInicioStr", fechaInicioStr);
+            }
+            if (fechaFinStr != null) {
+                builder.queryParam("fechaFinStr", fechaFinStr);
+            }
+            if (estadosProceso != null) {
+                builder.queryParam("estadosProceso", estadosProceso);
+            }
+            if (tipoProceso != null) {
+                builder.queryParam("tipoProceso", tipoProceso);
+            }
 
-        ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), Object.class);
+            ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), Object.class);
 
-        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
-            throw new ErrorDataServiceException("Error al obtener los procesos");
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
         }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public PageableResponse<Proceso> getProcessByAbogado(Integer abogadoId, String fechaInicioStr, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/abogado/filter")
-                .queryParam("abogadoId", abogadoId)
-                .queryParam("page", page)
-                .queryParam("size", size);
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/abogado/filter")
+                    .queryParam("abogadoId", abogadoId)
+                    .queryParam("page", page)
+                    .queryParam("size", size);
 
-        if (fechaInicioStr != null) {
-            builder.queryParam("fechaInicioStr", fechaInicioStr);
-        }
-        if (fechaFinStr != null) {
-            builder.queryParam("fechaFinStr", fechaFinStr);
-        }
-        if (estadosProceso != null) {
-            builder.queryParam("estadosProceso", estadosProceso);
-        }
-        if (tipoProceso != null) {
-            builder.queryParam("tipoProceso", tipoProceso);
-        }
+            if (fechaInicioStr != null) {
+                builder.queryParam("fechaInicioStr", fechaInicioStr);
+            }
+            if (fechaFinStr != null) {
+                builder.queryParam("fechaFinStr", fechaFinStr);
+            }
+            if (estadosProceso != null) {
+                builder.queryParam("estadosProceso", estadosProceso);
+            }
+            if (tipoProceso != null) {
+                builder.queryParam("tipoProceso", tipoProceso);
+            }
 
-        ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), Object.class);
+            ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), Object.class);
 
-        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
-            throw new ErrorDataServiceException("Error al obtener los procesos");
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
         }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public List<ProcesoResponse> getStateProcessesJefe(String state, Integer firmaId) throws ErrorDataServiceException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/estado")
-                .queryParam("name", state)
-                .queryParam("firmaId", firmaId);
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/estado")
+                    .queryParam("name", state)
+                    .queryParam("firmaId", firmaId);
 
-        ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoResponse[].class);
+            ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoResponse[].class);
 
-        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
-            throw new ErrorDataServiceException("Error al obtener los procesos");
+
+            return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-
-        return List.of(Objects.requireNonNull(responseEntity.getBody()));
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public ProcesoJefeResponse getProcessById(Integer processId) throws ErrorDataServiceException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/jefe")
-                .queryParam("procesoId", processId);
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/jefe")
+                    .queryParam("procesoId", processId);
 
-        ResponseEntity<ProcesoJefeResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoJefeResponse.class);
-
-        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
-            throw new ErrorDataServiceException("Error al obtener el proceso");
+            ResponseEntity<ProcesoJefeResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoJefeResponse.class);
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public String deleteProcess(Integer processId) throws ErrorDataServiceException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/delete")
-                .queryParam("procesoId", processId);
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/delete")
+                    .queryParam("procesoId", processId);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, null, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, null, String.class);
 
-        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
-            throw new ErrorDataServiceException("Error al eliminar el proceso");
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public String updateProcess(Proceso process) throws ErrorDataServiceException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Proceso> requestEntity = new HttpEntity<>(process, headers);
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/update");
-        builder.queryParam("procesoId", process.getIdProceso());
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                builder.toUriString(),
-                HttpMethod.PUT,
-                requestEntity,
-                String.class
-        );
 
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorDataServiceException("Error al actualizar el proceso");
+        try{
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Proceso> requestEntity = new HttpEntity<>(process, headers);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/update");
+            builder.queryParam("procesoId", process.getIdProceso());
+
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.PUT,
+                    requestEntity,
+                    String.class
+            );
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public List<ProcesoResponse> getStateProcessesAbogado(String name, String userName) throws ErrorDataServiceException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/estado/abogado")
-                .queryParam("name", name)
-                .queryParam("userName", userName);
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/estado/abogado")
+                    .queryParam("name", name)
+                    .queryParam("userName", userName);
 
-        ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoResponse[].class);
+            ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoResponse[].class);
 
-        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
-            throw new ErrorDataServiceException("Error al obtener los procesos");
+            return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        return List.of(Objects.requireNonNull(responseEntity.getBody()));
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public ProcesoAbogadoResponse getProcessAbogado(Integer processId) throws ErrorDataServiceException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/abogado")
-                .queryParam("procesoId", processId);
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/abogado")
+                    .queryParam("procesoId", processId);
 
-        ResponseEntity<ProcesoAbogadoResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoAbogadoResponse.class);
+            ResponseEntity<ProcesoAbogadoResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoAbogadoResponse.class);
 
-        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
-            throw new ErrorDataServiceException("Error al obtener el proceso");
+            return responseEntity.getBody();
         }
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public List<EstadoProceso> getEstadoProcesos() throws ErrorDataServiceException {
-        ResponseEntity<EstadoProceso[]> responseEntity = restTemplate.getForEntity(apiUrl + "/process/estadoProceso/get/all", EstadoProceso[].class);
+        try{
+            ResponseEntity<EstadoProceso[]> responseEntity = restTemplate.getForEntity(apiUrl + "/process/estadoProceso/get/all", EstadoProceso[].class);
 
-        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
-            throw new ErrorDataServiceException("Error al obtener los estados de proceso");
+            return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-
-        return List.of(responseEntity.getBody());
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public String updateAudiencia(Integer id, String enlace) throws ErrorDataServiceException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/process/audiencia/update")
-                .queryParam("id", id)
-                .queryParam("enlace", enlace);
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/process/audiencia/update")
+                    .queryParam("id", id)
+                    .queryParam("enlace", enlace);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                builder.toUriString(),
-                HttpMethod.PUT,
-                null,
-                String.class
-        );
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.PUT,
+                    null,
+                    String.class
+            );
 
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
-            throw new ErrorDataServiceException("Error al actualizar la audiencia");
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public String addAudiencia(AudienciaRequest audiencia) throws ErrorDataServiceException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        try{
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<AudienciaRequest> requestEntity = new HttpEntity<>(audiencia, headers);
+            HttpEntity<AudienciaRequest> requestEntity = new HttpEntity<>(audiencia, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                apiUrl + "/process/audiencia/add",
-                HttpMethod.POST,
-                requestEntity,
-                String.class
-        );
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    apiUrl + "/process/audiencia/add",
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
 
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorDataServiceException("Error al guardar la audiencia");
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public Set<Despacho> findAllDespachosWithOutLink(Integer year) throws ErrorDataServiceException {
-        ResponseEntity<Despacho []> responseEntity = restTemplate.getForEntity(
-                apiUrl + "/process/despacho/get/all/notlink?year=" + year,
-                Despacho[].class
-        );
+        try{
+            ResponseEntity<Despacho []> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/process/despacho/get/all/notlink?year=" + year,
+                    Despacho[].class
+            );
 
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorDataServiceException("Error al obtener los despachos");
+            return Set.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-
-        return Set.of(responseEntity.getBody());
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public List<TipoProceso> getTipoProcesos() throws ErrorDataServiceException {
-        ResponseEntity<TipoProceso[]> responseEntity = restTemplate.getForEntity(apiUrl + "/process/tipoProceso/get/all", TipoProceso[].class);
+        try{
+            ResponseEntity<TipoProceso[]> responseEntity = restTemplate.getForEntity(apiUrl + "/process/tipoProceso/get/all", TipoProceso[].class);
 
-        if (responseEntity.getStatusCode().is4xxClientError()) {
-            throw new ErrorDataServiceException("Error al obtener los tipos de proceso");
+            return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-
-        return List.of(responseEntity.getBody());
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public String saveEnlace(EnlaceRequest enlaceRequest) throws ErrorDataServiceException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        try{
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<EnlaceRequest> requestEntity = new HttpEntity<>(enlaceRequest, headers);
+            HttpEntity<EnlaceRequest> requestEntity = new HttpEntity<>(enlaceRequest, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                apiUrl + "/process/enlace/save",
-                HttpMethod.POST,
-                requestEntity,
-                String.class
-        );
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    apiUrl + "/process/enlace/save",
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
 
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorDataServiceException("Error al guardar el enlace");
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 }

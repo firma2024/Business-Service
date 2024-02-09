@@ -20,44 +20,46 @@ public class ProcessIntegrationService implements IProcessIntegrationService {
 
     @Override
     public Proceso getProcess(String numberProcess) throws ErrorIntegrationServiceException {
-        ResponseEntity <Proceso> responseEntity = restTemplate.getForEntity(
-                String.format("%sgetProcess/fileNumber=%s", apiUrl, numberProcess),
-                Proceso.class
-        );
-
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorIntegrationServiceException("Error al obtener el proceso");
+        try{
+            ResponseEntity <Proceso> responseEntity = restTemplate.getForEntity(
+                    String.format("%sgetProcess/fileNumber=%s", apiUrl, numberProcess),
+                    Proceso.class
+            );
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorIntegrationServiceException(e.getMessage());
+        }
     }
 
     @Override
     public DespachoResponse findUrlDespacho(String nombre) throws ErrorIntegrationServiceException {
-        String uri = String.format("%sgetUrl/despacho=%s", apiUrl, nombre);
-        ResponseEntity<DespachoResponse> responseEntity = restTemplate.getForEntity(
-                uri,
-                DespachoResponse.class
-        );
+        try{
+            String uri = String.format("%sgetUrl/despacho=%s", apiUrl, nombre);
+            ResponseEntity<DespachoResponse> responseEntity = restTemplate.getForEntity(
+                    uri,
+                    DespachoResponse.class
+            );
 
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorIntegrationServiceException("Error al obtener la url del despacho");
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorIntegrationServiceException(e.getMessage());
+        }
     }
 
     @Override
     public Proceso getAllProcess(String numberProcess) throws ErrorIntegrationServiceException {
-        ResponseEntity <Proceso> responseEntity = restTemplate.getForEntity(
-                String.format("%sgetAllProcess/fileNumber=%s", apiUrl, numberProcess),
-                Proceso.class
-        );
+        try{
+            ResponseEntity <Proceso> responseEntity = restTemplate.getForEntity(
+                    String.format("%sgetAllProcess/fileNumber=%s", apiUrl, numberProcess),
+                    Proceso.class
+            );
 
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorIntegrationServiceException("Error al obtener el proceso");
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorIntegrationServiceException(e.getMessage());
+        }
     }
 }

@@ -21,36 +21,38 @@ public class FirmaDataService implements IFirmaDataService {
 
     @Override
     public Firma getFirmaByUser(String username) throws ErrorDataServiceException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/firma/get/user")
-                .queryParam("userName", username);
+        try{
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/firma/get/user")
+                    .queryParam("userName", username);
 
-        ResponseEntity<Firma> responseEntity = restTemplate.getForEntity(builder.toUriString(), Firma.class);
+            ResponseEntity<Firma> responseEntity = restTemplate.getForEntity(builder.toUriString(), Firma.class);
 
-        if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorDataServiceException("Error al obtener la firma");
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 
     @Override
     public String saveFirma(FirmaRequest firma) throws ErrorDataServiceException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        try{
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<FirmaRequest> requestEntity = new HttpEntity<>(firma, headers);
+            HttpEntity<FirmaRequest> requestEntity = new HttpEntity<>(firma, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                apiUrl + "/firma/save",
-                HttpMethod.POST,
-                requestEntity,
-                String.class
-        );
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    apiUrl + "/firma/save",
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
 
-        if(responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()){
-            throw new ErrorDataServiceException("Error al guardar el proceso");
+            return responseEntity.getBody();
         }
-
-        return responseEntity.getBody();
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
     }
 }
