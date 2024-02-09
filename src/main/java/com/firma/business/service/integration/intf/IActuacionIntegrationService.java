@@ -11,6 +11,5 @@ import java.util.Set;
 
 public interface IActuacionIntegrationService {
     List<ActuacionRequest> findNewActuacion(List <FindProcess> process) throws ErrorIntegrationServiceException;
-
     List<Integer> sendEmailActuacion(List<ActuacionEmail> actuaciones) throws ErrorIntegrationServiceException;
 }
