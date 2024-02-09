@@ -2,10 +2,9 @@ package com.firma.business.controller;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.FileResponse;
-import com.firma.business.service.data.DataService;
+import com.firma.business.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,65 +12,36 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/file")
-public class FileController {
+@RequestMapping("/api/business/storage")
+public class StorageController {
 
     @Autowired
-    private DataService dataService;
-
+    private StorageService storageService;
 
     @PostMapping("/upload/photo")
     public ResponseEntity<?> uploadPhoto(@RequestParam("image") MultipartFile file, @RequestParam Integer usuarioId){
-        try {
-            String response = dataService.uploadPhoto(file, usuarioId);
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return storageService.uploadPhoto(file, usuarioId);
     }
 
     @GetMapping("/download/photo")
     public ResponseEntity<?> downloadPhoto(@RequestParam Integer usuarioId){
-        try {
-            byte[] response = dataService.downloadPhoto(usuarioId);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .body(response);
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return storageService.downloadPhoto(usuarioId);
     }
 
     @PostMapping("/upload/document")
     public ResponseEntity<?> uploadDocument(@RequestParam("document") MultipartFile file, @RequestParam Integer actuacionId){
-        try {
-            String response = dataService.uploadDocument(file, actuacionId);
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return storageService.uploadDocument(file, actuacionId);
     }
 
     @GetMapping("/download/document")
     public ResponseEntity<?> downloadDocument(@RequestParam Integer actuacionId){
-        try {
-            byte[] response = dataService.downloadDocument(actuacionId);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(response);
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return storageService.downloadDocument(actuacionId);
     }
 
     @GetMapping("/download/alldocuments")
     public ResponseEntity <?> downloadAllDocuments(@RequestParam Integer procesoId){
         try {
-            FileResponse fileResponse = dataService.downloadAllDocuments(procesoId);
+            FileResponse fileResponse = storageService.downloadAllDocuments(procesoId);
             return ResponseEntity.ok()
                     .contentLength(fileResponse.getFile().length)
                     .header("Content-Disposition",  String.format("attachment; filename=\"%s\"", fileResponse.getFileName()))
