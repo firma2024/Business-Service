@@ -90,7 +90,7 @@ public class ProcessController {
         return processService.updateProcess(process);
     }
 
-    @GetMapping("/estadoProceso/get/abogado")
+    @GetMapping("/get/abogado")
     public ResponseEntity<?> getProcessAbogado(@RequestParam Integer processId){
         return processService.getProcessAbogado(processId);
     }
@@ -113,7 +113,7 @@ public class ProcessController {
             Set<Despacho> despachos = processService.findAllDespachosWithOutLink(year);
 
             for (Despacho despacho : despachos) {
-                System.out.println(despacho.getNombre());
+                logger.info(despacho.getNombre());
                 DespachoResponse url = processService.findUrlDespacho(despacho.getNombre());
                 EnlaceRequest en = EnlaceRequest.builder()
                         .url(url.getUrl_despacho())
