@@ -65,6 +65,9 @@ public class StorageService {
 
     public FileResponse downloadAllDocuments (Integer processId) throws ErrorDataServiceException, IOException {
         Set<ActuacionDocumentResponse> documents = storageDataService.downloadAllDocuments(processId);
+        if (documents.isEmpty()) {
+            throw new ErrorDataServiceException("No se encontraron documentos");
+        }
 
         String radicado = null;
         File tempFolder = new File("temp");
@@ -85,7 +88,7 @@ public class StorageService {
             fos.close();
         }
 
-        // Comprimir los archivos PDF en un archivo ZIP
+
         File zipFile = new File("zip/providencias_" + radicado + ".zip");
         ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));
 

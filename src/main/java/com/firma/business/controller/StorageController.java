@@ -47,7 +47,7 @@ public class StorageController {
                     .header("Content-Disposition",  String.format("attachment; filename=\"%s\"", fileResponse.getFileName()))
                     .body(fileResponse.getFile());
         } catch (IOException | ErrorDataServiceException e) {
-            return new ResponseEntity<>("Error to download documents", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }
