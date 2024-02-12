@@ -1,6 +1,7 @@
 package com.firma.business.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.firma.business.controller.ActuacionController;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.model.*;
@@ -12,6 +13,8 @@ import com.firma.business.service.data.intf.IActuacionDataService;
 import com.firma.business.service.data.intf.IProcessDataService;
 import com.firma.business.service.integration.intf.IActuacionIntegrationService;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +40,7 @@ public class ActuacionService {
     @Autowired
     private FirmaService firmaService;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private Logger loggerService = LoggerFactory.getLogger(ActuacionService.class);
 
 
     public String saveActuaciones(List<ActuacionRequest> actuaciones) throws ErrorDataServiceException {
@@ -69,22 +73,20 @@ public class ActuacionService {
         return actuacionDataService.findActuacionesNotSend();
     }
 
-    public String updateActuacionesSend(List<Integer> actuaciones) throws ErrorDataServiceException {
+    public void updateActuacionesSend(List<Integer> actuaciones) throws ErrorDataServiceException {
 
         for (Integer actuacionId : actuaciones){
             Actuacion actuacion = actuacionDataService.getActuacion(actuacionId);
             actuacion.setEnviado('Y');
-            actuacionDataService.updateActuacion(actuacion);
+            loggerService.info(actuacionDataService.updateActuacion(actuacion));
 
             RegistroCorreo reg = RegistroCorreo.builder()
                     .correo(actuacion.getProceso().getEmpleado().getUsuario().getCorreo())
                     .fecha(LocalDateTime.now())
                     .build();
 
-            actuacionDataService.saveRegistroCorreo(reg);
+            loggerService.info(actuacionDataService.saveRegistroCorreo(reg));
         }
-
-        return actuacionDataService.updateActuacionesSend(actuaciones);
     }
 
     public ActuacionResponse getActuacion(Integer id) throws ErrorDataServiceException {

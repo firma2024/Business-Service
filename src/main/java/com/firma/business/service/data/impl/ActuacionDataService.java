@@ -197,7 +197,7 @@ public class ActuacionDataService implements IActuacionDataService {
     public Actuacion findLastActuacion(Integer processid) throws ErrorDataServiceException {
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/actuacion/get/last")
-                    .queryParam("processId", processid);
+                    .queryParam("processid", processid);
 
             ResponseEntity<Actuacion> responseEntity = restTemplate.getForEntity(builder.toUriString(), Actuacion.class);
 

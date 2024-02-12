@@ -90,7 +90,7 @@ public class ActuacionController {
             }
             List<Integer> actSend =  actuacionService.sendEmailActuacion(actuacionesEmail);
 
-            loggerActuacion.info(actuacionService.updateActuacionesSend(actSend));
+            actuacionService.updateActuacionesSend(actSend);
 
         } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
             loggerActuacion.error(e.getMessage());
