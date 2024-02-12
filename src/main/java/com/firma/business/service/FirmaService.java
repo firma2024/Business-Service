@@ -1,6 +1,9 @@
 package com.firma.business.service;
 
-import com.firma.business.payload.FirmaRequest;
+import com.firma.business.exception.ErrorDataServiceException;
+import com.firma.business.model.Empleado;
+import com.firma.business.model.Firma;
+import com.firma.business.payload.request.FirmaRequest;
 import com.firma.business.service.data.intf.IFirmaDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,4 +31,11 @@ public class FirmaService {
         }
     }
 
+    public Firma findFirmaById(Integer firmaId) throws ErrorDataServiceException {
+        return firmaDataService.findFirmaById(firmaId);
+    }
+
+    public Empleado findEmpleadoByUsuario(Integer idAbogado) throws ErrorDataServiceException {
+        return firmaDataService.findEmpleadoByUsuario(idAbogado);
+    }
 }

@@ -1,6 +1,6 @@
 package com.firma.business.controller;
 
-import com.firma.business.payload.FirmaRequest;
+import com.firma.business.payload.request.FirmaRequest;
 import com.firma.business.service.FirmaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

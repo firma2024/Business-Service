@@ -1,13 +1,12 @@
 package com.firma.business.service.integration.intf;
 
 import com.firma.business.exception.ErrorIntegrationServiceException;
-import com.firma.business.payload.DespachoResponse;
-import com.firma.business.payload.Proceso;
+import com.firma.business.model.Proceso;
+import com.firma.business.payload.response.DespachoResponse;
+import com.firma.business.payload.request.ProcessRequest;
 
 public interface IProcessIntegrationService {
-    Proceso getProcess(String numberProcess) throws ErrorIntegrationServiceException;
-
+    ProcessRequest getProcess(String numberProcess) throws ErrorIntegrationServiceException;
     DespachoResponse findUrlDespacho(String nombre) throws ErrorIntegrationServiceException;
-
-    Proceso getAllProcess(String numberProcess) throws ErrorIntegrationServiceException;
+    ProcessRequest getAllProcess(String numberProcess) throws ErrorIntegrationServiceException;
 }

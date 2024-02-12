@@ -1,8 +1,12 @@
 package com.firma.business.service.data.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firma.business.exception.ErrorDataServiceException;
-import com.firma.business.payload.*;
+import com.firma.business.model.Rol;
+import com.firma.business.model.TipoAbogado;
+import com.firma.business.model.TipoDocumento;
+import com.firma.business.model.Usuario;
+import com.firma.business.payload.request.UserDataRequest;
+import com.firma.business.payload.response.PageableUserResponse;
 import com.firma.business.service.data.intf.IUserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,15 +27,15 @@ public class UserDataService implements IUserDataService {
     private String apiUrl;
 
     @Override
-    public String saveAbogado(UsuarioRequest userRequest) throws ErrorDataServiceException {
+    public String saveUser(UserDataRequest userRequest) throws ErrorDataServiceException {
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<UsuarioRequest> requestEntity = new HttpEntity<>(userRequest, headers);
+            HttpEntity<UserDataRequest> requestEntity = new HttpEntity<>(userRequest, headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    apiUrl + "/user/add/abogado",
+                    apiUrl + "/user/save",
                     HttpMethod.POST,
                     requestEntity,
                     String.class
@@ -40,21 +44,21 @@ public class UserDataService implements IUserDataService {
             return responseEntity.getBody();
         }
         catch (Exception e) {
-            throw new ErrorDataServiceException("Error al guardar el abogado");
+            throw new ErrorDataServiceException("Error usuario no guardado");
         }
     }
 
     @Override
-    public String saveJefe(UsuarioRequest userRequest) throws ErrorDataServiceException {
+    public String updateUser(Usuario userRequest) throws ErrorDataServiceException {
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<UsuarioRequest> requestEntity = new HttpEntity<>(userRequest, headers);
+            HttpEntity<Usuario> requestEntity = new HttpEntity<>(userRequest, headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    apiUrl + "/user/add/jefe",
-                    HttpMethod.POST,
+                    apiUrl + "/user/update",
+                    HttpMethod.PUT,
                     requestEntity,
                     String.class
             );
@@ -62,92 +66,20 @@ public class UserDataService implements IUserDataService {
             return responseEntity.getBody();
         }
         catch (Exception e) {
-            throw new ErrorDataServiceException("Error al guardar el jefe");
+            throw new ErrorDataServiceException(e.getMessage());
         }
     }
 
     @Override
-    public String saveAdmin(UsuarioRequest userRequest) throws ErrorDataServiceException {
-        try{
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<UsuarioRequest> requestEntity = new HttpEntity<>(userRequest, headers);
-
-            ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    apiUrl + "/user/add/admin",
-                    HttpMethod.POST,
-                    requestEntity,
-                    String.class
-            );
-
-            return responseEntity.getBody();
-        }
-        catch (Exception e) {
-            throw new ErrorDataServiceException("Error al guardar el administrador");
-        }
-    }
-
-    @Override
-    public UsuarioResponse gerInfoJefe(Integer id) throws ErrorDataServiceException {
-
-        try{
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/get/info/jefe")
+    public Integer getNumberAssignedProcesses(Integer id) throws ErrorDataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/get/assigned/processes")
                     .queryParam("id", id);
 
-            ResponseEntity<UsuarioResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), UsuarioResponse.class);
+            ResponseEntity<Integer> responseEntity = restTemplate.getForEntity(builder.toUriString(), Integer.class);
 
             return responseEntity.getBody();
-        }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
-        }
-
-    }
-
-    @Override
-    public String updateInfoJefe(UsuarioRequest userRequest) throws ErrorDataServiceException {
-        try{
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/update/info/jefe")
-                    .queryParam("id", userRequest.getId());
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<UsuarioRequest> requestEntity = new HttpEntity<>(userRequest, headers);
-
-            ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    builder.toUriString(),
-                    HttpMethod.PUT,
-                    requestEntity,
-                    String.class
-            );
-
-            return responseEntity.getBody();
-        }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
-        }
-    }
-
-    @Override
-    public String updateInfoAbogado(UsuarioRequest userRequest) throws ErrorDataServiceException {
-        try{
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<UsuarioRequest> requestEntity = new HttpEntity<>(userRequest, headers);
-
-            ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    apiUrl + "/user/update/info/abogado",
-                    HttpMethod.PUT,
-                    requestEntity,
-                    String.class
-            );
-
-            return responseEntity.getBody();
-        }
-        catch (Exception e) {
+        }catch (Exception e) {
             throw new ErrorDataServiceException(e.getMessage());
         }
     }
@@ -171,14 +103,13 @@ public class UserDataService implements IUserDataService {
             throw new ErrorDataServiceException(e.getMessage());
         }
     }
-
     @Override
-    public UsuarioResponse getUserName(String userName) throws ErrorDataServiceException {
+    public Usuario findUserByUserName(String userName) throws ErrorDataServiceException {
         try{
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/get/name")
                     .queryParam("userName", userName);
 
-            ResponseEntity<UsuarioResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), UsuarioResponse.class);
+            ResponseEntity<Usuario> responseEntity = restTemplate.getForEntity(builder.toUriString(), Usuario.class);
 
             return responseEntity.getBody();
 
@@ -189,12 +120,12 @@ public class UserDataService implements IUserDataService {
     }
 
     @Override
-    public List<UsuarioResponse> getAllAbogadosNames(Integer firmaId) throws ErrorDataServiceException {
+    public List<Usuario> findAllAbogadosNames(Integer firmaId) throws ErrorDataServiceException {
         try{
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/get/all/names/abogados")
                     .queryParam("firmaId", firmaId);
 
-            ResponseEntity<UsuarioResponse[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), UsuarioResponse[].class);
+            ResponseEntity<Usuario[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), Usuario[].class);
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
@@ -204,10 +135,11 @@ public class UserDataService implements IUserDataService {
     }
 
     @Override
-    public PageableResponse<UsuarioResponse> getAbogadosFilter(Integer numProcesosInicial, Integer numProcesosFinal, List<String> especialidades, Integer firmaId, Integer page, Integer size) throws ErrorDataServiceException {
+    public PageableUserResponse getAbogadosByFirmaFilter(Integer numProcesosInicial, Integer numProcesosFinal, List<String> especialidades, Integer firmaId, Integer roleId, Integer page, Integer size) throws ErrorDataServiceException {
         try{
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/jefe/abogados/filter")
-                    .queryParam("firmaId", firmaId);
+                    .queryParam("firmaId", firmaId)
+                    .queryParam("roleId", roleId);
             if (numProcesosInicial != null) {
                 builder.queryParam("numProcesosInicial", numProcesosInicial);
             }
@@ -225,23 +157,7 @@ public class UserDataService implements IUserDataService {
                 builder.queryParam("especialidades", especialidades);
             }
 
-            ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), PageableResponse.class);
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
-        }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
-        }
-    }
-
-    @Override
-    public UsuarioResponse getAbogado(Integer usuarioId) throws ErrorDataServiceException {
-        try{
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/get/abogado")
-                    .queryParam("usuarioId", usuarioId);
-
-            ResponseEntity<UsuarioResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), UsuarioResponse.class);
+            ResponseEntity<PageableUserResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), PageableUserResponse.class);
 
             return responseEntity.getBody();
         }
@@ -278,12 +194,24 @@ public class UserDataService implements IUserDataService {
     }
 
     @Override
-    public TipoDocumento getTipoDocumento(String name) throws ErrorDataServiceException {
+    public List<TipoAbogado> findAllTipoAbogado() throws ErrorDataServiceException {
         try{
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/tipoDocumento/get")
-                    .queryParam("name", name);
+            ResponseEntity<TipoAbogado[]> responseEntity = restTemplate.getForEntity(apiUrl + "/user/tipoAbogado/get/all", TipoAbogado[].class);
 
-            ResponseEntity<TipoDocumento> responseEntity = restTemplate.getForEntity(builder.toUriString(), TipoDocumento.class);
+            return List.of(Objects.requireNonNull(responseEntity.getBody()));
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public TipoDocumento findTipoDocumendoByName(String tipoDocumento) throws ErrorDataServiceException {
+        try{
+
+            ResponseEntity<TipoDocumento> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/user/tipoDocumento/get?name=" + tipoDocumento,
+                    TipoDocumento.class);
 
             return responseEntity.getBody();
         }
@@ -293,11 +221,44 @@ public class UserDataService implements IUserDataService {
     }
 
     @Override
-    public List<TipoAbogado> findAllTipzoAbogado() throws ErrorDataServiceException {
+    public Rol findRolByName(String name) throws ErrorDataServiceException {
         try{
-            ResponseEntity<TipoAbogado[]> responseEntity = restTemplate.getForEntity(apiUrl + "/user/tipoAbogado/get/all", TipoAbogado[].class);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/rol/get")
+                    .queryParam("roleName", name);
 
-            return List.of(Objects.requireNonNull(responseEntity.getBody()));
+            ResponseEntity<Rol> responseEntity = restTemplate.getForEntity(builder.toUriString(), Rol.class);
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public TipoAbogado findTipoAbogadoByName(String specialty) throws ErrorDataServiceException{
+        try {
+
+            ResponseEntity<TipoAbogado> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/user/tipoAbogado/get?name="+specialty,
+                    TipoAbogado.class);
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Usuario findUserById(Integer id) throws ErrorDataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/get")
+                    .queryParam("id", id);
+
+            ResponseEntity<Usuario> responseEntity = restTemplate.getForEntity(builder.toUriString(), Usuario.class);
+
+            return responseEntity.getBody();
         }
         catch (Exception e) {
             throw new ErrorDataServiceException(e.getMessage());

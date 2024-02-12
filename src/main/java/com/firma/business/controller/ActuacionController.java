@@ -2,18 +2,22 @@ package com.firma.business.controller;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.exception.ErrorIntegrationServiceException;
-import com.firma.business.payload.*;
+import com.firma.business.model.Actuacion;
+import com.firma.business.payload.request.ActuacionEmailRequest;
+import com.firma.business.payload.request.ActuacionRequest;
+import com.firma.business.payload.request.FindProcessRequest;
+import com.firma.business.payload.response.ProcesoResponse;
 import com.firma.business.service.ActuacionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -25,16 +29,19 @@ public class ActuacionController {
     @Autowired
     private ActuacionService actuacionService;
     private Logger loggerActuacion = LoggerFactory.getLogger(ActuacionController.class);
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    @Value("${api.presentation.url}")
+    private String apiPresentationUrl;
 
     @Scheduled(cron = "0 0 7 * * ?")
     public void findNewActuaciones() {
         try {
             loggerActuacion.info("Buscando actuaciones nuevas");
-            List<ProcesoResponse> process = actuacionService.getProcessService().getProcess();
-            List<FindProcess> processFind = new ArrayList<>();
+            List<ProcesoResponse> process = actuacionService.getAllProcess();
+            List<FindProcessRequest> processFind = new ArrayList<>();
 
             for (ProcesoResponse procesoResponse : process) {
-                FindProcess ac = FindProcess.builder()
+                FindProcessRequest ac = FindProcessRequest.builder()
                         .number_process(procesoResponse.getNumeroProceso())
                         .file_number(procesoResponse.getNumeroRadicado())
                         .date(procesoResponse.getFechaUltimaActuacion())
@@ -52,7 +59,7 @@ public class ActuacionController {
             loggerActuacion.info(actuacionService.saveActuaciones(actuaciones));
 
         } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
-            System.out.println(e.getMessage());
+            loggerActuacion.error(e.getMessage());
         }
     }
 
@@ -66,19 +73,17 @@ public class ActuacionController {
                 return;
             }
 
-            List <ActuacionEmail> actuacionesEmail = new ArrayList<>();
+            List <ActuacionEmailRequest> actuacionesEmail = new ArrayList<>();
             for (Actuacion actuacion : actuaciones) {
-                ActuacionEmail actuacionEmail = ActuacionEmail.builder()
+                ActuacionEmailRequest actuacionEmail = ActuacionEmailRequest.builder()
                         .id(actuacion.getId())
-                        .demandante(actuacion.getDemandante())
-                        .demandado(actuacion.getDemandado())
                         .actuacion(actuacion.getActuacion())
-                        .radicado(actuacion.getRadicado())
+                        .radicado(actuacion.getProceso().getRadicado())
                         .anotacion(actuacion.getAnotacion())
-                        .fechaActuacion(actuacion.getFechaActuacion())
-                        .emailAbogado(actuacion.getEmailAbogado())
-                        .nameAbogado(actuacion.getNameAbogado())
-                        .link("http://localhost:3000/actuacion/" + actuacion.getId())
+                        .fechaActuacion(actuacion.getFechaactuacion().format(formatter))
+                        .emailAbogado(actuacion.getProceso().getEmpleado().getUsuario().getCorreo())
+                        .nameAbogado(actuacion.getProceso().getEmpleado().getUsuario().getNombres())
+                        .link(String.format("%s/actuacion/?id=%d", apiPresentationUrl, actuacion.getId()))
                         .build();
 
                 actuacionesEmail.add(actuacionEmail);
@@ -88,13 +93,17 @@ public class ActuacionController {
             loggerActuacion.info(actuacionService.updateActuacionesSend(actSend));
 
         } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
-            System.out.println(e.getMessage());
+            loggerActuacion.error(e.getMessage());
         }
     }
 
     @GetMapping("/get")
     public ResponseEntity<?> getActuacion(@RequestParam Integer id){
-        return actuacionService.getActuacion(id);
+        try {
+            return new ResponseEntity<>(actuacionService.getActuacion(id), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/jefe/get/all/filter")
@@ -104,7 +113,11 @@ public class ActuacionController {
                                                   @RequestParam(required = false) String estadoActuacion,
                                                   @RequestParam(defaultValue = "0") Integer page,
                                                   @RequestParam(defaultValue = "5") Integer size){
-        return actuacionService.getActuacionesFilter(procesoId, fechaInicioStr, fechaFinStr, estadoActuacion, page, size);
+        try {
+            return new ResponseEntity<>(actuacionService.getActuacionesFilter(procesoId, fechaInicioStr, fechaFinStr, estadoActuacion, page, size), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/get/all/abogado/filter")
@@ -114,6 +127,19 @@ public class ActuacionController {
                                                                 @RequestParam(required = false) Boolean existeDoc,
                                                                 @RequestParam(defaultValue = "0") Integer page,
                                                                 @RequestParam(defaultValue = "5") Integer size){
-        return actuacionService.getActuacionesByProcesoAbogado(procesoId, fechaInicioStr, fechaFinStr, existeDoc, page, size);
+        try {
+            return new ResponseEntity<>(actuacionService.getActuacionesByProcesoAbogado(procesoId, fechaInicioStr, fechaFinStr, existeDoc, page, size), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/update/state")
+    public ResponseEntity<?> updateStateActuacion(@RequestParam Integer actionId){
+        try {
+            return new ResponseEntity<>(actuacionService.updateActuacion(actionId), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

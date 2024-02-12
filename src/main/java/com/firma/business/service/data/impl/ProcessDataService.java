@@ -2,8 +2,12 @@ package com.firma.business.service.data.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firma.business.exception.ErrorDataServiceException;
-import com.firma.business.exception.ErrorIntegrationServiceException;
-import com.firma.business.payload.*;
+import com.firma.business.model.*;
+import com.firma.business.model.Audiencia;
+import com.firma.business.payload.request.ProcessDataRequest;
+import com.firma.business.payload.response.PageableProcessResponse;
+import com.firma.business.payload.response.PageableResponse;
+import com.firma.business.payload.response.ProcessAbogadoResponse;
 import com.firma.business.service.data.intf.IProcessDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,10 +29,10 @@ public class ProcessDataService implements IProcessDataService {
     private String apiUrl;
 
     @Override
-    public List<ProcesoResponse> getProcess() throws ErrorDataServiceException {
+    public Set<Proceso> getProcess() throws ErrorDataServiceException {
         try{
-            ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(apiUrl + "/process/get/all", ProcesoResponse[].class);
-            return List.of(Objects.requireNonNull(responseEntity.getBody()));
+            ResponseEntity<Proceso[]> responseEntity = restTemplate.getForEntity(apiUrl + "/process/get/all", Proceso[].class);
+            return Set.of(Objects.requireNonNull(responseEntity.getBody()));
         }
         catch (Exception e) {
             throw new ErrorDataServiceException(e.getMessage());
@@ -36,12 +40,12 @@ public class ProcessDataService implements IProcessDataService {
     }
 
     @Override
-    public String saveProcess(Proceso process) throws ErrorDataServiceException {
+    public String saveProcess(ProcessDataRequest processDataRequest) throws ErrorDataServiceException {
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<Proceso> requestEntity = new HttpEntity<>(process, headers);
+            HttpEntity<ProcessDataRequest> requestEntity = new HttpEntity<>(processDataRequest, headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
                     apiUrl + "/process/save",
@@ -58,8 +62,9 @@ public class ProcessDataService implements IProcessDataService {
     }
 
     @Override
-    public PageableResponse<Proceso> getProcessByFilter(String fechaInicioStr, Integer firmaId, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
+    public PageableProcessResponse getProcessByFilter(String fechaInicioStr, Integer firmaId, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
         try{
+            String uriRequest = "";
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/firma/filter")
                     .queryParam("firmaId", firmaId)
                     .queryParam("page", page)
@@ -74,15 +79,14 @@ public class ProcessDataService implements IProcessDataService {
             if (estadosProceso != null) {
                 builder.queryParam("estadosProceso", estadosProceso);
             }
+            uriRequest = builder.toUriString();
             if (tipoProceso != null) {
-                builder.queryParam("tipoProceso", tipoProceso);
+                uriRequest+= "&tipoProceso=" + tipoProceso;
             }
 
-            ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), Object.class);
+            ResponseEntity<PageableProcessResponse> responseEntity = restTemplate.getForEntity(uriRequest, PageableProcessResponse.class);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
+            return responseEntity.getBody();
         }
         catch (Exception e) {
             throw new ErrorDataServiceException(e.getMessage());
@@ -90,8 +94,9 @@ public class ProcessDataService implements IProcessDataService {
     }
 
     @Override
-    public PageableResponse<Proceso> getProcessByAbogado(Integer abogadoId, String fechaInicioStr, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
+    public PageableProcessResponse getProcessByAbogado(Integer abogadoId, String fechaInicioStr, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
         try{
+            String uriRequest = "";
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/abogado/filter")
                     .queryParam("abogadoId", abogadoId)
                     .queryParam("page", page)
@@ -106,15 +111,14 @@ public class ProcessDataService implements IProcessDataService {
             if (estadosProceso != null) {
                 builder.queryParam("estadosProceso", estadosProceso);
             }
+            uriRequest = builder.toUriString();
             if (tipoProceso != null) {
-                builder.queryParam("tipoProceso", tipoProceso);
+                uriRequest+= "&tipoProceso=" + tipoProceso;
             }
 
-            ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), Object.class);
+            ResponseEntity<PageableProcessResponse> responseEntity = restTemplate.getForEntity(uriRequest, PageableProcessResponse.class);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
+            return responseEntity.getBody();
         }
         catch (Exception e) {
             throw new ErrorDataServiceException(e.getMessage());
@@ -122,14 +126,12 @@ public class ProcessDataService implements IProcessDataService {
     }
 
     @Override
-    public List<ProcesoResponse> getStateProcessesJefe(String state, Integer firmaId) throws ErrorDataServiceException {
+    public List<Proceso> getStateProcessesJefe(String state, Integer firmaId) throws ErrorDataServiceException {
         try{
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/estado")
-                    .queryParam("name", state)
-                    .queryParam("firmaId", firmaId);
 
-            ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoResponse[].class);
-
+            ResponseEntity<Proceso[]> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/process/get/all/estado?name=" + state + "&firmaId=" + firmaId,
+                    Proceso[].class);
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
@@ -139,12 +141,12 @@ public class ProcessDataService implements IProcessDataService {
     }
 
     @Override
-    public ProcesoJefeResponse getProcessById(Integer processId) throws ErrorDataServiceException {
+    public Proceso getProcessById(Integer processId) throws ErrorDataServiceException {
         try{
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/jefe")
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get")
                     .queryParam("procesoId", processId);
 
-            ResponseEntity<ProcesoJefeResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoJefeResponse.class);
+            ResponseEntity<Proceso> responseEntity = restTemplate.getForEntity(builder.toUriString(), Proceso.class);
             return responseEntity.getBody();
         }
         catch (Exception e) {
@@ -156,7 +158,7 @@ public class ProcessDataService implements IProcessDataService {
     public String deleteProcess(Integer processId) throws ErrorDataServiceException {
         try{
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/delete")
-                    .queryParam("procesoId", processId);
+                    .queryParam("processId", processId);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, null, String.class);
 
@@ -170,15 +172,12 @@ public class ProcessDataService implements IProcessDataService {
     @Override
     public String updateProcess(Proceso process) throws ErrorDataServiceException {
 
-
-
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<Proceso> requestEntity = new HttpEntity<>(process, headers);
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/update");
-            builder.queryParam("procesoId", process.getIdProceso());
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
                     builder.toUriString(),
@@ -194,13 +193,12 @@ public class ProcessDataService implements IProcessDataService {
     }
 
     @Override
-    public List<ProcesoResponse> getStateProcessesAbogado(String name, String userName) throws ErrorDataServiceException {
+    public List<Proceso> getStateProcessesAbogado(String name, String userName) throws ErrorDataServiceException {
         try{
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/all/estado/abogado")
-                    .queryParam("name", name)
-                    .queryParam("userName", userName);
 
-            ResponseEntity<ProcesoResponse[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoResponse[].class);
+            ResponseEntity<Proceso[]> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/process/get/all/estado/abogado?name=" + name + "&userName=" + userName,
+                    Proceso[].class);
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
@@ -210,12 +208,12 @@ public class ProcessDataService implements IProcessDataService {
     }
 
     @Override
-    public ProcesoAbogadoResponse getProcessAbogado(Integer processId) throws ErrorDataServiceException {
+    public ProcessAbogadoResponse getProcessAbogado(Integer processId) throws ErrorDataServiceException {
         try{
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/abogado")
                     .queryParam("procesoId", processId);
 
-            ResponseEntity<ProcesoAbogadoResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcesoAbogadoResponse.class);
+            ResponseEntity<ProcessAbogadoResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), ProcessAbogadoResponse.class);
 
             return responseEntity.getBody();
         }
@@ -258,15 +256,15 @@ public class ProcessDataService implements IProcessDataService {
     }
 
     @Override
-    public String addAudiencia(AudienciaRequest audiencia) throws ErrorDataServiceException {
+    public String addAudiencia(Audiencia audiencia) throws ErrorDataServiceException {
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<AudienciaRequest> requestEntity = new HttpEntity<>(audiencia, headers);
+            HttpEntity<Audiencia> requestEntity = new HttpEntity<>(audiencia, headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    apiUrl + "/process/audiencia/add",
+                    apiUrl + "/process/audiencia/save",
                     HttpMethod.POST,
                     requestEntity,
                     String.class
@@ -307,12 +305,12 @@ public class ProcessDataService implements IProcessDataService {
     }
 
     @Override
-    public String saveEnlace(EnlaceRequest enlaceRequest) throws ErrorDataServiceException {
+    public String saveEnlace(Enlace enlaceRequest) throws ErrorDataServiceException {
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<EnlaceRequest> requestEntity = new HttpEntity<>(enlaceRequest, headers);
+            HttpEntity<Enlace> requestEntity = new HttpEntity<>(enlaceRequest, headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
                     apiUrl + "/process/enlace/save",
@@ -320,6 +318,112 @@ public class ProcessDataService implements IProcessDataService {
                     requestEntity,
                     String.class
             );
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public TipoProceso findTipoProcesoByNombre(String tipoProceso) throws ErrorDataServiceException {
+        try{
+
+            ResponseEntity<TipoProceso> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/process/tipoProceso/get?name=" + tipoProceso,
+                    TipoProceso.class);
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Despacho findDespachoByNombre(String despacho) throws ErrorDataServiceException {
+        try {
+
+            ResponseEntity<Despacho> responseEntity = restTemplate.getForEntity(
+                        apiUrl + "/process/despacho/get?name=" + despacho,
+                            Despacho.class);
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public EstadoProceso findEstadoProcesoByNombre(String name) throws ErrorDataServiceException {
+        try {
+
+            ResponseEntity<EstadoProceso> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/process/estadoProceso/get?name=" + name,
+                    EstadoProceso.class);
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Set<Audiencia> findAllAudienciasByProceso(Integer processId) throws ErrorDataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/audiencia/get/all")
+                    .queryParam("procesoId", processId);
+
+            ResponseEntity<Audiencia[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), Audiencia[].class);
+
+            return Set.of(Objects.requireNonNull(responseEntity.getBody()));
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Despacho findDespachoById(Integer despachoid) throws ErrorDataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/despacho/get/id")
+                    .queryParam("despachoid", despachoid);
+
+            ResponseEntity<Despacho> responseEntity = restTemplate.getForEntity(builder.toUriString(), Despacho.class);
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Proceso findByRadicado(String radicado) throws ErrorDataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/get/radicado")
+                    .queryParam("radicado", radicado);
+
+            ResponseEntity<Proceso> responseEntity = restTemplate.getForEntity(builder.toUriString(), Proceso.class);
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Enlace findByDespachoAndYear(Integer id, String year) throws ErrorDataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/process/enlace/get")
+                    .queryParam("id", id)
+                    .queryParam("year", year);
+
+            ResponseEntity<Enlace> responseEntity = restTemplate.getForEntity(builder.toUriString(), Enlace.class);
 
             return responseEntity.getBody();
         }

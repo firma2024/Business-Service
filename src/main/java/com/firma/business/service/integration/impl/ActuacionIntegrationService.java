@@ -1,11 +1,9 @@
 package com.firma.business.service.integration.impl;
 
-import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.exception.ErrorIntegrationServiceException;
-import com.firma.business.payload.Actuacion;
-import com.firma.business.payload.ActuacionEmail;
-import com.firma.business.payload.ActuacionRequest;
-import com.firma.business.payload.FindProcess;
+import com.firma.business.payload.request.ActuacionEmailRequest;
+import com.firma.business.payload.request.ActuacionRequest;
+import com.firma.business.payload.request.FindProcessRequest;
 import com.firma.business.service.integration.intf.IActuacionIntegrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 public class ActuacionIntegrationService implements IActuacionIntegrationService {
@@ -26,13 +23,13 @@ public class ActuacionIntegrationService implements IActuacionIntegrationService
     private String apiUrl;
 
     @Override
-    public List<ActuacionRequest> findNewActuacion(List<FindProcess> process) throws ErrorIntegrationServiceException {
+    public List<ActuacionRequest> findNewActuacion(List<FindProcessRequest> process) throws ErrorIntegrationServiceException {
 
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<List<FindProcess>> requestEntity = new HttpEntity<>(process, headers);
+            HttpEntity<List<FindProcessRequest>> requestEntity = new HttpEntity<>(process, headers);
 
             ResponseEntity<ActuacionRequest[]> responseEntity = restTemplate.exchange(
                     apiUrl + "find/actuaciones",
@@ -49,12 +46,12 @@ public class ActuacionIntegrationService implements IActuacionIntegrationService
     }
 
     @Override
-    public List<Integer> sendEmailActuacion(List<ActuacionEmail> actuaciones) throws ErrorIntegrationServiceException {
+    public List<Integer> sendEmailActuacion(List<ActuacionEmailRequest> actuaciones) throws ErrorIntegrationServiceException {
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<List<ActuacionEmail>> requestEntity = new HttpEntity<>(actuaciones, headers);
+            HttpEntity<List<ActuacionEmailRequest>> requestEntity = new HttpEntity<>(actuaciones, headers);
 
             ResponseEntity<Integer[]> responseEntity = restTemplate.exchange(
                     apiUrl + "send_email",

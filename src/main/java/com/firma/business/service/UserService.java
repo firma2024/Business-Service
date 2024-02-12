@@ -1,160 +1,257 @@
 package com.firma.business.service;
 
 import com.firma.business.exception.ErrorDataServiceException;
-import com.firma.business.payload.PageableResponse;
-import com.firma.business.payload.UsuarioRequest;
-import com.firma.business.payload.UsuarioResponse;
+import com.firma.business.model.*;
+import com.firma.business.payload.request.UserAbogadoUpdateRequest;
+import com.firma.business.payload.request.UserJefeUpdateRequest;
+import com.firma.business.payload.response.PageableResponse;
+import com.firma.business.payload.request.UserRequest;
+import com.firma.business.payload.response.PageableUserResponse;
+import com.firma.business.payload.response.UserResponse;
+import com.firma.business.payload.request.UserDataRequest;
 import com.firma.business.service.data.intf.IUserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserService {
 
     @Autowired
     private IUserDataService userDataService;
+    @Autowired
+    private FirmaService firmaService;
 
-    public ResponseEntity<?> saveAbogado(UsuarioRequest userRequest){
-        try {
-            return new ResponseEntity<>(userDataService.saveAbogado(userRequest), HttpStatus.CREATED);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public String saveAbogado(UserRequest userRequest) throws ErrorDataServiceException {
+        TipoDocumento typeDocument = userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento());
+        Rol role = userDataService.findRolByName("ABOGADO");
+        Set<TipoAbogado> specialties = new HashSet<>();
+
+        for (String specialty : userRequest.getEspecialidades()) {
+            TipoAbogado typeLawyer = userDataService.findTipoAbogadoByName(specialty);
+            specialties.add(typeLawyer);
         }
 
+        Usuario newUser = Usuario.builder()
+                .nombres(userRequest.getNombres())
+                .correo(userRequest.getCorreo())
+                .username(userRequest.getUsername())
+                .telefono(userRequest.getTelefono())
+                .identificacion(userRequest.getIdentificacion())
+                .rol(role)
+                .tipodocumento(typeDocument)
+                .especialidadesAbogado(specialties)
+                .eliminado('N')
+                .build();
+
+        Firma firma = firmaService.findFirmaById(userRequest.getFirmaId());
+        Empleado newEmployee = Empleado.builder()
+                .usuario(newUser)
+                .firma(firma)
+                .build();
+
+        UserDataRequest userDataRequest = UserDataRequest.builder()
+                .user(newUser)
+                .employee(newEmployee)
+                .build();
+
+        return userDataService.saveUser(userDataRequest);
     }
 
-    public ResponseEntity<?> saveJefe(UsuarioRequest userRequest){
-        try {
-            return new ResponseEntity<>(userDataService.saveJefe(userRequest), HttpStatus.CREATED);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public String saveJefe(UserRequest userRequest) throws ErrorDataServiceException {
+        TipoDocumento typeDocument = userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento());
+        Rol role = userDataService.findRolByName("JEFE");
+
+        Usuario newUser = Usuario.builder()
+                .nombres(userRequest.getNombres())
+                .correo(userRequest.getCorreo())
+                .username(userRequest.getUsername())
+                .telefono(userRequest.getTelefono())
+                .identificacion(userRequest.getIdentificacion())
+                .rol(role)
+                .tipodocumento(typeDocument)
+                .eliminado('N')
+                .build();
+
+        Firma firma = firmaService.findFirmaById(userRequest.getFirmaId());
+        Empleado newEmployee = Empleado.builder()
+                .usuario(newUser)
+                .firma(firma)
+                .build();
+
+        UserDataRequest userDataRequest = UserDataRequest.builder()
+                .user(newUser)
+                .employee(newEmployee)
+                .build();
+
+        return userDataService.saveUser(userDataRequest);
     }
 
-    public ResponseEntity<?> saveAdmin(UsuarioRequest userRequest){
-        try {
-            return new ResponseEntity<>(userDataService.saveAdmin(userRequest), HttpStatus.CREATED);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public String saveAdmin(UserRequest userRequest) throws ErrorDataServiceException {
+        TipoDocumento typeDocument = userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento());
+        Rol role = userDataService.findRolByName("ADMIN");
+
+        Usuario newUser = Usuario.builder()
+                .nombres(userRequest.getNombres())
+                .correo(userRequest.getCorreo())
+                .username(userRequest.getUsername())
+                .telefono(userRequest.getTelefono())
+                .identificacion(userRequest.getIdentificacion())
+                .rol(role)
+                .tipodocumento(typeDocument)
+                .eliminado('N')
+                .build();
+
+        UserDataRequest userDataRequest = UserDataRequest.builder()
+                .user(newUser)
+                .build();
+
+        return userDataService.saveUser(userDataRequest);
     }
 
-    public ResponseEntity<?> getInfoJefe(Integer id){
-        try {
-            return new ResponseEntity<>(userDataService.gerInfoJefe(id), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public String updateInfoAbogado(UserAbogadoUpdateRequest userRequest) throws ErrorDataServiceException {
+        Usuario user = userDataService.findUserById(userRequest.getId());
+        Set<TipoAbogado> specialties = new HashSet<>();
+
+        for (String specialty : userRequest.getEspecialidades()) {
+            TipoAbogado typeLawyer = userDataService.findTipoAbogadoByName(specialty);
+            specialties.add(typeLawyer);
         }
+
+        user.setNombres(userRequest.getNombres());
+        user.setCorreo(userRequest.getCorreo());
+        user.setTelefono(userRequest.getTelefono());
+        user.setIdentificacion(userRequest.getIdentificacion());
+        user.setEspecialidadesAbogado(specialties);
+        return userDataService.updateUser(user);
     }
 
-    public ResponseEntity<?> getInfoAbogado(Integer id){
-        try {
-            return new ResponseEntity<>(userDataService.getAbogado(id), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public String updateInfoJefe(UserJefeUpdateRequest userRequest) throws ErrorDataServiceException {
+        Usuario user = userDataService.findUserById(userRequest.getId());
+
+        user.setNombres(userRequest.getNombres());
+        user.setCorreo(userRequest.getCorreo());
+        user.setTelefono(userRequest.getTelefono());
+        user.setIdentificacion(userRequest.getIdentificacion());
+        return userDataService.updateUser(user);
     }
 
-    public ResponseEntity<?> updateInfoAbogado(UsuarioRequest userRequest){
-        try {
-            return new ResponseEntity<>(userDataService.updateInfoAbogado(userRequest), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public UserResponse getInfoJefe(String userName) throws ErrorDataServiceException {
+        Usuario user = userDataService.findUserByUserName(userName);
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .nombres(user.getNombres())
+                .correo(user.getCorreo())
+                .telefono(user.getTelefono())
+                .identificacion(user.getIdentificacion())
+                .build();
     }
 
-    public ResponseEntity<?> updateInfoJefe(UsuarioRequest userRequest){
-        try {
-            return new ResponseEntity<>(userDataService.updateInfoJefe(userRequest), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public UserResponse getInfoAbogado(String userName) throws ErrorDataServiceException {
+        Usuario user = userDataService.findUserByUserName(userName);
+        List<String> especialidades = new ArrayList<>();
+
+        for(TipoAbogado tipoAbogado : user.getEspecialidadesAbogado()){
+            especialidades.add(tipoAbogado.getNombre());
         }
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .nombres(user.getNombres())
+                .correo(user.getCorreo())
+                .telefono(user.getTelefono())
+                .identificacion(user.getIdentificacion())
+                .especialidades(especialidades)
+                .build();
     }
 
-    public ResponseEntity<?> deleteUser(Integer id){
-        try {
-            return new ResponseEntity<>(userDataService.deleteUser(id), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public String deleteUser(Integer id) throws ErrorDataServiceException {
+        Usuario user = userDataService.findUserById(id);
+        if (user.getRol().getNombre().equals("ABOGADO")){
+            Integer number = userDataService.getNumberAssignedProcesses(user.getId());
+            if (number == null) {
+                number = 0;
+            }
+            if (number != 0) {
+                throw new ErrorDataServiceException(String.format("El abogado tiene %d procesos asignados", number));
+            }
         }
+
+        return userDataService.deleteUser(id);
     }
 
-    public ResponseEntity<?> getUserName(String userName){
-        try {
-            return new ResponseEntity<>(userDataService.getUserName(userName), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public UserResponse getUserName(String userName) throws ErrorDataServiceException {
+        Usuario user = userDataService.findUserByUserName(userName);
+        return UserResponse.builder()
+                .id(user.getId())
+                .nombres(user.getNombres())
+                .build();
     }
 
-    public ResponseEntity<?> getAllAbogadosNames(Integer firmaId){
-        try {
-            return new ResponseEntity<>(userDataService.getAllAbogadosNames(firmaId), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public List<UserResponse> getAllAbogadosNames(Integer firmaId) throws ErrorDataServiceException {
+        List<Usuario> users = userDataService.findAllAbogadosNames(firmaId);
+        List<UserResponse> userResponse = new ArrayList<>();
+
+        for (Usuario user : users) {
+            userResponse.add(UserResponse.builder()
+                    .id(user.getId())
+                    .nombres(user.getNombres())
+                    .build());
         }
+
+        return userResponse;
     }
 
-    public ResponseEntity<?> getAbogadosFilter(Integer numProcesosInicial, Integer numProcesosFinal, List<String> especialidades, Integer firmaId, Integer page, Integer size){
-        try {
-            return new ResponseEntity<>(userDataService.getAbogadosFilter(numProcesosInicial, numProcesosFinal, especialidades, firmaId, page, size), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public PageableResponse<UserResponse> getAbogadosByFirmaFilter(Integer numProcesosInicial, Integer numProcesosFinal, List<String> especialidades, Integer firmaId, Integer page, Integer size) throws ErrorDataServiceException {
+        Rol rol = userDataService.findRolByName("ABOGADO");
+        PageableUserResponse pageableResponse = userDataService.getAbogadosByFirmaFilter(numProcesosInicial, numProcesosFinal, especialidades, firmaId, rol.getId(), page, size);
+        List<UserResponse> userResponse = new ArrayList<>();
+        for (Usuario user : pageableResponse.getData()) {
+            Integer number = userDataService.getNumberAssignedProcesses(user.getId());
+            if (number == null) {
+                number = 0;
+            }
+            List<String> especialidadesAbogado = new ArrayList<>();
+
+            for(TipoAbogado tipoAbogado : user.getEspecialidadesAbogado()){
+                especialidadesAbogado.add(tipoAbogado.getNombre());
+            }
+            if (number >= numProcesosInicial && number <= numProcesosFinal) {
+                userResponse.add(UserResponse.builder()
+                        .id(user.getId())
+                        .nombres(user.getNombres())
+                        .correo(user.getCorreo())
+                        .telefono(user.getTelefono())
+                        .especialidades(especialidadesAbogado)
+                        .numeroProcesosAsignados(number)
+                        .build());
+            }
         }
+        return PageableResponse.<UserResponse>builder()
+                .data(userResponse)
+                .currentPage(pageableResponse.getCurrentPage())
+                .totalItems(pageableResponse.getTotalItems())
+                .totalPages(pageableResponse.getTotalPages())
+                .build();
     }
 
-    public ResponseEntity<?> getAbogado(Integer usuarioId){
-        try {
-            return new ResponseEntity<>(userDataService.getAbogado(usuarioId), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public List<TipoDocumento> getAllTipoDocumento() throws ErrorDataServiceException {
+        return userDataService.getAllTipoDocumento();
     }
 
-    public ResponseEntity<?> getAllTipoDocumento(){
-        try {
-            return new ResponseEntity<>(userDataService.getAllTipoDocumento(), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public Rol getRoleByUser(String username) throws ErrorDataServiceException {
+        return userDataService.getRoleByUser(username);
     }
 
-    public ResponseEntity<?> getTipoDocumento(String name){
-        try {
-            return new ResponseEntity<>(userDataService.getTipoDocumento(name), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public List<TipoAbogado> findAllTipoAbogado() throws ErrorDataServiceException {
+        return userDataService.findAllTipoAbogado();
     }
 
-    public ResponseEntity<?> getRoleByUser(String username) {
-        try {
-            return new ResponseEntity<>(userDataService.getRoleByUser(username), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    public ResponseEntity<?> findAllTipoAbogado() {
-        try {
-            return new ResponseEntity<>(userDataService.findAllTipzoAbogado(), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    public ResponseEntity<?> getActiveAbogados(Integer firmaId) {
-        try {
-            PageableResponse<UsuarioResponse> pageableResponse = userDataService.getAbogadosFilter(null, null, null, firmaId, null, null);
-            Map<String, Object> response = Map.of("value", pageableResponse.getTotalItems());
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public Map<String, Object> getActiveAbogados(Integer firmaId) throws ErrorDataServiceException {
+        Rol rol = userDataService.findRolByName("ABOGADO");
+        PageableUserResponse pageableResponse = userDataService.getAbogadosByFirmaFilter(null, null, null, firmaId, rol.getId(), null, null);
+        return Map.of("value", pageableResponse.getTotalItems());
     }
 }

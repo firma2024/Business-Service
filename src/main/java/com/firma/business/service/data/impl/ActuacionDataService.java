@@ -2,9 +2,12 @@ package com.firma.business.service.data.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firma.business.exception.ErrorDataServiceException;
-import com.firma.business.payload.Actuacion;
-import com.firma.business.payload.ActuacionRequest;
-import com.firma.business.payload.PageableResponse;
+import com.firma.business.model.EstadoActuacion;
+import com.firma.business.model.Actuacion;
+import com.firma.business.model.RegistroCorreo;
+import com.firma.business.payload.request.ActuacionRequest;
+import com.firma.business.payload.response.PageableActuacionResponse;
+import com.firma.business.payload.response.PageableResponse;
 import com.firma.business.service.data.intf.IActuacionDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +29,42 @@ public class ActuacionDataService implements IActuacionDataService {
     private String apiUrl;
 
     @Override
-    public String saveActuaciones(List<ActuacionRequest> actuaciones) throws ErrorDataServiceException {
+    public String updateActuacion(Actuacion actuacion) throws ErrorDataServiceException {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Actuacion> requestEntity = new HttpEntity<>(actuacion, headers);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    apiUrl + "/actuacion/update",
+                    HttpMethod.PUT,
+                    requestEntity,
+                    String.class
+            );
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public String saveRegistroCorreo(RegistroCorreo estadoCorreo) throws ErrorDataServiceException {
+        try {
+            ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl + "/actuacion/registroCorreo/save", estadoCorreo, String.class);
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public String saveActuaciones(List<Actuacion> actuaciones) throws ErrorDataServiceException {
         try{
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl + "/actuacion/save", actuaciones, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl + "/actuacion/save/all", actuaciones, String.class);
 
             return responseEntity.getBody();
         }
@@ -87,8 +123,9 @@ public class ActuacionDataService implements IActuacionDataService {
     }
 
     @Override
-    public PageableResponse<Actuacion> getActuacionesFilter(Integer procesoId, String fechaInicioStr, String fechaFinStr, String estadoActuacion, Integer page, Integer size) throws ErrorDataServiceException {
+    public PageableActuacionResponse getActuacionesFilter(Integer procesoId, String fechaInicioStr, String fechaFinStr, String estadoActuacion, Integer page, Integer size) throws ErrorDataServiceException {
         try{
+            String uriRequest = "";
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/actuacion/jefe/get/all/filter")
                     .queryParam("procesoId", procesoId)
                     .queryParam("page", page)
@@ -100,14 +137,15 @@ public class ActuacionDataService implements IActuacionDataService {
             if (fechaFinStr != null) {
                 builder.queryParam("fechaFinStr", fechaFinStr);
             }
+            uriRequest = builder.toUriString();
             if (estadoActuacion != null) {
-                builder.queryParam("estadoActuacion", estadoActuacion);
+                uriRequest+= "&estadoActuacion=" + estadoActuacion;
             }
 
-            ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), Object.class);
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
+            ResponseEntity<PageableActuacionResponse> responseEntity = restTemplate.getForEntity(
+                    uriRequest,
+                    PageableActuacionResponse.class);
+            return responseEntity.getBody();
         }
         catch (Exception e) {
             throw new ErrorDataServiceException(e.getMessage());
@@ -115,7 +153,7 @@ public class ActuacionDataService implements IActuacionDataService {
     }
 
     @Override
-    public PageableResponse<Actuacion> getActuacionesByProcesoAbogado(Integer procesoId, String fechaInicioStr, String fechaFinStr, Boolean existeDoc, Integer page, Integer size) throws ErrorDataServiceException {
+    public PageableActuacionResponse getActuacionesByProcesoAbogado(Integer procesoId, String fechaInicioStr, String fechaFinStr, Boolean existeDoc, Integer page, Integer size) throws ErrorDataServiceException {
         try{
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/actuacion/get/all/abogado/filter")
                     .queryParam("procesoId", procesoId)
@@ -132,10 +170,53 @@ public class ActuacionDataService implements IActuacionDataService {
                 builder.queryParam("existeDoc", existeDoc);
             }
 
-            ResponseEntity<?> responseEntity = restTemplate.getForEntity(builder.toUriString(), Object.class);
+            ResponseEntity<PageableActuacionResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), PageableActuacionResponse.class);
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.convertValue(responseEntity.getBody(), PageableResponse.class);
+    @Override
+    public EstadoActuacion findEstadoActuacionByName(String state) throws ErrorDataServiceException {
+        try {
+
+            ResponseEntity<EstadoActuacion> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/actuacion/estadoActuacion/get?state=" + state,
+                    EstadoActuacion.class);
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Actuacion findLastActuacion(Integer processid) throws ErrorDataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/actuacion/get/last")
+                    .queryParam("processId", processid);
+
+            ResponseEntity<Actuacion> responseEntity = restTemplate.getForEntity(builder.toUriString(), Actuacion.class);
+
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Actuacion> findByNoVisto(Integer firmaId) throws ErrorDataServiceException {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/actuacion/get/byNoVisto")
+                    .queryParam("firmaId", firmaId);
+
+            ResponseEntity<Actuacion[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), Actuacion[].class);
+
+            return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
         catch (Exception e) {
             throw new ErrorDataServiceException(e.getMessage());

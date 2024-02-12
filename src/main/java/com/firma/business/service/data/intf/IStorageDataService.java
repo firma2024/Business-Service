@@ -1,7 +1,7 @@
 package com.firma.business.service.data.intf;
 
 import com.firma.business.exception.ErrorDataServiceException;
-import com.firma.business.payload.ActuacionDocumentResponse;
+import com.firma.business.payload.response.ActuacionDocumentResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

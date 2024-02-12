@@ -1,8 +1,9 @@
 package com.firma.business.service.integration.impl;
 
 import com.firma.business.exception.ErrorIntegrationServiceException;
-import com.firma.business.payload.DespachoResponse;
-import com.firma.business.payload.Proceso;
+import com.firma.business.model.Proceso;
+import com.firma.business.payload.response.DespachoResponse;
+import com.firma.business.payload.request.ProcessRequest;
 import com.firma.business.service.integration.intf.IProcessIntegrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,11 +20,11 @@ public class ProcessIntegrationService implements IProcessIntegrationService {
     private String apiUrl;
 
     @Override
-    public Proceso getProcess(String numberProcess) throws ErrorIntegrationServiceException {
+    public ProcessRequest getProcess(String numberProcess) throws ErrorIntegrationServiceException {
         try{
-            ResponseEntity <Proceso> responseEntity = restTemplate.getForEntity(
+            ResponseEntity <ProcessRequest> responseEntity = restTemplate.getForEntity(
                     String.format("%sgetProcess/fileNumber=%s", apiUrl, numberProcess),
-                    Proceso.class
+                    ProcessRequest.class
             );
             return responseEntity.getBody();
         }
@@ -49,11 +50,11 @@ public class ProcessIntegrationService implements IProcessIntegrationService {
     }
 
     @Override
-    public Proceso getAllProcess(String numberProcess) throws ErrorIntegrationServiceException {
+    public ProcessRequest getAllProcess(String numberProcess) throws ErrorIntegrationServiceException {
         try{
-            ResponseEntity <Proceso> responseEntity = restTemplate.getForEntity(
+            ResponseEntity <ProcessRequest> responseEntity = restTemplate.getForEntity(
                     String.format("%sgetAllProcess/fileNumber=%s", apiUrl, numberProcess),
-                    Proceso.class
+                    ProcessRequest.class
             );
 
             return responseEntity.getBody();

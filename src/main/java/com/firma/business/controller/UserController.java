@@ -1,8 +1,11 @@
 package com.firma.business.controller;
 
-import com.firma.business.payload.UsuarioRequest;
+import com.firma.business.payload.request.UserAbogadoUpdateRequest;
+import com.firma.business.payload.request.UserJefeUpdateRequest;
+import com.firma.business.payload.request.UserRequest;
 import com.firma.business.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,53 +18,84 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/add/abogado")
-    public ResponseEntity<?> addAbogado(@RequestBody UsuarioRequest userRequest) {
-        return userService.saveAbogado(userRequest);
+    public ResponseEntity<?> addAbogado(@RequestBody UserRequest userRequest) {
+        try {
+            return new ResponseEntity<>(userService.saveAbogado(userRequest), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/add/jefe")
-    public ResponseEntity<?> addJefe(@RequestBody UsuarioRequest userRequest) {
-        return userService.saveJefe(userRequest);
+    public ResponseEntity<?> addJefe(@RequestBody UserRequest userRequest) {
+        try {
+            return new ResponseEntity<>(userService.saveJefe(userRequest), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/add/admin")
-    public ResponseEntity<?> addAdmin(@RequestBody UsuarioRequest userRequest) {
-        return userService.saveAdmin(userRequest);
+    public ResponseEntity<?> addAdmin(@RequestBody UserRequest userRequest) {
+        try {
+            return new ResponseEntity<>(userService.saveAdmin(userRequest), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/get/info/jefe")
-    public ResponseEntity<?> getPersonalInfo(@RequestParam Integer id) {
-        return userService.getInfoJefe(id);
-    }
-
-    @GetMapping("/get/info/abogado")
-    public ResponseEntity<?> getPersonalInfoAbogado(@RequestParam Integer id) {
-        return userService.getInfoAbogado(id);
+    public ResponseEntity<?> getPersonalInfo(@RequestParam String userName) {
+        try {
+            return new ResponseEntity<>(userService.getInfoJefe(userName), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/update/info/abogado")
-    public ResponseEntity<?> updatePersonalInfoAbogado(@RequestBody UsuarioRequest userRequest) {
-        return userService.updateInfoAbogado(userRequest);
+    public ResponseEntity<?> updatePersonalInfoAbogado(@RequestBody UserAbogadoUpdateRequest userRequest) {
+        try {
+            return new ResponseEntity<>(userService.updateInfoAbogado(userRequest), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/update/info/jefe")
-    public ResponseEntity<?> updatePersonalInfoJefe(@RequestBody UsuarioRequest userRequest) {
-        return userService.updateInfoJefe(userRequest);
+    public ResponseEntity<?> updatePersonalInfoJefe(@RequestBody UserJefeUpdateRequest userRequest) {
+        try {
+            return new ResponseEntity<>(userService.updateInfoJefe(userRequest), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@RequestParam Integer id) {
-        return userService.deleteUser(id);
+        try {
+            return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/get/name")
     public ResponseEntity<?> getUserName(@RequestParam String name) {
-        return userService.getUserName(name);
+        try {
+            return new ResponseEntity<>(userService.getUserName(name), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/get/all/names/abogados")
     public ResponseEntity<?> getAllAbogadosNames(@RequestParam Integer firmaId) {
-        return userService.getAllAbogadosNames(firmaId);
+        try {
+            return new ResponseEntity<>(userService.getAllAbogadosNames(firmaId), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/jefe/abogados/filter")
@@ -71,31 +105,55 @@ public class UserController {
                                                @RequestParam(defaultValue = "5") Integer numProcesosFinal,
                                                @RequestParam(defaultValue = "0") Integer page,
                                                @RequestParam(defaultValue = "10") Integer size){
-        return userService.getAbogadosFilter(numProcesosInicial, numProcesosFinal, especialidades, firmaId, page, size);
+        try {
+            return new ResponseEntity<>(userService.getAbogadosByFirmaFilter(numProcesosInicial, numProcesosFinal, especialidades, firmaId, page, size), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/get/abogado")
-    public ResponseEntity<?> getAbogado(@RequestParam Integer usuarioId){
-        return userService.getAbogado(usuarioId);
+    public ResponseEntity<?> getAbogado(@RequestParam String userName){
+        try {
+            return new ResponseEntity<>(userService.getInfoAbogado(userName), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/get/active/abogados")
     public ResponseEntity<?> getActiveAbogados(@RequestParam Integer firmaId){
-        return userService.getActiveAbogados(firmaId);
+        try {
+            return new ResponseEntity<>(userService.getActiveAbogados(firmaId), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/rol/get/user")
     public ResponseEntity<?> getRoleByUser(@RequestParam String username){
-        return userService.getRoleByUser(username);
+        try {
+            return new ResponseEntity<>(userService.getRoleByUser(username), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/tipoDocumento/get/all")
     public ResponseEntity<?> getAllTipoDocumento(){
-        return userService.getAllTipoDocumento();
+        try {
+            return new ResponseEntity<>(userService.getAllTipoDocumento(), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/tipoAbogado/get/all")
     public ResponseEntity<?> getAllTipoAbogado(){
-        return userService.findAllTipoAbogado();
+        try {
+            return new ResponseEntity<>(userService.findAllTipoAbogado(), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

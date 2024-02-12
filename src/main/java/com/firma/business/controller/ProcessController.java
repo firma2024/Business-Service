@@ -2,11 +2,15 @@ package com.firma.business.controller;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.exception.ErrorIntegrationServiceException;
-import com.firma.business.payload.*;
+import com.firma.business.model.Despacho;
+import com.firma.business.model.Proceso;
+import com.firma.business.payload.request.*;
+import com.firma.business.payload.response.DespachoResponse;
 import com.firma.business.service.ProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
@@ -25,15 +29,19 @@ public class ProcessController {
 
     @GetMapping("/get/info")
     public ResponseEntity<?> getInfoProcess(@RequestParam String numberProcess){
-        return processService.getProcess(numberProcess);
+        try {
+            return new ResponseEntity<>(processService.getProcess(numberProcess), HttpStatus.OK);
+        } catch (ErrorIntegrationServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/save")
-    public ResponseEntity <?> addProcess(@RequestBody ProcessRequest processRequest){
+    public ResponseEntity <?> addProcess(@RequestBody ProcessBusinessRequest processRequest){
         try{
-            Proceso process = processService.getAllProcess(processRequest.getNumeroRadicado());
+            processService.findByRadicado(processRequest.getNumeroRadicado());
+            ProcessRequest process = processService.getAllProcess(processRequest.getNumeroRadicado());
             process.setIdAbogado(processRequest.getIdAbogado());
-            process.setIdFirma(processRequest.getIdFirma());
 
             return ResponseEntity.ok(processService.saveProcess(process));
 
@@ -50,7 +58,11 @@ public class ProcessController {
                                                       @RequestParam(required = false) String tipoProceso,
                                                       @RequestParam(defaultValue = "0") Integer page,
                                                       @RequestParam(defaultValue = "10") Integer size){
-        return processService.getProcessByFilter(fechaInicioStr, firmaId, fechaFinStr, estadosProceso, tipoProceso, page, size);
+        try {
+            return new ResponseEntity<>(processService.getProcessesByFilter(fechaInicioStr, firmaId, fechaFinStr, estadosProceso, tipoProceso, page, size), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/get/all/abogado/filter")
@@ -61,38 +73,65 @@ public class ProcessController {
                                                 @RequestParam(required = false) String tipoProceso,
                                                 @RequestParam(defaultValue = "0") Integer page,
                                                 @RequestParam(defaultValue = "10") Integer size){
-        return processService.getProcessByAbogado(abogadoId, fechaInicioStr, fechaFinStr, estadosProceso, tipoProceso, page, size);
+        try {
+            return new ResponseEntity<>(processService.getProcessesByAbogado(abogadoId, fechaInicioStr, fechaFinStr, estadosProceso, tipoProceso, page, size), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/get/state/processes/jefe")
     public ResponseEntity<?> getAllByEstado(@RequestParam String name, @RequestParam Integer firmaId){
-        return processService.getStateProcessesJefe(name, firmaId);
+        try {
+            return new ResponseEntity<>(processService.getStateProcessesJefe(name, firmaId), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
+    @GetMapping("/get/state/processes/abogado")
+    public ResponseEntity<?> getAllByEstadoAbogado(@RequestParam String name, @RequestParam String userName){
+        try{
+            return new ResponseEntity<>(processService.getStateProcessesAbogado(name, userName), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @GetMapping("/get/jefe")
     public ResponseEntity<?> getJefeProcess(@RequestParam Integer processId){
-        return processService.getProcessById(processId);
-    }
-
-    @GetMapping("/get/all/estado/abogado")
-    public ResponseEntity<?> getAllByEstadoAbogado(@RequestParam String name, @RequestParam String userName){
-        return processService.getStateProcessesAbogado(name, userName);
+        try {
+            return new ResponseEntity<>(processService.getJefeProcess(processId), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteProcess(@RequestParam Integer processId){
-        return processService.deleteProcess(processId);
+        try {
+            return new ResponseEntity<>(processService.deleteProcess(processId), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateProcess(@RequestBody Proceso process){
-        return processService.updateProcess(process);
+    public ResponseEntity<?> updateProcess(@RequestBody ProcessUpdateRequest process){
+        try {
+            return new ResponseEntity<>(processService.updateProcess(process), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/get/abogado")
     public ResponseEntity<?> getProcessAbogado(@RequestParam Integer processId){
-        return processService.getProcessAbogado(processId);
+        try {
+            return new ResponseEntity<>(processService.getProcessAbogado(processId), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/estadoProceso/get/all")
@@ -135,7 +174,11 @@ public class ProcessController {
 
     @PostMapping("/audiencia/add")
     public ResponseEntity<?> addAudiencia(@RequestBody AudienciaRequest audiencia){
-        return processService.addAudiencia(audiencia);
+        try {
+            return new ResponseEntity<>(processService.addAudiencia(audiencia), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }
