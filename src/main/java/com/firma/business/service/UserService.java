@@ -206,7 +206,7 @@ public class UserService {
 
     public PageableResponse<UserResponse> getAbogadosByFirmaFilter(Integer numProcesosInicial, Integer numProcesosFinal, List<String> especialidades, Integer firmaId, Integer page, Integer size) throws ErrorDataServiceException {
         Rol rol = userDataService.findRolByName("ABOGADO");
-        PageableUserResponse pageableResponse = userDataService.getAbogadosByFirmaFilter(numProcesosInicial, numProcesosFinal, especialidades, firmaId, rol.getId(), page, size);
+        PageableUserResponse pageableResponse = userDataService.getAbogadosByFirmaFilter(especialidades, firmaId, rol.getId(), page, size);
         List<UserResponse> userResponse = new ArrayList<>();
         for (Usuario user : pageableResponse.getData()) {
             Integer number = userDataService.getNumberAssignedProcesses(user.getId());
@@ -249,9 +249,9 @@ public class UserService {
         return userDataService.findAllTipoAbogado();
     }
 
-    public Map<String, Object> getActiveAbogados(Integer firmaId) throws ErrorDataServiceException {
+    public Map<String, Long> getActiveAbogados(Integer firmaId) throws ErrorDataServiceException {
         Rol rol = userDataService.findRolByName("ABOGADO");
-        PageableUserResponse pageableResponse = userDataService.getAbogadosByFirmaFilter(null, null, null, firmaId, rol.getId(), null, null);
+        PageableUserResponse pageableResponse = userDataService.getAbogadosByFirmaFilter( null, firmaId, rol.getId(), null, null);
         return Map.of("value", pageableResponse.getTotalItems());
     }
 }

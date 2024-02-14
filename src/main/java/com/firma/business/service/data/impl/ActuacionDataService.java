@@ -196,10 +196,10 @@ public class ActuacionDataService implements IActuacionDataService {
     @Override
     public Actuacion findLastActuacion(Integer processid) throws ErrorDataServiceException {
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/actuacion/get/last")
-                    .queryParam("processid", processid);
 
-            ResponseEntity<Actuacion> responseEntity = restTemplate.getForEntity(builder.toUriString(), Actuacion.class);
+            ResponseEntity<Actuacion> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/actuacion/get/last?processid=" + processid,
+                    Actuacion.class);
 
             return responseEntity.getBody();
         }
@@ -211,10 +211,10 @@ public class ActuacionDataService implements IActuacionDataService {
     @Override
     public List<Actuacion> findByNoVisto(Integer firmaId) throws ErrorDataServiceException {
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/actuacion/get/byNoVisto")
-                    .queryParam("firmaId", firmaId);
 
-            ResponseEntity<Actuacion[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), Actuacion[].class);
+            ResponseEntity<Actuacion[]> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/actuacion/get/byNoVisto?firmaId=" + firmaId,
+                    Actuacion[].class);
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }

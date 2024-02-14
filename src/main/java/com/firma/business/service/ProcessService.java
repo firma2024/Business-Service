@@ -224,7 +224,7 @@ public class ProcessService {
     }
 
 
-    public  Map<String, Object> getStateProcessesJefe(String state, Integer firmaId) throws ErrorDataServiceException {
+    public  Map<String, Integer> getStateProcessesJefe(String state, Integer firmaId) throws ErrorDataServiceException {
         List<Proceso> processes = processDataService.getStateProcessesJefe(state, firmaId);
 
         return Map.of(
@@ -232,7 +232,7 @@ public class ProcessService {
         );
     }
 
-    public Map<String, Object> getStateProcessesAbogado(String name, String userName) throws ErrorDataServiceException {
+    public Map<String, Integer> getStateProcessesAbogado(String name, String userName) throws ErrorDataServiceException {
         List<Proceso> processes = processDataService.getStateProcessesAbogado(name, userName);
         return Map.of(
                 "value", processes.size()
@@ -251,32 +251,20 @@ public class ProcessService {
     }
 
 
-    public ResponseEntity<?> getEstadoProcesos(){
-        try {
-            return new ResponseEntity<>(processDataService.getEstadoProcesos(), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public List<EstadoProceso> getEstadoProcesos() throws ErrorDataServiceException {
+        return processDataService.getEstadoProcesos();
     }
 
-    public ResponseEntity<?> updateAudiencia(Integer id, String enlace){
-        try {
-            return new ResponseEntity<>(processDataService.updateAudiencia(id, enlace), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public String updateAudiencia(Integer id, String enlace) throws ErrorDataServiceException {
+        return processDataService.updateAudiencia(id, enlace);
     }
 
     public Set<Despacho> findAllDespachosWithOutLink(Integer year) throws ErrorDataServiceException {
         return processDataService.findAllDespachosWithOutLink(year);
     }
 
-    public ResponseEntity<?> getTipoProcesos(){
-        try {
-            return new ResponseEntity<>(processDataService.getTipoProcesos(), HttpStatus.OK);
-        } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public List<TipoProceso> getTipoProcesos() throws ErrorDataServiceException {
+        return processDataService.getTipoProcesos();
     }
 
     public String saveEnlace(EnlaceRequest enlaceRequest) throws ErrorDataServiceException {

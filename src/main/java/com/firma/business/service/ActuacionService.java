@@ -1,7 +1,5 @@
 package com.firma.business.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.firma.business.controller.ActuacionController;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.model.*;
@@ -12,23 +10,18 @@ import com.firma.business.payload.response.*;
 import com.firma.business.service.data.intf.IActuacionDataService;
 import com.firma.business.service.data.intf.IProcessDataService;
 import com.firma.business.service.integration.intf.IActuacionIntegrationService;
-import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
 @Service
-@Getter
 public class ActuacionService {
 
     @Autowired

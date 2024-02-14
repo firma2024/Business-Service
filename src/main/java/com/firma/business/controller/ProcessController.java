@@ -136,12 +136,20 @@ public class ProcessController {
 
     @GetMapping("/estadoProceso/get/all")
     public ResponseEntity<?> getAllEstadoProcesos(){
-        return processService.getEstadoProcesos();
+        try {
+            return new ResponseEntity<>(processService.getEstadoProcesos(), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/tipoProceso/get/all")
     public ResponseEntity<?> getAllTipoProcesos(){
-        return processService.getTipoProcesos();
+        try {
+            return new ResponseEntity<>(processService.getTipoProcesos(), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @Scheduled(fixedRate = 600000)
@@ -169,7 +177,11 @@ public class ProcessController {
 
     @PutMapping("/audiencia/update")
     public ResponseEntity<?> updateAudiencia(@RequestParam Integer id, @RequestParam String enlace){
-        return processService.updateAudiencia(id, enlace);
+        try {
+            return new ResponseEntity<>(processService.updateAudiencia(id, enlace), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/audiencia/add")

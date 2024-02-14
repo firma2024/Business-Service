@@ -13,7 +13,7 @@ import com.firma.business.payload.response.PageableUserResponse;
 import java.util.List;
 
 public interface IUserDataService {
-    PageableUserResponse getAbogadosByFirmaFilter(Integer numProcesosInicial, Integer numProcesosFinal, List<String> especialidades, Integer firmaId, Integer rolId, Integer page, Integer size) throws ErrorDataServiceException;
+    PageableUserResponse getAbogadosByFirmaFilter(List<String> especialidades, Integer firmaId, Integer rolId, Integer page, Integer size) throws ErrorDataServiceException;
     List<TipoDocumento> getAllTipoDocumento() throws ErrorDataServiceException;
     Rol getRoleByUser(String userName) throws ErrorDataServiceException;
     List<TipoAbogado> findAllTipoAbogado() throws ErrorDataServiceException;

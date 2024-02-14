@@ -135,17 +135,11 @@ public class UserDataService implements IUserDataService {
     }
 
     @Override
-    public PageableUserResponse getAbogadosByFirmaFilter(Integer numProcesosInicial, Integer numProcesosFinal, List<String> especialidades, Integer firmaId, Integer roleId, Integer page, Integer size) throws ErrorDataServiceException {
+    public PageableUserResponse getAbogadosByFirmaFilter(List<String> especialidades, Integer firmaId, Integer roleId, Integer page, Integer size) throws ErrorDataServiceException {
         try{
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/jefe/abogados/filter")
                     .queryParam("firmaId", firmaId)
                     .queryParam("roleId", roleId);
-            if (numProcesosInicial != null) {
-                builder.queryParam("numProcesosInicial", numProcesosInicial);
-            }
-            if (numProcesosFinal != null) {
-                builder.queryParam("numProcesosFinal", numProcesosFinal);
-            }
             if (page != null) {
                 builder.queryParam("page", page);
             }
