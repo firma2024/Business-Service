@@ -14,11 +14,19 @@ public class FirmaController {
 
     @GetMapping("/get/user")
     public ResponseEntity<?> getFirmaByUser(@RequestParam String userName) {
-        return firmaService.getFirmaByUser(userName);
+        try{
+            return ResponseEntity.ok(firmaService.getFirmaByUser(userName));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/save")
     public ResponseEntity<?> saveFirma(@RequestBody FirmaRequest firma) {
-        return firmaService.saveFirma(firma);
+        try{
+            return ResponseEntity.ok(firmaService.saveFirma(firma));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

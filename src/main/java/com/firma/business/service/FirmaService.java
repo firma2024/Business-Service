@@ -6,7 +6,6 @@ import com.firma.business.model.Firma;
 import com.firma.business.payload.request.FirmaRequest;
 import com.firma.business.service.data.intf.IFirmaDataService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
@@ -15,20 +14,12 @@ public class FirmaService {
     @Autowired
     private IFirmaDataService firmaDataService;
 
-    public ResponseEntity<?> getFirmaByUser(String username) {
-        try {
-            return ResponseEntity.ok(firmaDataService.getFirmaByUser(username));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public Firma getFirmaByUser(String username) throws ErrorDataServiceException {
+        return firmaDataService.getFirmaByUser(username);
     }
 
-    public ResponseEntity<?> saveFirma(FirmaRequest firma) {
-        try {
-            return ResponseEntity.ok(firmaDataService.saveFirma(firma));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String saveFirma(FirmaRequest firma) throws ErrorDataServiceException {
+        return firmaDataService.saveFirma(firma);
     }
 
     public Firma findFirmaById(Integer firmaId) throws ErrorDataServiceException {

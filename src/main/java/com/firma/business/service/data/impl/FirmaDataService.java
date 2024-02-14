@@ -23,10 +23,10 @@ public class FirmaDataService implements IFirmaDataService {
     @Override
     public Firma getFirmaByUser(String username) throws ErrorDataServiceException {
         try{
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/firma/get/user")
-                    .queryParam("userName", username);
 
-            ResponseEntity<Firma> responseEntity = restTemplate.getForEntity(builder.toUriString(), Firma.class);
+            ResponseEntity<Firma> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/firma/get/user?userName=" + username,
+                    Firma.class);
 
             return responseEntity.getBody();
         }
@@ -60,10 +60,9 @@ public class FirmaDataService implements IFirmaDataService {
     @Override
     public Firma findFirmaById(Integer firmaId) throws ErrorDataServiceException {
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/firma/get")
-                    .queryParam("id", firmaId);
-
-            ResponseEntity<Firma> responseEntity = restTemplate.getForEntity(builder.toUriString(), Firma.class);
+            ResponseEntity<Firma> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "/firma/get?id=" + firmaId,
+                    Firma.class);
 
             return responseEntity.getBody();
         }
@@ -75,10 +74,10 @@ public class FirmaDataService implements IFirmaDataService {
     @Override
     public Empleado findEmpleadoByUsuario(Integer idAbogado) throws ErrorDataServiceException {
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "firma/empleado/get")
-                    .queryParam("idAbogado", idAbogado);
 
-            ResponseEntity<Empleado> responseEntity = restTemplate.getForEntity(builder.toUriString(), Empleado.class);
+            ResponseEntity<Empleado> responseEntity = restTemplate.getForEntity(
+                    apiUrl + "firma/empleado/get?idAbogado=" + idAbogado,
+                    Empleado.class);
 
             return responseEntity.getBody();
         }

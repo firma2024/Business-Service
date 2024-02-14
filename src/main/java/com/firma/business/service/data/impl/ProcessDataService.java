@@ -237,12 +237,9 @@ public class ProcessDataService implements IProcessDataService {
     @Override
     public String updateAudiencia(Integer id, String enlace) throws ErrorDataServiceException {
         try{
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl + "/process/audiencia/update")
-                    .queryParam("id", id)
-                    .queryParam("enlace", enlace);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    builder.toUriString(),
+                    apiUrl + "/process/audiencia/update?id=" + id + "&enlace=" + enlace,
                     HttpMethod.PUT,
                     null,
                     String.class
