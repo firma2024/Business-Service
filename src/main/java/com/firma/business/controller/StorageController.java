@@ -3,6 +3,9 @@ package com.firma.business.controller;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.response.FileResponse;
 import com.firma.business.service.StorageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +22,11 @@ public class StorageController {
     @Autowired
     private StorageService storageService;
 
+    @Operation(summary = "Subir foto", description = "Sube la foto del usuario dado el id del usuario")
+    @Parameter(name = "image", description = "Imagen a subir", required = true)
+    @Parameter(name = "usuarioId", description = "Id del usuario", required = true)
+    @ApiResponse(responseCode = "201", description = "Foto subida correctamente")
+    @ApiResponse(responseCode = "400", description = "Error al subir la foto")
     @PostMapping("/upload/photo")
     public ResponseEntity<?> uploadPhoto(@RequestParam("image") MultipartFile file, @RequestParam Integer usuarioId){
         try {
@@ -28,6 +36,10 @@ public class StorageController {
         }
     }
 
+    @Operation(summary = "Descargar foto", description = "Descarga la foto del usuario dado el id")
+    @Parameter(name = "usuarioId", description = "Id del usuario", required = true)
+    @ApiResponse(responseCode = "200", description = "Foto descargada en formato JPEG")
+    @ApiResponse(responseCode = "400", description = "Error al descargar la foto")
     @GetMapping("/download/photo")
     public ResponseEntity<?> downloadPhoto(@RequestParam Integer usuarioId){
         try {
@@ -40,6 +52,11 @@ public class StorageController {
         }
     }
 
+    @Operation(summary = "Subir documento de actuacion", description = "Sube el documento de la actuación dado el id de la actuación.")
+    @Parameter(name = "document", description = "Documento a subir", required = true)
+    @Parameter(name = "actuacionId", description = "Id de la actuación", required = true)
+    @ApiResponse(responseCode = "201", description = "Documento subido correctamente")
+    @ApiResponse(responseCode = "400", description = "Error al subir el documento")
     @PostMapping("/upload/document")
     public ResponseEntity<?> uploadDocument(@RequestParam("document") MultipartFile file, @RequestParam Integer actuacionId){
         try {
@@ -49,6 +66,10 @@ public class StorageController {
         }
     }
 
+    @Operation(summary = "Descargar documento de actuacion", description = "Descarga el documento de la actuación dado el id de la actuación.")
+    @Parameter(name = "actuacionId", description = "Id de la actuación", required = true)
+    @ApiResponse(responseCode = "200", description = "Documento descargado en formato PDF")
+    @ApiResponse(responseCode = "400", description = "Error al descargar el documento")
     @GetMapping("/download/document")
     public ResponseEntity<?> downloadDocument(@RequestParam Integer actuacionId){
         try {
@@ -61,6 +82,10 @@ public class StorageController {
         }
     }
 
+    @Operation(summary = "Descargar todos los documentos de una actuacion", description = "Descarga todos los documentos de la actuación dado el id de la actuación.")
+    @Parameter(name = "procesoId", description = "Id del proceso", required = true)
+    @ApiResponse(responseCode = "200", description = "Documentos descargados en un archivo ZIP")
+    @ApiResponse(responseCode = "400", description = "Error al descargar los documentos")
     @GetMapping("/download/alldocuments")
     public ResponseEntity <?> downloadAllDocuments(@RequestParam Integer procesoId){
         try {

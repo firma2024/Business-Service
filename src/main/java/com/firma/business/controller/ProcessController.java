@@ -3,10 +3,20 @@ package com.firma.business.controller;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.model.Despacho;
+import com.firma.business.model.EstadoProceso;
 import com.firma.business.model.Proceso;
+import com.firma.business.model.TipoProceso;
 import com.firma.business.payload.request.*;
 import com.firma.business.payload.response.DespachoResponse;
+import com.firma.business.payload.response.PageableResponse;
+import com.firma.business.payload.response.ProcessAbogadoResponse;
+import com.firma.business.payload.response.ProcessJefeResponse;
 import com.firma.business.service.ProcessService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +37,10 @@ public class ProcessController {
     private ProcessService processService;
     private Logger logger = LoggerFactory.getLogger(ProcessController.class);
 
+    @Operation(summary = "Obtener informacion inicial del proceso por número de radicado", description = "Obtiene el proceso asociado al número de radicado consultando la informacion a Integration-service")
+    @Parameter(name = "numberProcess", description = "Número de radicado del proceso", required = true)
+    @ApiResponse(responseCode = "200", description = "Informacion inicial del proceso exeptuando los campos actuaciones, IdAbogado y idFirma", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ProcessRequest.class))})
+    @ApiResponse(responseCode = "400", description = "Error al obtener la informacion del proceso")
     @GetMapping("/get/info")
     public ResponseEntity<?> getInfoProcess(@RequestParam String numberProcess){
         try {
@@ -36,6 +50,10 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Guardar proceso", description = "Guarda el proceso en la base de datos")
+    @Parameter(name = "processRequest", description = "Informacion del proceso a guardar", required = true)
+    @ApiResponse(responseCode = "200", description = "Proceso guardado correctamente", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
+    @ApiResponse(responseCode = "400", description = "Error al guardar el proceso")
     @PostMapping("/save")
     public ResponseEntity <?> addProcess(@RequestBody ProcessBusinessRequest processRequest){
         try{
@@ -50,6 +68,15 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Filtrar procesos por firma para el jefe", description = "Filtra los procesos por firma para el jefe, en caso de no adjuntar nungun filtro lista todos los procesos")
+    @Parameter(name = "fechaInicioStr", description = "Fecha de inicio del filtro", required = false)
+    @Parameter(name = "firmaId", description = "Id de la firma", required = true)
+    @Parameter(name = "fechaFinStr", description = "Fecha de fin del filtro", required = false)
+    @Parameter(name = "estadosProceso", description = "Estados del proceso", required = false)
+    @Parameter(name = "tipoProceso", description = "Tipo de proceso", required = false)
+    @Parameter(name = "page", description = "Número de página default 0", required = false)
+    @Parameter(name = "size", description = "Tamaño de la página default 10", required = false)
+    @ApiResponse(responseCode = "200", description = "Procesos filtrados", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageableResponse.class))})
     @GetMapping("/get/all/filter")
     public ResponseEntity<?> getProcesosByFirmaFilter(@RequestParam(required = false) String fechaInicioStr,
                                                       @RequestParam Integer firmaId,
@@ -65,6 +92,16 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Filtrar procesos de un abogado", description = "Filtra los procesos de un abogado, en caso de no adjuntar nungun filtro lista todos los procesos")
+    @Parameter(name = "abogadoId", description = "Id del abogado", required = true)
+    @Parameter(name = "fechaInicioStr", description = "Fecha de inicio de radicacion", required = false)
+    @Parameter(name = "fechaFinStr", description = "Fecha de fin de radicacion", required = false)
+    @Parameter(name = "estadosProceso", description = "Estados del proceso", required = false)
+    @Parameter(name = "tipoProceso", description = "Tipo de proceso", required = false)
+    @Parameter(name = "page", description = "Número de página default 0", required = false)
+    @Parameter(name = "size", description = "Tamaño de la página default 10", required = false)
+    @ApiResponse(responseCode = "200", description = "Entidad paginada", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageableResponse.class))})
+    @ApiResponse(responseCode = "400", description = "Error al obtener los procesos")
     @GetMapping("/get/all/abogado/filter")
     public ResponseEntity<?> getProcesosAbogado(@RequestParam Integer abogadoId,
                                                 @RequestParam(required = false) String fechaInicioStr,
@@ -80,6 +117,11 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Obtiene el numero de procesos por firma y estado", description = "Obtiene el numero de procesos por firma para el jefe de abogados")
+    @Parameter(name = "firmaId", description = "Id de la firma", required = true)
+    @Parameter(name = "name", description = "Nombre del estado (Activo, Finalzado a favor, Finalizado en contra", required = true)
+    @ApiResponse(responseCode = "200", description = "Numero de procesos", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class))})
+    @ApiResponse(responseCode = "400", description = "Error al obtener el numero de procesos")
     @GetMapping("/get/state/processes/jefe")
     public ResponseEntity<?> getAllByEstado(@RequestParam String name, @RequestParam Integer firmaId){
         try {
@@ -89,6 +131,11 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Obtiene el numero de procesos por abogado y estado", description = "Obtiene el numero de procesos por abogado")
+    @Parameter(name = "name", description = "Nombre del estado (Activo, Finalzado a favor, Finalizado en contra", required = true)
+    @Parameter(name = "userName", description = "Nombre de usuario del abogado", required = true)
+    @ApiResponse(responseCode = "200", description = "Numero de procesos", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class))})
+    @ApiResponse(responseCode = "400", description = "Error al obtener el numero de procesos")
     @GetMapping("/get/state/processes/abogado")
     public ResponseEntity<?> getAllByEstadoAbogado(@RequestParam String name, @RequestParam String userName){
         try{
@@ -98,6 +145,10 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Obtiene el proceso por id jefe", description = "Obtiene la informacion del proceso por id para el jefe de abogados")
+    @Parameter(name = "processId", description = "Id del proceso", required = true)
+    @ApiResponse(responseCode = "200", description = "Proceso", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ProcessJefeResponse.class))})
+    @ApiResponse(responseCode = "400", description = "Error al obtener el proceso")
     @GetMapping("/get/jefe")
     public ResponseEntity<?> getJefeProcess(@RequestParam Integer processId){
         try {
@@ -107,6 +158,10 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Elimina un proceso", description = "Elimina un proceso por id")
+    @Parameter(name = "processId", description = "Id del proceso", required = true)
+    @ApiResponse(responseCode = "200", description = "Proceso eliminado", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
+    @ApiResponse(responseCode = "400", description = "Error al eliminar el proceso")
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteProcess(@RequestParam Integer processId){
         try {
@@ -116,6 +171,10 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Actualiza un proceso", description = "Actualiza un proceso asignando un abogado o cambio de estado del proceso")
+    @Parameter(name = "process", description = "Informacion del proceso a actualizar", required = true)
+    @ApiResponse(responseCode = "200", description = "Proceso actualizado", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
+    @ApiResponse(responseCode = "400", description = "Error al actualizar el proceso")
     @PutMapping("/update")
     public ResponseEntity<?> updateProcess(@RequestBody ProcessUpdateRequest process){
         try {
@@ -125,6 +184,10 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Obtiene el proceso por id", description = "Obtiene la informacion del proceso por id para el abogado")
+    @Parameter(name = "processId", description = "Id del proceso", required = true)
+    @ApiResponse(responseCode = "200", description = "Proceso", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ProcessAbogadoResponse.class))})
+    @ApiResponse(responseCode = "400", description = "Error al obtener el proceso")
     @GetMapping("/get/abogado")
     public ResponseEntity<?> getProcessAbogado(@RequestParam Integer processId){
         try {
@@ -134,6 +197,9 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Obtiene todos los estados de los procesos", description = "Obtiene todos los estados de los procesos")
+    @ApiResponse(responseCode = "200", description = "Lista de estado de proceeso", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = EstadoProceso.class))})
+    @ApiResponse(responseCode = "400", description = "Error al obtener los estados de los procesos")
     @GetMapping("/estadoProceso/get/all")
     public ResponseEntity<?> getAllEstadoProcesos(){
         try {
@@ -143,6 +209,9 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Obtiene todos los tipos de procesos", description = "Obtiene todos los tipos de procesos")
+    @ApiResponse(responseCode = "200", description = "Lista de tipos de procesos", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TipoProceso.class))})
+    @ApiResponse(responseCode = "400", description = "Error al obtener los tipos de procesos")
     @GetMapping("/tipoProceso/get/all")
     public ResponseEntity<?> getAllTipoProcesos(){
         try {
@@ -175,6 +244,11 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Actualizar audiencia", description = "Actualiza el enlace de la audiencia dado el id de la audiencia")
+    @Parameter(name = "id", description = "Id de la audiencia", required = true)
+    @Parameter(name = "enlace", description = "Enlace de la audiencia", required = true)
+    @ApiResponse(responseCode = "200", description = "Audiencia actualizada", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
+    @ApiResponse(responseCode = "400", description = "Error al actualizar la audiencia")
     @PutMapping("/audiencia/update")
     public ResponseEntity<?> updateAudiencia(@RequestParam Integer id, @RequestParam String enlace){
         try {
@@ -184,6 +258,9 @@ public class ProcessController {
         }
     }
 
+    @Operation(summary = "Agregar audiencia", description = "Agrega una audiencia a un proceso")
+    @Parameter(name = "audiencia", description = "Informacion de la audiencia a agregar", required = true)
+    @ApiResponse(responseCode = "200", description = "Audiencia agregada", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
     @PostMapping("/audiencia/add")
     public ResponseEntity<?> addAudiencia(@RequestBody AudienciaRequest audiencia){
         try {

@@ -16,7 +16,6 @@ public class ProcessRequest {
     private String numeroRadicado;
     private String despacho;
     private String sujetos;
-    private String demandado;
     private String fechaRadicacion;
     private List<ActuacionRequest> actuaciones;
     private String tipoProceso;
