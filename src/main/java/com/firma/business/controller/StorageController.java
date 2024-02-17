@@ -23,7 +23,6 @@ public class StorageController {
     private StorageService storageService;
 
     @Operation(summary = "Subir foto", description = "Sube la foto del usuario dado el id del usuario")
-    @Parameter(name = "image", description = "Imagen a subir", required = true)
     @Parameter(name = "usuarioId", description = "Id del usuario", required = true)
     @ApiResponse(responseCode = "201", description = "Foto subida correctamente")
     @ApiResponse(responseCode = "400", description = "Error al subir la foto")
@@ -53,7 +52,6 @@ public class StorageController {
     }
 
     @Operation(summary = "Subir documento de actuacion", description = "Sube el documento de la actuación dado el id de la actuación.")
-    @Parameter(name = "document", description = "Documento a subir", required = true)
     @Parameter(name = "actuacionId", description = "Id de la actuación", required = true)
     @ApiResponse(responseCode = "201", description = "Documento subido correctamente")
     @ApiResponse(responseCode = "400", description = "Error al subir el documento")

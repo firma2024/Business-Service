@@ -51,7 +51,6 @@ public class ProcessController {
     }
 
     @Operation(summary = "Guardar proceso", description = "Guarda el proceso en la base de datos")
-    @Parameter(name = "processRequest", description = "Informacion del proceso a guardar", required = true)
     @ApiResponse(responseCode = "200", description = "Proceso guardado correctamente", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
     @ApiResponse(responseCode = "400", description = "Error al guardar el proceso")
     @PostMapping("/save")
@@ -172,7 +171,6 @@ public class ProcessController {
     }
 
     @Operation(summary = "Actualiza un proceso", description = "Actualiza un proceso asignando un abogado o cambio de estado del proceso")
-    @Parameter(name = "process", description = "Informacion del proceso a actualizar", required = true)
     @ApiResponse(responseCode = "200", description = "Proceso actualizado", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
     @ApiResponse(responseCode = "400", description = "Error al actualizar el proceso")
     @PutMapping("/update")
@@ -259,7 +257,6 @@ public class ProcessController {
     }
 
     @Operation(summary = "Agregar audiencia", description = "Agrega una audiencia a un proceso")
-    @Parameter(name = "audiencia", description = "Informacion de la audiencia a agregar", required = true)
     @ApiResponse(responseCode = "200", description = "Audiencia agregada", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
     @PostMapping("/audiencia/add")
     public ResponseEntity<?> addAudiencia(@RequestBody AudienciaRequest audiencia){
