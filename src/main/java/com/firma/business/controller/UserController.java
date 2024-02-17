@@ -27,7 +27,6 @@ public class UserController {
     private UserService userService;
 
     @Operation(summary = "Agregar Abogado", description = "Guarda la información del abogado.")
-    @Parameter(name = "userRequest", description = "Información del usuario", required = true)
     @ApiResponse(responseCode = "201", description = "Abogado guardado correctamente")
     @ApiResponse(responseCode = "400", description = "Error al guardar el abogado")
     @PostMapping("/add/abogado")
@@ -40,7 +39,6 @@ public class UserController {
     }
 
     @Operation(summary = "Agregar Jefe", description = "Guarda la información del jefe.")
-    @Parameter(name = "userRequest", description = "Información del usuario", required = true)
     @ApiResponse(responseCode = "201", description = "Jefe guardado correctamente")
     @ApiResponse(responseCode = "400", description = "Error al guardar el jefe")
     @PostMapping("/add/jefe")
@@ -53,7 +51,6 @@ public class UserController {
     }
 
     @Operation(summary = "Agregar Admin", description = "Guarda la información del administrador.")
-    @Parameter(name = "userRequest", description = "Información del usuario", required = true)
     @ApiResponse(responseCode = "201", description = "Admin guardado correctamente")
     @ApiResponse(responseCode = "400", description = "Error al guardar el admin")
     @PostMapping("/add/admin")
@@ -79,7 +76,6 @@ public class UserController {
     }
 
     @Operation(summary = "Actualizar información del abogado", description = "Actualiza la información del abogado dado el nombre de usuario")
-    @Parameter(name = "userRequest", description = "Entidad de actualizacion de abogado", required = true)
     @ApiResponse(responseCode = "200", description = "Abogado actualizado")
     @ApiResponse(responseCode = "400", description = "Error al actualizar el abogado")
     @PutMapping("/update/info/abogado")
@@ -92,7 +88,6 @@ public class UserController {
     }
 
     @Operation(summary = "Actualizar información del jefe", description = "Actualiza la información del jefe dado el nombre de usuario")
-    @Parameter(name = "userRequest", description = "Entidad de actualizacion de jefe", required = true)
     @ApiResponse(responseCode = "200", description = "Jefe actualizado")
     @ApiResponse(responseCode = "400", description = "Error al actualizar el jefe")
     @PutMapping("/update/info/jefe")

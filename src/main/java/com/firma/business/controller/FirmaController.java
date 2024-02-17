@@ -32,7 +32,6 @@ public class FirmaController {
     }
 
     @Operation(summary = "Guardar firma", description = "Guarda la firma proporcionada.")
-    @Parameter(name = "firma", description = "Firma a guardar", required = true)
     @ApiResponse(responseCode = "200", description = "Firma guardada correctamente")
     @ApiResponse(responseCode = "400", description = "Error al guardar la firma")
     @PostMapping("/save")
