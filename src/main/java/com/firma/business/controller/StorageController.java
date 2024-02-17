@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,6 +56,7 @@ public class StorageController {
     @Parameter(name = "actuacionId", description = "Id de la actuación", required = true)
     @ApiResponse(responseCode = "201", description = "Documento subido correctamente")
     @ApiResponse(responseCode = "400", description = "Error al subir el documento")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @PostMapping("/upload/document")
     public ResponseEntity<?> uploadDocument(@RequestParam("document") MultipartFile file, @RequestParam Integer actuacionId){
         try {
@@ -68,6 +70,7 @@ public class StorageController {
     @Parameter(name = "actuacionId", description = "Id de la actuación", required = true)
     @ApiResponse(responseCode = "200", description = "Documento descargado en formato PDF")
     @ApiResponse(responseCode = "400", description = "Error al descargar el documento")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @GetMapping("/download/document")
     public ResponseEntity<?> downloadDocument(@RequestParam Integer actuacionId){
         try {
@@ -84,6 +87,7 @@ public class StorageController {
     @Parameter(name = "procesoId", description = "Id del proceso", required = true)
     @ApiResponse(responseCode = "200", description = "Documentos descargados en un archivo ZIP")
     @ApiResponse(responseCode = "400", description = "Error al descargar los documentos")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @GetMapping("/download/alldocuments")
     public ResponseEntity <?> downloadAllDocuments(@RequestParam Integer procesoId){
         try {

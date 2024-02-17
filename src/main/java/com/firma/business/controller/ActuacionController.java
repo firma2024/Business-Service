@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.format.DateTimeFormatter;
@@ -108,6 +109,7 @@ public class ActuacionController {
     @Parameter(name = "id", description = "Id de la actuacion", required = true)
     @ApiResponse(responseCode = "200", description = "Se retorna la entidad de la actuacion", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ActuacionResponse.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener la actuacion")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @GetMapping("/get")
     public ResponseEntity<?> getActuacion(@RequestParam Integer id) {
         try {
@@ -126,6 +128,7 @@ public class ActuacionController {
     @Parameter(name = "size", description = "Tamaño de la pagina", required = false)
     @ApiResponse(responseCode = "200", description = "Se retorna la lista de actuaciones", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageableResponse.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener las actuaciones")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'JEFE')")
     @GetMapping("/jefe/get/all/filter")
     public ResponseEntity<?> getActuacionesFilter(@RequestParam Integer procesoId,
                                                   @RequestParam(required = false) String fechaInicioStr,
@@ -148,6 +151,7 @@ public class ActuacionController {
     @Parameter(name = "page", description = "Pagina", required = false)
     @Parameter(name = "size", description = "Tamaño de la pagina", required = false)
     @ApiResponse(responseCode = "200", description = "Se retorna la lista de actuaciones", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageableResponse.class))})
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @GetMapping("/get/all/abogado/filter")
     public ResponseEntity<?> getAllActuacionesByProcesoAbogado(@RequestParam Integer procesoId,
                                                                @RequestParam(required = false) String fechaInicioStr,
@@ -166,6 +170,7 @@ public class ActuacionController {
     @Parameter(name = "actionId", description = "Id de la actuacion", required = true)
     @ApiResponse(responseCode = "200", description = "Estado de visualizacion actualizado")
     @ApiResponse(responseCode = "400", description = "Error al actualizar el estado de visualizacion")
+    @PreAuthorize("hasAnyAuthority('ABOGADO')")
     @PutMapping("/update/state")
     public ResponseEntity<?> updateStateActuacion(@RequestParam Integer actionId){
         try {
