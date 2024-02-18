@@ -1,5 +1,6 @@
 package com.firma.business.service;
 
+import com.firma.business.controller.ActuacionController;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.model.*;
@@ -13,6 +14,8 @@ import com.firma.business.service.integration.intf.IActuacionIntegrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,10 +33,12 @@ public class ActuacionService {
     private IActuacionDataService actuacionDataService;
     @Autowired
     private IActuacionIntegrationService actuacionIntegrationService;
-    @Autowired
-    private FirmaService firmaService;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private Logger loggerService = LoggerFactory.getLogger(ActuacionService.class);
+
+    @Value("${api.presentation.url}")
+    private String apiPresentationUrl;
+
 
 
     public String saveActuaciones(List<ActuacionRequest> actuaciones) throws ErrorDataServiceException {
@@ -213,5 +218,69 @@ public class ActuacionService {
         actuacion.setEstadoactuacion(es);
 
         return actuacionDataService.updateActuacion(actuacion);
+    }
+
+    @Scheduled(cron = "0 0 7 * * ?")
+    public void findNewActuaciones() {
+        try {
+            loggerService.info("Buscando actuaciones nuevas");
+            List<ProcesoResponse> process = this.getAllProcess();
+            List<FindProcessRequest> processFind = new ArrayList<>();
+
+            for (ProcesoResponse procesoResponse : process) {
+                FindProcessRequest ac = FindProcessRequest.builder()
+                        .number_process(procesoResponse.getNumeroProceso())
+                        .file_number(procesoResponse.getNumeroRadicado())
+                        .date(procesoResponse.getFechaUltimaActuacion())
+                        .build();
+
+                processFind.add(ac);
+            }
+            List<ActuacionRequest> actuaciones = actuacionIntegrationService.findNewActuacion(processFind);
+
+            if (actuaciones.isEmpty()) {
+                loggerService.info("No hay actuaciones nuevas");
+                return;
+            }
+
+            loggerService.info(this.saveActuaciones(actuaciones));
+
+        } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
+            loggerService.error(e.getMessage());
+        }
+    }
+
+    @Scheduled(cron = "0 0/30 7-9 * * ?") //rango de 7:00 am a 9:00 am cada 30 minutos
+    public void sendEmailNewActuacion() {
+        try {
+            loggerService.info("Enviando correos de actuaciones");
+            Set<Actuacion> actuaciones = actuacionDataService.findActuacionesNotSend();
+            if (actuaciones.isEmpty()) {
+                loggerService.info("No hay actuaciones para enviar");
+                return;
+            }
+
+            List<ActuacionEmailRequest> actuacionesEmail = new ArrayList<>();
+            for (Actuacion actuacion : actuaciones) {
+                ActuacionEmailRequest actuacionEmail = ActuacionEmailRequest.builder()
+                        .id(actuacion.getId())
+                        .actuacion(actuacion.getActuacion())
+                        .radicado(actuacion.getProceso().getRadicado())
+                        .anotacion(actuacion.getAnotacion())
+                        .fechaActuacion(actuacion.getFechaactuacion().format(formatter))
+                        .emailAbogado(actuacion.getProceso().getEmpleado().getUsuario().getCorreo())
+                        .nameAbogado(actuacion.getProceso().getEmpleado().getUsuario().getNombres())
+                        .link(String.format("%s/actuacion/?id=%d", apiPresentationUrl, actuacion.getId()))
+                        .build();
+
+                actuacionesEmail.add(actuacionEmail);
+            }
+            List<Integer> actSend = actuacionIntegrationService.sendEmailActuacion(actuacionesEmail);
+
+            actuacionDataService.updateActuacionesSend(actSend);
+
+        } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
+            loggerService.error(e.getMessage());
+        }
     }
 }

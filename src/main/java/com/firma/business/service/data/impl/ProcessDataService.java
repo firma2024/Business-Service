@@ -1,6 +1,7 @@
 package com.firma.business.service.data.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.firma.business.controller.ProcessController;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.model.*;
 import com.firma.business.model.Audiencia;
@@ -9,6 +10,8 @@ import com.firma.business.payload.response.PageableProcessResponse;
 import com.firma.business.payload.response.PageableResponse;
 import com.firma.business.payload.response.ProcessAbogadoResponse;
 import com.firma.business.service.data.intf.IProcessDataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -423,6 +426,18 @@ public class ProcessDataService implements IProcessDataService {
             ResponseEntity<Enlace> responseEntity = restTemplate.getForEntity(builder.toUriString(), Enlace.class);
 
             return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            throw new ErrorDataServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Set<DespachoFecha> findAllDespachosWithDateActuacion() throws ErrorDataServiceException {
+        try {
+            ResponseEntity<DespachoFecha[]> responseEntity = restTemplate.getForEntity(apiUrl + "/process/despacho/get/all/date", DespachoFecha[].class);
+
+            return Set.of(Objects.requireNonNull(responseEntity.getBody()));
         }
         catch (Exception e) {
             throw new ErrorDataServiceException(e.getMessage());

@@ -56,7 +56,7 @@ class ProcessIntegrationServiceTest {
         when(restTemplate.getForEntity(anyString(), Mockito.eq(DespachoResponse.class)))
                 .thenReturn(new ResponseEntity<>(expectedDespachoResponse, HttpStatus.OK));
 
-        DespachoResponse actualDespachoResponse = processIntegrationService.findUrlDespacho("nombre");
+        DespachoResponse actualDespachoResponse = processIntegrationService.findUrlDespacho("nombre", 2023);
 
         assertEquals(expectedDespachoResponse, actualDespachoResponse);
     }
@@ -66,7 +66,7 @@ class ProcessIntegrationServiceTest {
         when(restTemplate.getForEntity(anyString(), Mockito.eq(DespachoResponse.class)))
                 .thenThrow(new RuntimeException("API call failed"));
 
-        assertThrows(ErrorIntegrationServiceException.class, () -> processIntegrationService.findUrlDespacho("nombre"));
+        assertThrows(ErrorIntegrationServiceException.class, () -> processIntegrationService.findUrlDespacho("nombre", 2023));
     }
 
     @Test
