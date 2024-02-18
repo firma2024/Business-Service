@@ -2,10 +2,7 @@ package com.firma.business.controller;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.exception.ErrorIntegrationServiceException;
-import com.firma.business.model.Despacho;
-import com.firma.business.model.EstadoProceso;
-import com.firma.business.model.Proceso;
-import com.firma.business.model.TipoProceso;
+import com.firma.business.model.*;
 import com.firma.business.payload.request.*;
 import com.firma.business.payload.response.DespachoResponse;
 import com.firma.business.payload.response.PageableResponse;
@@ -35,7 +32,6 @@ public class ProcessController {
 
     @Autowired
     private ProcessService processService;
-    private Logger logger = LoggerFactory.getLogger(ProcessController.class);
 
     @Operation(summary = "Obtener informacion inicial del proceso por número de radicado", description = "Obtiene el proceso asociado al número de radicado consultando la informacion a Integration-service")
     @Parameter(name = "numberProcess", description = "Número de radicado del proceso", required = true)
@@ -216,29 +212,6 @@ public class ProcessController {
             return new ResponseEntity<>(processService.getTipoProcesos(), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @Scheduled(fixedRate = 600000)
-    public void updateDespacho(){
-        try {
-            logger.info("Buscando enlaces de despachos");
-            Integer year = LocalDate.now().getYear();
-            Set<Despacho> despachos = processService.findAllDespachosWithOutLink(year);
-
-            for (Despacho despacho : despachos) {
-                logger.info(despacho.getNombre());
-                DespachoResponse url = processService.findUrlDespacho(despacho.getNombre());
-                EnlaceRequest en = EnlaceRequest.builder()
-                        .url(url.getUrl_despacho())
-                        .despachoid(despacho.getId())
-                        .fechaconsulta(LocalDate.now())
-                        .build();
-                logger.info(processService.saveEnlace(en));
-            }
-
-        } catch (ErrorIntegrationServiceException | ErrorDataServiceException e) {
-            logger.error(e.getMessage());
         }
     }
 

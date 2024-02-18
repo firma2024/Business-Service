@@ -35,4 +35,5 @@ public interface IProcessDataService {
     Despacho findDespachoById(Integer despachoid) throws ErrorDataServiceException;
     Proceso findByRadicado(String radicado) throws ErrorDataServiceException;
     Enlace findByDespachoAndYear(Integer id, String year) throws ErrorDataServiceException;
+    Set<DespachoFecha> findAllDespachosWithDateActuacion() throws ErrorDataServiceException;
 }

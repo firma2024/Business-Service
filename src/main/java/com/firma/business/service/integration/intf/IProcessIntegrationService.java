@@ -7,6 +7,6 @@ import com.firma.business.payload.request.ProcessRequest;
 
 public interface IProcessIntegrationService {
     ProcessRequest getProcess(String numberProcess) throws ErrorIntegrationServiceException;
-    DespachoResponse findUrlDespacho(String nombre) throws ErrorIntegrationServiceException;
+    DespachoResponse findUrlDespacho(String nombre, Integer year) throws ErrorIntegrationServiceException;
     ProcessRequest getAllProcess(String numberProcess) throws ErrorIntegrationServiceException;
 }

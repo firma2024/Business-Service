@@ -7,12 +7,13 @@ import com.firma.business.payload.request.*;
 import com.firma.business.payload.response.*;
 import com.firma.business.service.data.intf.IProcessDataService;
 import com.firma.business.service.integration.intf.IProcessIntegrationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class ProcessService {
     private FirmaService firmaService;
     private DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private Logger logger = LoggerFactory.getLogger(ProcessService.class);
 
 
     public String saveProcess(ProcessRequest processRequest) throws ErrorDataServiceException {
@@ -282,9 +284,7 @@ public class ProcessService {
         return processIntegrationService.getProcess(numberProcess);
     }
 
-    public DespachoResponse findUrlDespacho(String nombre) throws ErrorIntegrationServiceException {
-        return processIntegrationService.findUrlDespacho(nombre);
-    }
+
 
     public ProcessRequest getAllProcess(String numberProcess) throws ErrorIntegrationServiceException {
         return processIntegrationService.getAllProcess(numberProcess);
@@ -294,6 +294,29 @@ public class ProcessService {
         Proceso p = processDataService.findByRadicado(numeroRadicado);
         if (p != null) {
             throw new ErrorDataServiceException(String.format("El proceso con el radicado %s ya existe", p.getRadicado()));
+        }
+    }
+
+    @Scheduled(fixedRate = 600000)
+    public void updateDespachoEnlace(){
+        try {
+            logger.info("Buscando enlaces de despachos");
+            Set<DespachoFecha> despachosFecha = processDataService.findAllDespachosWithDateActuacion();
+            for(DespachoFecha despachoFecha : despachosFecha){
+                Enlace enlace = processDataService.findByDespachoAndYear(despachoFecha.getDespachoId(), String.valueOf(despachoFecha.getYear()));
+                if (enlace == null){
+                    logger.info(despachoFecha.getNombre());
+                    DespachoResponse url = processIntegrationService.findUrlDespacho(despachoFecha.getNombre(), despachoFecha.getYear());
+                    EnlaceRequest en = EnlaceRequest.builder()
+                            .url(url.getUrl_despacho())
+                            .despachoid(despachoFecha.getDespachoId())
+                            .fechaconsulta(LocalDate.now().withYear(despachoFecha.getYear()))
+                            .build();
+                    logger.info(this.saveEnlace(en));
+                }
+            }
+        } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
+            logger.error(e.getMessage());
         }
     }
 }
