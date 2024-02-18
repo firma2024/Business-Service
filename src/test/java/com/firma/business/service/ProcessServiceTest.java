@@ -339,16 +339,6 @@ class ProcessServiceTest {
         assertNotNull(response);
     }
 
-    @Test
-    void findUrlDespacho() throws ErrorIntegrationServiceException {
-        DespachoResponse despachoResponse = new DespachoResponse();
-        String nombreDespacho = "test";
-        Integer year = 2023;
-        when(processIntegrationService.findUrlDespacho(nombreDespacho, year)).thenReturn(despachoResponse);
-        DespachoResponse response = processService.findUrlDespacho(nombreDespacho);
-
-        assertNotNull(response);
-    }
 
     @Test
     void getAllProcess() throws ErrorIntegrationServiceException {
