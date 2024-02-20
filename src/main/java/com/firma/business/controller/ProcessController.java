@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -37,6 +38,7 @@ public class ProcessController {
     @Parameter(name = "numberProcess", description = "Número de radicado del proceso", required = true)
     @ApiResponse(responseCode = "200", description = "Informacion inicial del proceso exeptuando los campos actuaciones, IdAbogado y idFirma", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ProcessRequest.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener la informacion del proceso")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'JEFE')")
     @GetMapping("/get/info")
     public ResponseEntity<?> getInfoProcess(@RequestParam String numberProcess){
         try {
@@ -50,6 +52,7 @@ public class ProcessController {
     @ApiResponse(responseCode = "200", description = "Proceso guardado correctamente", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
     @ApiResponse(responseCode = "400", description = "Error al guardar el proceso")
     @PostMapping("/save")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'JEFE')")
     public ResponseEntity <?> addProcess(@RequestBody ProcessBusinessRequest processRequest){
         try{
             processService.findByRadicado(processRequest.getNumeroRadicado());
@@ -72,6 +75,7 @@ public class ProcessController {
     @Parameter(name = "page", description = "Número de página default 0", required = false)
     @Parameter(name = "size", description = "Tamaño de la página default 10", required = false)
     @ApiResponse(responseCode = "200", description = "Procesos filtrados", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageableResponse.class))})
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'JEFE')")
     @GetMapping("/get/all/filter")
     public ResponseEntity<?> getProcesosByFirmaFilter(@RequestParam(required = false) String fechaInicioStr,
                                                       @RequestParam Integer firmaId,
@@ -97,6 +101,7 @@ public class ProcessController {
     @Parameter(name = "size", description = "Tamaño de la página default 10", required = false)
     @ApiResponse(responseCode = "200", description = "Entidad paginada", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageableResponse.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener los procesos")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @GetMapping("/get/all/abogado/filter")
     public ResponseEntity<?> getProcesosAbogado(@RequestParam Integer abogadoId,
                                                 @RequestParam(required = false) String fechaInicioStr,
@@ -117,6 +122,7 @@ public class ProcessController {
     @Parameter(name = "name", description = "Nombre del estado (Activo, Finalzado a favor, Finalizado en contra", required = true)
     @ApiResponse(responseCode = "200", description = "Numero de procesos", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener el numero de procesos")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'JEFE')")
     @GetMapping("/get/state/processes/jefe")
     public ResponseEntity<?> getAllByEstado(@RequestParam String name, @RequestParam Integer firmaId){
         try {
@@ -131,6 +137,7 @@ public class ProcessController {
     @Parameter(name = "userName", description = "Nombre de usuario del abogado", required = true)
     @ApiResponse(responseCode = "200", description = "Numero de procesos", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener el numero de procesos")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @GetMapping("/get/state/processes/abogado")
     public ResponseEntity<?> getAllByEstadoAbogado(@RequestParam String name, @RequestParam String userName){
         try{
@@ -144,6 +151,7 @@ public class ProcessController {
     @Parameter(name = "processId", description = "Id del proceso", required = true)
     @ApiResponse(responseCode = "200", description = "Proceso", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ProcessJefeResponse.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener el proceso")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'JEFE')")
     @GetMapping("/get/jefe")
     public ResponseEntity<?> getJefeProcess(@RequestParam Integer processId){
         try {
@@ -157,6 +165,7 @@ public class ProcessController {
     @Parameter(name = "processId", description = "Id del proceso", required = true)
     @ApiResponse(responseCode = "200", description = "Proceso eliminado", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
     @ApiResponse(responseCode = "400", description = "Error al eliminar el proceso")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'JEFE')")
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteProcess(@RequestParam Integer processId){
         try {
@@ -169,6 +178,7 @@ public class ProcessController {
     @Operation(summary = "Actualiza un proceso", description = "Actualiza un proceso asignando un abogado o cambio de estado del proceso")
     @ApiResponse(responseCode = "200", description = "Proceso actualizado", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
     @ApiResponse(responseCode = "400", description = "Error al actualizar el proceso")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'JEFE')")
     @PutMapping("/update")
     public ResponseEntity<?> updateProcess(@RequestBody ProcessUpdateRequest process){
         try {
@@ -182,6 +192,7 @@ public class ProcessController {
     @Parameter(name = "processId", description = "Id del proceso", required = true)
     @ApiResponse(responseCode = "200", description = "Proceso", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ProcessAbogadoResponse.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener el proceso")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @GetMapping("/get/abogado")
     public ResponseEntity<?> getProcessAbogado(@RequestParam Integer processId){
         try {
@@ -194,6 +205,7 @@ public class ProcessController {
     @Operation(summary = "Obtiene todos los estados de los procesos", description = "Obtiene todos los estados de los procesos")
     @ApiResponse(responseCode = "200", description = "Lista de estado de proceeso", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = EstadoProceso.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener los estados de los procesos")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'JEFE')")
     @GetMapping("/estadoProceso/get/all")
     public ResponseEntity<?> getAllEstadoProcesos(){
         try {
@@ -220,6 +232,7 @@ public class ProcessController {
     @Parameter(name = "enlace", description = "Enlace de la audiencia", required = true)
     @ApiResponse(responseCode = "200", description = "Audiencia actualizada", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
     @ApiResponse(responseCode = "400", description = "Error al actualizar la audiencia")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @PutMapping("/audiencia/update")
     public ResponseEntity<?> updateAudiencia(@RequestParam Integer id, @RequestParam String enlace){
         try {
@@ -231,6 +244,8 @@ public class ProcessController {
 
     @Operation(summary = "Agregar audiencia", description = "Agrega una audiencia a un proceso")
     @ApiResponse(responseCode = "200", description = "Audiencia agregada", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))})
+    @ApiResponse(responseCode = "400", description = "Error al agregar la audiencia")
+    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @PostMapping("/audiencia/add")
     public ResponseEntity<?> addAudiencia(@RequestBody AudienciaRequest audiencia){
         try {
