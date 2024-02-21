@@ -41,7 +41,7 @@ public class StorageDataService implements IStorageDataService {
 
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    apiUrl + "/storage/upload/photo?usuarioId=" + usuarioId,
+                    apiUrl + "/storage/upload/photo?userId=" + usuarioId,
                     HttpMethod.POST,
                     requestEntity,
                     String.class
