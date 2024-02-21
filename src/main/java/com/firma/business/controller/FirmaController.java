@@ -26,6 +26,7 @@ public class FirmaController {
     @GetMapping("/get/user")
     public ResponseEntity<?> getFirmaByUser(@RequestParam String userName) {
         try{
+            System.out.println("hola");
             return ResponseEntity.ok(firmaService.getFirmaByUser(userName));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -43,5 +44,10 @@ public class FirmaController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/hi")
+    public String hi() {
+        return "hi";
     }
 }
