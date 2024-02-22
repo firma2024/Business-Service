@@ -24,6 +24,7 @@ class UserDataServiceTest {
     @Mock
     RestTemplate restTemplate;
 
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -35,6 +36,7 @@ class UserDataServiceTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<UserDataRequest> requestEntity = new HttpEntity<>(userRequest, headers);
+
         ResponseEntity<String> responseEntity = ResponseEntity.ok("User saved successfully");
 
         when(restTemplate.exchange(any(String.class), eq(HttpMethod.POST), eq(requestEntity), eq(String.class)))

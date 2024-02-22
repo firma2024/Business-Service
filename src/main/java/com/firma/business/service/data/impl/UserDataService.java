@@ -175,11 +175,7 @@ public class UserDataService implements IUserDataService {
     @Override
     public Rol getRoleByUser(String userName) throws ErrorDataServiceException {
         try{
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/rol/get/user")
-                    .queryParam("username", userName);
-
-            ResponseEntity<Rol> responseEntity = restTemplate.getForEntity(builder.toUriString(), Rol.class);
-
+            ResponseEntity<Rol> responseEntity = restTemplate.getForEntity(apiUrl + "/user/rol/get/user?username=" +userName, Rol.class);
             return responseEntity.getBody();
         }
         catch (Exception e) {

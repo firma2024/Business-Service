@@ -48,6 +48,7 @@ public class FirmaController {
 
     @GetMapping("/hi")
     public String hi() {
+        System.out.println("hi");
         return "hi";
     }
 }
