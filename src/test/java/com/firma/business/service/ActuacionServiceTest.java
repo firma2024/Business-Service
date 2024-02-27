@@ -65,9 +65,9 @@ class ActuacionServiceTest {
         when(processDataService.findByRadicado("123123123123")).thenReturn(process);
         when(actuacionDataService.saveActuaciones(any())).thenReturn("Actuaciones almacenadas");
 
-        String response = actuacionService.saveActuaciones(actuacionRequestList);
+        MessageResponse response = actuacionService.saveActuaciones(actuacionRequestList);
 
-        assertEquals("Actuaciones almacenadas", response);
+        assertEquals("Actuaciones almacenadas", response.getMessage());
     }
 
     @Test
@@ -269,9 +269,9 @@ class ActuacionServiceTest {
         when(actuacionDataService.findEstadoActuacionByName("Visto")).thenReturn(es);
         when(actuacionDataService.updateActuacion(ac)).thenReturn("Actuacion actualizada");
 
-        String response = actuacionService.updateActuacion(actuacionId);
+        MessageResponse response = actuacionService.updateActuacion(actuacionId);
         assertDoesNotThrow(() -> actuacionService.updateActuacion(actuacionId));
-        assertEquals("Actuacion actualizada", response);
+        assertEquals("Actuacion actualizada", response.getMessage());
 
     }
 }

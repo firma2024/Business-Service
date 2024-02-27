@@ -1,6 +1,5 @@
 package com.firma.business.service;
 
-import com.firma.business.controller.ActuacionController;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.model.*;
@@ -41,7 +40,7 @@ public class ActuacionService {
 
 
 
-    public String saveActuaciones(List<ActuacionRequest> actuaciones) throws ErrorDataServiceException {
+    public MessageResponse saveActuaciones(List<ActuacionRequest> actuaciones) throws ErrorDataServiceException {
         EstadoActuacion estadoActuacion = actuacionDataService.findEstadoActuacionByName("No Visto");
         List<Actuacion> actuacionesList = new ArrayList<>();
         for (ActuacionRequest ac : actuaciones){
@@ -64,7 +63,7 @@ public class ActuacionService {
             }
             actuacionesList.add(actuacion);
         }
-        return actuacionDataService.saveActuaciones(actuacionesList);
+        return new MessageResponse(actuacionDataService.saveActuaciones(actuacionesList));
     }
 
     public Set<Actuacion> findActuacionesNotSend() throws ErrorDataServiceException {
@@ -212,12 +211,12 @@ public class ActuacionService {
         return actuacionDataService.findByNoVisto(firmaId);
     }
 
-    public String updateActuacion(Integer actionId) throws ErrorDataServiceException {
+    public MessageResponse updateActuacion(Integer actionId) throws ErrorDataServiceException {
         Actuacion actuacion = actuacionDataService.getActuacion(actionId);
         EstadoActuacion es = actuacionDataService.findEstadoActuacionByName("Visto");
         actuacion.setEstadoactuacion(es);
 
-        return actuacionDataService.updateActuacion(actuacion);
+        return new MessageResponse(actuacionDataService.updateActuacion(actuacion));
     }
 
     @Scheduled(cron = "0 0 7 * * ?")
@@ -243,7 +242,7 @@ public class ActuacionService {
                 return;
             }
 
-            loggerService.info(this.saveActuaciones(actuaciones));
+            loggerService.info(this.saveActuaciones(actuaciones).getMessage());
 
         } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
             loggerService.error(e.getMessage());

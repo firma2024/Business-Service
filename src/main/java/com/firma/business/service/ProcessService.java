@@ -37,7 +37,7 @@ public class ProcessService {
     private Logger logger = LoggerFactory.getLogger(ProcessService.class);
 
 
-    public String saveProcess(ProcessRequest processRequest) throws ErrorDataServiceException {
+    public MessageResponse saveProcess(ProcessRequest processRequest) throws ErrorDataServiceException {
 
         Empleado empleado = firmaService.findEmpleadoByUsuario(processRequest.getIdAbogado());
 
@@ -107,7 +107,7 @@ public class ProcessService {
                 .actions(actuaciones)
                 .build();
 
-        return processDataService.saveProcess(processDataRequest);
+        return new MessageResponse(processDataService.saveProcess(processDataRequest));
 
     }
 
@@ -124,8 +124,8 @@ public class ProcessService {
                 .build();
     }
 
-    public String deleteProcess(Integer processId) throws ErrorDataServiceException {
-        return processDataService.deleteProcess(processId);
+    public MessageResponse deleteProcess(Integer processId) throws ErrorDataServiceException {
+        return new MessageResponse(processDataService.deleteProcess(processId));
     }
 
     public PageableResponse<ProcessJefeResponse> getProcessesByFilter(String fechaInicioStr, Integer firmaId, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
@@ -209,7 +209,7 @@ public class ProcessService {
                 .build();
     }
 
-    public String updateProcess(ProcessUpdateRequest processRequest) throws ErrorDataServiceException {
+    public MessageResponse updateProcess(ProcessUpdateRequest processRequest) throws ErrorDataServiceException {
         Proceso process = processDataService.getProcessById(processRequest.getId());
 
         if (processRequest.getIdAbogado() != null) {
@@ -222,7 +222,7 @@ public class ProcessService {
             process.setEstadoproceso(estadoProceso);
         }
 
-        return processDataService.updateProcess(process);
+        return new MessageResponse(processDataService.updateProcess(process));
     }
 
 
@@ -241,7 +241,7 @@ public class ProcessService {
         );
     }
 
-    public String addAudiencia(AudienciaRequest audiencia) throws ErrorDataServiceException {
+    public MessageResponse addAudiencia(AudienciaRequest audiencia) throws ErrorDataServiceException {
         Proceso process = processDataService.getProcessById(audiencia.getProcesoid());
         Audiencia newAudiencia = Audiencia.builder()
                 .enlace(audiencia.getEnlace())
@@ -249,7 +249,7 @@ public class ProcessService {
                 .proceso(process)
                 .build();
 
-        return processDataService.addAudiencia(newAudiencia);
+        return new MessageResponse(processDataService.addAudiencia(newAudiencia));
     }
 
 
@@ -257,8 +257,8 @@ public class ProcessService {
         return processDataService.getEstadoProcesos();
     }
 
-    public String updateAudiencia(Integer id, String enlace) throws ErrorDataServiceException {
-        return processDataService.updateAudiencia(id, enlace);
+    public MessageResponse updateAudiencia(Integer id, String enlace) throws ErrorDataServiceException {
+        return new MessageResponse(processDataService.updateAudiencia(id, enlace));
     }
 
     public Set<Despacho> findAllDespachosWithOutLink(Integer year) throws ErrorDataServiceException {
@@ -269,7 +269,7 @@ public class ProcessService {
         return processDataService.getTipoProcesos();
     }
 
-    public String saveEnlace(EnlaceRequest enlaceRequest) throws ErrorDataServiceException {
+    public MessageResponse saveEnlace(EnlaceRequest enlaceRequest) throws ErrorDataServiceException {
         Despacho despacho = processDataService.findDespachoById(enlaceRequest.getDespachoid());
         Enlace enlace = Enlace.builder()
                 .url(enlaceRequest.getUrl())
@@ -277,7 +277,7 @@ public class ProcessService {
                 .despacho(despacho)
                 .build();
 
-        return processDataService.saveEnlace(enlace);
+        return new MessageResponse(processDataService.saveEnlace(enlace));
     }
 
     public ProcessRequest getProcess(String numberProcess) throws ErrorIntegrationServiceException {
@@ -312,7 +312,7 @@ public class ProcessService {
                             .despachoid(despachoFecha.getDespachoId())
                             .fechaconsulta(LocalDate.now().withYear(despachoFecha.getYear()))
                             .build();
-                    logger.info(this.saveEnlace(en));
+                    logger.info(this.saveEnlace(en).getMessage());
                 }
             }
         } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {

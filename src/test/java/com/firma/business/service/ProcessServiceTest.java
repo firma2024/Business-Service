@@ -79,8 +79,8 @@ class ProcessServiceTest {
         when(actuacionService.findEstadoActuacionByName("Visto")).thenReturn(estadoActuacion);
         when(processDataService.saveProcess(any())).thenReturn("Proceso guardado");
 
-        String response = processService.saveProcess(processRequest);
-        assertEquals("Proceso guardado", response);
+        MessageResponse response = processService.saveProcess(processRequest);
+        assertEquals("Proceso guardado", response.getMessage());
         assertDoesNotThrow(() -> processService.saveProcess(processRequest));
 
     }
@@ -120,8 +120,8 @@ class ProcessServiceTest {
         Integer processid = 1;
         when(processDataService.deleteProcess(processid)).thenReturn("Proceso eliminado");
 
-        String response = processService.deleteProcess(processid);
-        assertEquals("Proceso eliminado", response);
+        MessageResponse response = processService.deleteProcess(processid);
+        assertEquals("Proceso eliminado", response.getMessage());
     }
 
     @Test
@@ -242,8 +242,8 @@ class ProcessServiceTest {
         when(processDataService.findEstadoProcesoByNombre(processUpdateRequest.getEstadoProceso())).thenReturn(estadoProceso);
         when(processDataService.updateProcess(process)).thenReturn("Proceso actualizado");
 
-        String response = processService.updateProcess(processUpdateRequest);
-        assertEquals("Proceso actualizado", response);
+        MessageResponse response = processService.updateProcess(processUpdateRequest);
+        assertEquals("Proceso actualizado", response.getMessage());
         verify(processDataService, times(1)).updateProcess(process);
     }
 
@@ -276,8 +276,8 @@ class ProcessServiceTest {
         when(processDataService.getProcessById(audienciaRequest.getProcesoid())).thenReturn(process);
         when(processDataService.addAudiencia(any())).thenReturn("Audiencia guardada");
 
-        String response = processService.addAudiencia(audienciaRequest);
-        assertEquals("Audiencia guardada", response);
+        MessageResponse response = processService.addAudiencia(audienciaRequest);
+        assertEquals("Audiencia guardada", response.getMessage());
     }
 
     @Test
@@ -292,8 +292,8 @@ class ProcessServiceTest {
     @Test
     void updateAudiencia() throws ErrorDataServiceException {
         when(processDataService.updateAudiencia(any(), any())).thenReturn("Audiencia actualizada");
-        String response = processService.updateAudiencia(1, "test");
-        assertEquals("Audiencia actualizada", response);
+        MessageResponse response = processService.updateAudiencia(1, "test");
+        assertEquals("Audiencia actualizada", response.getMessage());
     }
 
     @Test
@@ -325,8 +325,8 @@ class ProcessServiceTest {
         when(processDataService.findDespachoById(enlaceRequest.getDespachoid())).thenReturn(despacho);
         when(processDataService.saveEnlace(any())).thenReturn("Enlace guardado");
 
-        String response = processService.saveEnlace(enlaceRequest);
-        assertEquals("Enlace guardado", response);
+        MessageResponse response = processService.saveEnlace(enlaceRequest);
+        assertEquals("Enlace guardado", response.getMessage());
     }
 
     @Test

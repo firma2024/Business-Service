@@ -4,6 +4,7 @@ import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.model.*;
 import com.firma.business.payload.request.UserAbogadoUpdateRequest;
 import com.firma.business.payload.request.UserJefeUpdateRequest;
+import com.firma.business.payload.response.MessageResponse;
 import com.firma.business.payload.response.PageableResponse;
 import com.firma.business.payload.request.UserRequest;
 import com.firma.business.payload.response.PageableUserResponse;
@@ -23,7 +24,7 @@ public class UserService {
     @Autowired
     private FirmaService firmaService;
 
-    public String saveAbogado(UserRequest userRequest) throws ErrorDataServiceException {
+    public MessageResponse saveAbogado(UserRequest userRequest) throws ErrorDataServiceException {
         TipoDocumento typeDocument = userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento());
         Rol role = userDataService.findRolByName("ABOGADO");
         Set<TipoAbogado> specialties = new HashSet<>();
@@ -56,10 +57,10 @@ public class UserService {
                 .employee(newEmployee)
                 .build();
 
-        return userDataService.saveUser(userDataRequest);
+        return new MessageResponse(userDataService.saveUser(userDataRequest));
     }
 
-    public String saveJefe(UserRequest userRequest) throws ErrorDataServiceException {
+    public MessageResponse saveJefe(UserRequest userRequest) throws ErrorDataServiceException {
         TipoDocumento typeDocument = userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento());
         Rol role = userDataService.findRolByName("JEFE");
 
@@ -85,10 +86,10 @@ public class UserService {
                 .employee(newEmployee)
                 .build();
 
-        return userDataService.saveUser(userDataRequest);
+        return new MessageResponse( userDataService.saveUser(userDataRequest));
     }
 
-    public String saveAdmin(UserRequest userRequest) throws ErrorDataServiceException {
+    public MessageResponse saveAdmin(UserRequest userRequest) throws ErrorDataServiceException {
         TipoDocumento typeDocument = userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento());
         Rol role = userDataService.findRolByName("ADMIN");
 
@@ -107,10 +108,10 @@ public class UserService {
                 .user(newUser)
                 .build();
 
-        return userDataService.saveUser(userDataRequest);
+        return new MessageResponse(userDataService.saveUser(userDataRequest));
     }
 
-    public String updateInfoAbogado(UserAbogadoUpdateRequest userRequest) throws ErrorDataServiceException {
+    public MessageResponse updateInfoAbogado(UserAbogadoUpdateRequest userRequest) throws ErrorDataServiceException {
         Usuario user = userDataService.findUserById(userRequest.getId());
         Set<TipoAbogado> specialties = new HashSet<>();
 
@@ -124,17 +125,17 @@ public class UserService {
         user.setTelefono(userRequest.getTelefono());
         user.setIdentificacion(userRequest.getIdentificacion());
         user.setEspecialidadesAbogado(specialties);
-        return userDataService.updateUser(user);
+        return new MessageResponse(userDataService.updateUser(user));
     }
 
-    public String updateInfoJefe(UserJefeUpdateRequest userRequest) throws ErrorDataServiceException {
+    public MessageResponse updateInfoJefe(UserJefeUpdateRequest userRequest) throws ErrorDataServiceException {
         Usuario user = userDataService.findUserById(userRequest.getId());
 
         user.setNombres(userRequest.getNombres());
         user.setCorreo(userRequest.getCorreo());
         user.setTelefono(userRequest.getTelefono());
         user.setIdentificacion(userRequest.getIdentificacion());
-        return userDataService.updateUser(user);
+        return new MessageResponse(userDataService.updateUser(user));
     }
 
     public UserResponse getInfoJefe(String userName) throws ErrorDataServiceException {
@@ -167,7 +168,7 @@ public class UserService {
                 .build();
     }
 
-    public String deleteUser(Integer id) throws ErrorDataServiceException {
+    public MessageResponse deleteUser(Integer id) throws ErrorDataServiceException {
         Usuario user = userDataService.findUserById(id);
         if (user.getRol().getNombre().equals("ABOGADO")){
             Integer number = userDataService.getNumberAssignedProcesses(user.getId());
@@ -179,7 +180,7 @@ public class UserService {
             }
         }
 
-        return userDataService.deleteUser(id);
+        return new MessageResponse(userDataService.deleteUser(id));
     }
 
     public UserResponse getUserName(String userName) throws ErrorDataServiceException {

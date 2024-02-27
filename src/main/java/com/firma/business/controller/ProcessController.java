@@ -101,7 +101,6 @@ public class ProcessController {
     @Parameter(name = "size", description = "Tamaño de la página default 10", required = false)
     @ApiResponse(responseCode = "200", description = "Entidad paginada", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageableResponse.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener los procesos")
-    @PreAuthorize("hasAnyAuthority('ADMIN' ,'ABOGADO')")
     @GetMapping("/get/all/abogado/filter")
     public ResponseEntity<?> getProcesosAbogado(@RequestParam Integer abogadoId,
                                                 @RequestParam(required = false) String fechaInicioStr,

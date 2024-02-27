@@ -2,6 +2,7 @@ package com.firma.business.service;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.response.ActuacionDocumentResponse;
+import com.firma.business.payload.response.MessageResponse;
 import com.firma.business.service.data.intf.IStorageDataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,9 +36,9 @@ class StorageServiceTest {
         MultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "test".getBytes());
         Integer usuarioId = 1;
         when(storageDataService.uploadPhoto(file, usuarioId)).thenReturn("foto cargada");
-        String response = storageService.uploadPhoto(file, usuarioId);
+        MessageResponse response = storageService.uploadPhoto(file, usuarioId);
 
-        assertEquals ("foto cargada", response);
+        assertEquals ("foto cargada", response.getMessage());
     }
 
     @Test
@@ -56,9 +57,9 @@ class StorageServiceTest {
         Integer actuacionId = 10;
 
         when(storageDataService.uploadDocument(file, actuacionId)).thenReturn("Documento cargado");
-        String response = storageService.uploadDocument(file, actuacionId);
+        MessageResponse response = storageService.uploadDocument(file, actuacionId);
 
-        assertEquals("Documento cargado", response);
+        assertEquals("Documento cargado", response.getMessage());
     }
 
     @Test

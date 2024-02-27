@@ -3,6 +3,7 @@ package com.firma.business.service;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.response.ActuacionDocumentResponse;
 import com.firma.business.payload.response.FileResponse;
+import com.firma.business.payload.response.MessageResponse;
 import com.firma.business.service.data.intf.IStorageDataService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,16 @@ public class StorageService {
     @Autowired
     private IStorageDataService storageDataService;
 
-    public String uploadPhoto(MultipartFile file, Integer usuarioId) throws IOException, ErrorDataServiceException {
-        return storageDataService.uploadPhoto(file, usuarioId);
+    public MessageResponse uploadPhoto(MultipartFile file, Integer usuarioId) throws IOException, ErrorDataServiceException {
+        return new MessageResponse(storageDataService.uploadPhoto(file, usuarioId));
     }
 
     public byte [] downloadPhoto(Integer usuarioId) throws ErrorDataServiceException {
         return storageDataService.downloadPhoto(usuarioId);
     }
 
-    public String uploadDocument(MultipartFile file, Integer actuacionId) throws ErrorDataServiceException, IOException {
-        return storageDataService.uploadDocument(file, actuacionId);
+    public MessageResponse uploadDocument(MultipartFile file, Integer actuacionId) throws ErrorDataServiceException, IOException {
+        return new MessageResponse(storageDataService.uploadDocument(file, actuacionId));
     }
 
     public byte [] downloadDocument(Integer actuacionId) throws ErrorDataServiceException {

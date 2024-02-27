@@ -5,6 +5,7 @@ import com.firma.business.model.*;
 import com.firma.business.payload.request.UserAbogadoUpdateRequest;
 import com.firma.business.payload.request.UserJefeUpdateRequest;
 import com.firma.business.payload.request.UserRequest;
+import com.firma.business.payload.response.MessageResponse;
 import com.firma.business.payload.response.PageableResponse;
 import com.firma.business.payload.response.PageableUserResponse;
 import com.firma.business.payload.response.UserResponse;
@@ -66,9 +67,9 @@ class UserServiceTest {
         when(firmaService.findFirmaById(1)).thenReturn(firma);
         when(userDataService.saveUser(any())).thenReturn("User saved successfully");
 
-        String result = userService.saveAbogado(userRequest);
+        MessageResponse result = userService.saveAbogado(userRequest);
 
-        assertEquals("User saved successfully", result);
+        assertEquals("User saved successfully", result.getMessage());
     }
 
     @Test
@@ -94,9 +95,9 @@ class UserServiceTest {
         when(firmaService.findFirmaById(1)).thenReturn(firma);
         when(userDataService.saveUser(any())).thenReturn("User saved successfully");
 
-        String result = userService.saveJefe(userRequest);
+        MessageResponse result = userService.saveJefe(userRequest);
 
-        assertEquals("User saved successfully", result);
+        assertEquals("User saved successfully", result.getMessage());
     }
 
     @Test
@@ -118,9 +119,9 @@ class UserServiceTest {
         when(userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento())).thenReturn(tipoDocumento);
         when(userDataService.findRolByName("ADMIN")).thenReturn(rol);
         when(userDataService.saveUser(any())).thenReturn("User saved successfully");
-        String result = userService.saveAdmin(userRequest);
+        MessageResponse result = userService.saveAdmin(userRequest);
 
-        assertEquals("User saved successfully", result);
+        assertEquals("User saved successfully", result.getMessage());
 
     }
 
@@ -140,9 +141,9 @@ class UserServiceTest {
         when(userDataService.findTipoAbogadoByName("Familia")).thenReturn(tipoAbogado);
         when(userDataService.updateUser(user)).thenReturn("User updated successfully");
 
-        String response = userService.updateInfoAbogado(userRequest);
+        MessageResponse response = userService.updateInfoAbogado(userRequest);
 
-        assertEquals("User updated successfully", response);
+        assertEquals("User updated successfully", response.getMessage());
 
     }
 
@@ -159,9 +160,9 @@ class UserServiceTest {
         when(userDataService.findUserById(userRequest.getId())).thenReturn(user);
         when(userDataService.updateUser(user)).thenReturn("User updated successfully");
 
-        String response = userService.updateInfoJefe(userRequest);
+        MessageResponse response = userService.updateInfoJefe(userRequest);
 
-        assertEquals("User updated successfully", response);
+        assertEquals("User updated successfully", response.getMessage());
     }
 
     @Test
@@ -198,9 +199,9 @@ class UserServiceTest {
         when(userDataService.findUserById(id)).thenReturn(user);
         when(userDataService.deleteUser(id)).thenReturn("User deleted");
 
-        String response = userService.deleteUser(id);
+        MessageResponse response = userService.deleteUser(id);
 
-        assertEquals("User deleted", response);
+        assertEquals("User deleted", response.getMessage());
     }
 
     @Test
@@ -213,9 +214,9 @@ class UserServiceTest {
         when(userDataService.findUserById(id)).thenReturn(user);
         when(userDataService.deleteUser(id)).thenReturn("User deleted");
 
-        String response = userService.deleteUser(id);
+        MessageResponse response = userService.deleteUser(id);
 
-        assertEquals("User deleted", response);
+        assertEquals("User deleted", response.getMessage());
     }
 
     @Test
@@ -229,9 +230,9 @@ class UserServiceTest {
         when(userDataService.getNumberAssignedProcesses(id)).thenReturn(null);
         when(userDataService.deleteUser(id)).thenReturn("User deleted");
 
-        String response = userService.deleteUser(id);
+        MessageResponse response = userService.deleteUser(id);
 
-        assertEquals("User deleted", response);
+        assertEquals("User deleted", response.getMessage());
     }
 
     @Test
