@@ -1,4 +1,4 @@
-package com.firma.business.service.data.intf;
+package com.firma.business.intfData;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.model.Empleado;

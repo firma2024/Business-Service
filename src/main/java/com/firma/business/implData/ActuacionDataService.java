@@ -1,14 +1,11 @@
-package com.firma.business.service.data.impl;
+package com.firma.business.implData;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firma.business.exception.ErrorDataServiceException;
+import com.firma.business.intfData.IActuacionDataService;
 import com.firma.business.model.EstadoActuacion;
 import com.firma.business.model.Actuacion;
 import com.firma.business.model.RegistroCorreo;
-import com.firma.business.payload.request.ActuacionRequest;
 import com.firma.business.payload.response.PageableActuacionResponse;
-import com.firma.business.payload.response.PageableResponse;
-import com.firma.business.service.data.intf.IActuacionDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

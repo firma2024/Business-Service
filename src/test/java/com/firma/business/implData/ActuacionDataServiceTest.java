@@ -1,6 +1,7 @@
-package com.firma.business.service.data.impl;
+package com.firma.business.implData;
 
 import com.firma.business.exception.ErrorDataServiceException;
+import com.firma.business.implData.ActuacionDataService;
 import com.firma.business.model.Actuacion;
 import com.firma.business.model.EstadoActuacion;
 import com.firma.business.model.RegistroCorreo;

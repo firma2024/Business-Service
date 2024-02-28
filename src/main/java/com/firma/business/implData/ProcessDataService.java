@@ -1,21 +1,17 @@
-package com.firma.business.service.data.impl;
+package com.firma.business.implData;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.firma.business.controller.ProcessController;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.model.*;
 import com.firma.business.model.Audiencia;
 import com.firma.business.payload.request.ProcessDataRequest;
 import com.firma.business.payload.response.PageableProcessResponse;
-import com.firma.business.payload.response.PageableResponse;
 import com.firma.business.payload.response.ProcessAbogadoResponse;
-import com.firma.business.service.data.intf.IProcessDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.firma.business.intfData.IProcessDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,8 +33,8 @@ public class ProcessDataService implements IProcessDataService {
             ResponseEntity<Proceso[]> responseEntity = restTemplate.getForEntity(apiUrl + "/process/get/all", Proceso[].class);
             return Set.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -59,8 +55,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException("Error al guardar el proceso");
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -91,8 +87,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -123,8 +119,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -138,8 +134,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -152,8 +148,8 @@ public class ProcessDataService implements IProcessDataService {
             ResponseEntity<Proceso> responseEntity = restTemplate.getForEntity(builder.toUriString(), Proceso.class);
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -167,8 +163,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -190,8 +186,8 @@ public class ProcessDataService implements IProcessDataService {
             );
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -205,8 +201,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -220,8 +216,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -232,8 +228,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -250,8 +246,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -272,8 +268,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -287,8 +283,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return Set.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -299,8 +295,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -321,8 +317,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -336,8 +332,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -351,8 +347,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -366,8 +362,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -381,8 +377,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return Set.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -396,8 +392,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -411,8 +407,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -427,8 +423,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -439,8 +435,8 @@ public class ProcessDataService implements IProcessDataService {
 
             return Set.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 }

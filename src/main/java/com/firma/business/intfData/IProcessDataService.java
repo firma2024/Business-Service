@@ -1,11 +1,10 @@
-package com.firma.business.service.data.intf;
+package com.firma.business.intfData;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.model.*;
 import com.firma.business.model.Audiencia;
 import com.firma.business.payload.request.ProcessDataRequest;
 import com.firma.business.payload.response.PageableProcessResponse;
-import com.firma.business.payload.response.PageableResponse;
 import com.firma.business.payload.response.ProcessAbogadoResponse;
 
 import java.util.List;

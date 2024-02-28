@@ -1,5 +1,8 @@
 package com.firma.business.payload.request;
 
+import com.firma.business.model.Rol;
+import com.firma.business.model.TipoAbogado;
+import com.firma.business.model.TipoDocumento;
 import lombok.*;
 
 import java.math.BigInteger;
@@ -17,7 +20,7 @@ public class UserRequest {
     private BigInteger telefono;
     private BigInteger identificacion;
     private String username;
-    private String tipoDocumento;
-    private Set<String> especialidades;
+    private TipoDocumento tipoDocumento;
+    private Set<TipoAbogado> especialidades;
     private Integer firmaId;
 }

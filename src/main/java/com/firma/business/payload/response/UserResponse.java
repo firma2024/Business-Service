@@ -1,10 +1,12 @@
 package com.firma.business.payload.response;
 
 
+import com.firma.business.model.TipoAbogado;
 import lombok.*;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +20,6 @@ public class UserResponse {
     private String correo;
     private BigInteger telefono;
     private BigInteger identificacion;
-    private List<String> especialidades;
+    private Set<TipoAbogado> especialidades;
     private Integer numeroProcesosAsignados;
 }

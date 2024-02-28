@@ -1,6 +1,7 @@
-package com.firma.business.service.data.impl;
+package com.firma.business.implData;
 
 import com.firma.business.exception.ErrorDataServiceException;
+import com.firma.business.implData.ProcessDataService;
 import com.firma.business.model.*;
 import com.firma.business.payload.request.ProcessDataRequest;
 import com.firma.business.payload.response.PageableProcessResponse;

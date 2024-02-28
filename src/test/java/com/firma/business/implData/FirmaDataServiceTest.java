@@ -1,8 +1,9 @@
-package com.firma.business.service.data.impl;
+package com.firma.business.implData;
 
 
 
 import com.firma.business.exception.ErrorDataServiceException;
+import com.firma.business.implData.FirmaDataService;
 import com.firma.business.model.Empleado;
 import com.firma.business.model.Firma;
 import com.firma.business.payload.request.FirmaRequest;

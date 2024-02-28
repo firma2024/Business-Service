@@ -1,4 +1,4 @@
-package com.firma.business.service.integration.impl;
+package com.firma.business.implIntegration;
 
 import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.payload.request.ActuacionEmailRequest;

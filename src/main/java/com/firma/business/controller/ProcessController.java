@@ -44,7 +44,13 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.getProcess(numberProcess), HttpStatus.OK);
         } catch (ErrorIntegrationServiceException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            if (e.getStatusCode() == 404) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            }
+            if (e.getStatusCode() == 503){
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+            }
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -59,11 +65,23 @@ public class ProcessController {
             ProcessRequest process = processService.getAllProcess(processRequest.getNumeroRadicado());
             process.setIdAbogado(processRequest.getIdAbogado());
 
-            return ResponseEntity.ok(processService.saveProcess(process));
+            return new ResponseEntity<>(processService.saveProcess(process), HttpStatus.CREATED);
 
-        }catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (ErrorIntegrationServiceException e) {
+            if (e.getStatusCode() == 404) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            }
+            if (e.getStatusCode() == 503){
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+            }
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (ErrorDataServiceException e) {
+            if (e.getStatusCode() == 409){
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+            }
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+
     }
 
     @Operation(summary = "Filtrar procesos por firma para el jefe", description = "Filtra los procesos por firma para el jefe, en caso de no adjuntar nungun filtro lista todos los procesos")
@@ -170,7 +188,10 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.deleteProcess(processId), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            if (e.getStatusCode() == 404){
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -237,6 +258,9 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.updateAudiencia(id, enlace), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
+            if (e.getStatusCode() == 404){
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            }
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

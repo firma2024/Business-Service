@@ -10,8 +10,9 @@ import com.firma.business.payload.request.UserRequest;
 import com.firma.business.payload.response.PageableUserResponse;
 import com.firma.business.payload.response.UserResponse;
 import com.firma.business.payload.request.UserDataRequest;
-import com.firma.business.service.data.intf.IUserDataService;
+import com.firma.business.intfData.IUserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,26 +24,26 @@ public class UserService {
     private IUserDataService userDataService;
     @Autowired
     private FirmaService firmaService;
+    @Value("${api.rol.abogado}")
+    private String rolAbogado;
+    @Value("${api.rol.jefe}")
+    private String rolJefe;
+    @Value("${api.rol.admin}")
+    private String rolAdmin;
+
 
     public MessageResponse saveAbogado(UserRequest userRequest) throws ErrorDataServiceException {
-        TipoDocumento typeDocument = userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento());
-        Rol role = userDataService.findRolByName("ABOGADO");
         Set<TipoAbogado> specialties = new HashSet<>();
-
-        for (String specialty : userRequest.getEspecialidades()) {
-            TipoAbogado typeLawyer = userDataService.findTipoAbogadoByName(specialty);
-            specialties.add(typeLawyer);
-        }
-
+        Rol rol = userDataService.findRolByName(rolAbogado);
         Usuario newUser = Usuario.builder()
                 .nombres(userRequest.getNombres())
                 .correo(userRequest.getCorreo())
                 .username(userRequest.getUsername())
                 .telefono(userRequest.getTelefono())
                 .identificacion(userRequest.getIdentificacion())
-                .rol(role)
-                .tipodocumento(typeDocument)
-                .especialidadesAbogado(specialties)
+                .rol(rol)
+                .tipodocumento(userRequest.getTipoDocumento())
+                .especialidadesAbogado(userRequest.getEspecialidades())
                 .eliminado('N')
                 .build();
 
@@ -61,17 +62,15 @@ public class UserService {
     }
 
     public MessageResponse saveJefe(UserRequest userRequest) throws ErrorDataServiceException {
-        TipoDocumento typeDocument = userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento());
-        Rol role = userDataService.findRolByName("JEFE");
-
+        Rol rol = userDataService.findRolByName(rolAbogado);
         Usuario newUser = Usuario.builder()
                 .nombres(userRequest.getNombres())
                 .correo(userRequest.getCorreo())
                 .username(userRequest.getUsername())
                 .telefono(userRequest.getTelefono())
                 .identificacion(userRequest.getIdentificacion())
-                .rol(role)
-                .tipodocumento(typeDocument)
+                .rol(rol)
+                .tipodocumento(userRequest.getTipoDocumento())
                 .eliminado('N')
                 .build();
 
@@ -90,17 +89,15 @@ public class UserService {
     }
 
     public MessageResponse saveAdmin(UserRequest userRequest) throws ErrorDataServiceException {
-        TipoDocumento typeDocument = userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento());
-        Rol role = userDataService.findRolByName("ADMIN");
-
+        Rol rol = userDataService.findRolByName(rolAdmin);
         Usuario newUser = Usuario.builder()
                 .nombres(userRequest.getNombres())
                 .correo(userRequest.getCorreo())
                 .username(userRequest.getUsername())
                 .telefono(userRequest.getTelefono())
                 .identificacion(userRequest.getIdentificacion())
-                .rol(role)
-                .tipodocumento(typeDocument)
+                .rol(rol)
+                .tipodocumento(userRequest.getTipoDocumento())
                 .eliminado('N')
                 .build();
 
@@ -113,18 +110,11 @@ public class UserService {
 
     public MessageResponse updateInfoAbogado(UserAbogadoUpdateRequest userRequest) throws ErrorDataServiceException {
         Usuario user = userDataService.findUserById(userRequest.getId());
-        Set<TipoAbogado> specialties = new HashSet<>();
-
-        for (String specialty : userRequest.getEspecialidades()) {
-            TipoAbogado typeLawyer = userDataService.findTipoAbogadoByName(specialty);
-            specialties.add(typeLawyer);
-        }
-
         user.setNombres(userRequest.getNombres());
         user.setCorreo(userRequest.getCorreo());
         user.setTelefono(userRequest.getTelefono());
         user.setIdentificacion(userRequest.getIdentificacion());
-        user.setEspecialidadesAbogado(specialties);
+        user.setEspecialidadesAbogado(userRequest.getEspecialidades());
         return new MessageResponse(userDataService.updateUser(user));
     }
 
@@ -152,11 +142,6 @@ public class UserService {
 
     public UserResponse getInfoAbogado(String userName) throws ErrorDataServiceException {
         Usuario user = userDataService.findUserByUserName(userName);
-        List<String> especialidades = new ArrayList<>();
-
-        for(TipoAbogado tipoAbogado : user.getEspecialidadesAbogado()){
-            especialidades.add(tipoAbogado.getNombre());
-        }
 
         return UserResponse.builder()
                 .id(user.getId())
@@ -164,19 +149,19 @@ public class UserService {
                 .correo(user.getCorreo())
                 .telefono(user.getTelefono())
                 .identificacion(user.getIdentificacion())
-                .especialidades(especialidades)
+                .especialidades(user.getEspecialidadesAbogado())
                 .build();
     }
 
     public MessageResponse deleteUser(Integer id) throws ErrorDataServiceException {
         Usuario user = userDataService.findUserById(id);
-        if (user.getRol().getNombre().equals("ABOGADO")){
+        if (user.getRol().getNombre().equals(rolAbogado)){
             Integer number = userDataService.getNumberAssignedProcesses(user.getId());
             if (number == null) {
                 number = 0;
             }
             if (number != 0) {
-                throw new ErrorDataServiceException(String.format("El abogado tiene %d procesos asignados", number));
+                throw new ErrorDataServiceException(String.format("El abogado tiene %d procesos asignados", number), 400);
             }
         }
 
@@ -206,7 +191,7 @@ public class UserService {
     }
 
     public PageableResponse<UserResponse> getAbogadosByFirmaFilter(Integer numProcesosInicial, Integer numProcesosFinal, List<String> especialidades, Integer firmaId, Integer page, Integer size) throws ErrorDataServiceException {
-        Rol rol = userDataService.findRolByName("ABOGADO");
+        Rol rol = userDataService.findRolByName(rolAbogado);
         PageableUserResponse pageableResponse = userDataService.getAbogadosByFirmaFilter(especialidades, firmaId, rol.getId(), page, size);
         List<UserResponse> userResponse = new ArrayList<>();
         for (Usuario user : pageableResponse.getData()) {
@@ -214,18 +199,14 @@ public class UserService {
             if (number == null) {
                 number = 0;
             }
-            List<String> especialidadesAbogado = new ArrayList<>();
 
-            for(TipoAbogado tipoAbogado : user.getEspecialidadesAbogado()){
-                especialidadesAbogado.add(tipoAbogado.getNombre());
-            }
             if (number >= numProcesosInicial && number <= numProcesosFinal) {
                 userResponse.add(UserResponse.builder()
                         .id(user.getId())
                         .nombres(user.getNombres())
                         .correo(user.getCorreo())
                         .telefono(user.getTelefono())
-                        .especialidades(especialidadesAbogado)
+                        .especialidades(user.getEspecialidadesAbogado())
                         .numeroProcesosAsignados(number)
                         .build());
             }
@@ -251,7 +232,7 @@ public class UserService {
     }
 
     public Map<String, Long> getActiveAbogados(Integer firmaId) throws ErrorDataServiceException {
-        Rol rol = userDataService.findRolByName("ABOGADO");
+        Rol rol = userDataService.findRolByName(rolAbogado);
         PageableUserResponse pageableResponse = userDataService.getAbogadosByFirmaFilter( null, firmaId, rol.getId(), null, null);
         return Map.of("value", pageableResponse.getTotalItems());
     }

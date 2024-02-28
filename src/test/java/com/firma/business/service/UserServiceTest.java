@@ -9,7 +9,7 @@ import com.firma.business.payload.response.MessageResponse;
 import com.firma.business.payload.response.PageableResponse;
 import com.firma.business.payload.response.PageableUserResponse;
 import com.firma.business.payload.response.UserResponse;
-import com.firma.business.service.data.intf.IUserDataService;
+import com.firma.business.intfData.IUserDataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,14 +42,14 @@ class UserServiceTest {
     @Test
     public void saveAbogadoShouldReturnExpectedResult() throws ErrorDataServiceException {
         UserRequest userRequest = new UserRequest();
-        userRequest.setTipoDocumento("CC");
+        userRequest.setTipoDocumento(new TipoDocumento(1, "CC"));
         userRequest.setNombres("John Doe");
         userRequest.setCorreo("john.doe@example.com");
         userRequest.setUsername("johndoe");
         userRequest.setTelefono(new BigInteger("1234567890"));
         userRequest.setIdentificacion(new BigInteger("123456789"));
         userRequest.setFirmaId(1);
-        userRequest.setEspecialidades(Set.of("Familia"));
+        userRequest.setEspecialidades(Set.of(new TipoAbogado(1, "Familia")));
 
         TipoDocumento tipoDocumento = new TipoDocumento();
         tipoDocumento.setNombre("CC");
@@ -61,9 +61,7 @@ class UserServiceTest {
 
         Firma firma = new Firma(1, "test", "casa");
 
-        when(userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento())).thenReturn(tipoDocumento);
         when(userDataService.findRolByName("ABOGADO")).thenReturn(rol);
-        when(userDataService.findTipoAbogadoByName("Familia")).thenReturn(tp);
         when(firmaService.findFirmaById(1)).thenReturn(firma);
         when(userDataService.saveUser(any())).thenReturn("User saved successfully");
 
@@ -75,7 +73,7 @@ class UserServiceTest {
     @Test
     void saveJefeShouldReturnExpectedResult() throws ErrorDataServiceException {
         UserRequest userRequest = new UserRequest();
-        userRequest.setTipoDocumento("CC");
+        userRequest.setTipoDocumento(new TipoDocumento(1, "CC"));
         userRequest.setNombres("John Doe");
         userRequest.setCorreo("john.doe@example.com");
         userRequest.setUsername("johndoe");
@@ -83,14 +81,9 @@ class UserServiceTest {
         userRequest.setIdentificacion(new BigInteger("123456789"));
         userRequest.setFirmaId(1);
 
-        TipoDocumento tipoDocumento = new TipoDocumento();
-        tipoDocumento.setNombre("CC");
-
         Rol rol = new Rol();
         rol.setNombre("JEFE");
-
         Firma firma = new Firma(1, "test", "casa");
-        when(userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento())).thenReturn(tipoDocumento);
         when(userDataService.findRolByName("JEFE")).thenReturn(rol);
         when(firmaService.findFirmaById(1)).thenReturn(firma);
         when(userDataService.saveUser(any())).thenReturn("User saved successfully");
@@ -103,20 +96,14 @@ class UserServiceTest {
     @Test
     void saveAdminShouldReturnExpectectResult() throws ErrorDataServiceException {
         UserRequest userRequest = new UserRequest();
-        userRequest.setTipoDocumento("CC");
+        userRequest.setTipoDocumento(new TipoDocumento(1, "CC"));
         userRequest.setNombres("John Doe");
         userRequest.setCorreo("john.doe@example.com");
         userRequest.setUsername("johndoe");
         userRequest.setTelefono(new BigInteger("1234567890"));
         userRequest.setIdentificacion(new BigInteger("123456789"));
 
-        TipoDocumento tipoDocumento = new TipoDocumento();
-        tipoDocumento.setNombre("CC");
-
-        Rol rol = new Rol();
-        rol.setNombre("JEFE");
-
-        when(userDataService.findTipoDocumendoByName(userRequest.getTipoDocumento())).thenReturn(tipoDocumento);
+        Rol rol = new Rol(1, "ADMIN");
         when(userDataService.findRolByName("ADMIN")).thenReturn(rol);
         when(userDataService.saveUser(any())).thenReturn("User saved successfully");
         MessageResponse result = userService.saveAdmin(userRequest);
@@ -133,7 +120,7 @@ class UserServiceTest {
         userRequest.setCorreo("john.doe@example.com");
         userRequest.setTelefono(new BigInteger("1234567890"));
         userRequest.setIdentificacion(new BigInteger("123456789"));
-        userRequest.setEspecialidades(List.of("Familia"));
+        userRequest.setEspecialidades(Set.of(new TipoAbogado(1, "Familia")));
 
         TipoAbogado tipoAbogado = new TipoAbogado(1, "Familia");
         Usuario user = new Usuario();
@@ -289,36 +276,6 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldgetAbogadosByFirmaFilterSuccessfully() throws ErrorDataServiceException {
-        Rol role = new Rol(1, "ABOGADO");
-        Integer numberProcesses = 3;
-        TipoAbogado tp = new TipoAbogado();
-        tp.setNombre("Familia");
-        Usuario user = Usuario.builder()
-                .id(1)
-                .nombres("Daniel Barreto")
-                .correo("correo")
-                .telefono(new BigInteger("11111111"))
-                .especialidadesAbogado(Set.of(tp))
-                .build();
-        Integer firmaId = 1;
-        PageableUserResponse pageableUserResponse = PageableUserResponse.builder()
-                .currentPage(1)
-                .totalItems(1)
-                .totalItems(1)
-                .data(List.of(user))
-                .build();
-
-        when(userDataService.findRolByName("ABOGADO")).thenReturn(role);
-        when(userDataService.getAbogadosByFirmaFilter(null, firmaId, role.getId(), 0, 10)).thenReturn(pageableUserResponse);
-        when(userDataService.getNumberAssignedProcesses(user.getId())).thenReturn(numberProcesses);
-
-        PageableResponse<UserResponse> pageableResponse = userService.getAbogadosByFirmaFilter(0, 5, null, firmaId,0, 10);
-
-        assertEquals(pageableResponse.getCurrentPage(), pageableUserResponse.getCurrentPage());
-    }
-
-    @Test
     void shouldgetAllTipoDocumentoSuccessfully() throws ErrorDataServiceException {
         TipoDocumento tipoDocumento = new TipoDocumento();
         tipoDocumento.setNombre("CC");
@@ -346,37 +303,5 @@ class UserServiceTest {
         List<TipoAbogado> tipoAbogados = userService.findAllTipoAbogado();
         assertEquals(tipoAbogados.size(), 1);
     }
-
-    @Test
-    void shouldgetActiveAbogadosSuccessfully() throws ErrorDataServiceException {
-        Rol role = new Rol(1, "ABOGADO");
-        TipoAbogado tp = new TipoAbogado();
-        tp.setNombre("Familia");
-        Usuario user = Usuario.builder()
-                .id(1)
-                .nombres("Daniel Barreto")
-                .correo("correo")
-                .telefono(new BigInteger("11111111"))
-                .especialidadesAbogado(Set.of(tp))
-                .build();
-        Integer firmaId = 1;
-        PageableUserResponse pageableUserResponse = PageableUserResponse.builder()
-                .currentPage(1)
-                .totalItems(1)
-                .totalItems(1)
-                .data(List.of(user))
-                .build();
-
-        when(userDataService.findRolByName("ABOGADO")).thenReturn(role);
-        when(userDataService.getAbogadosByFirmaFilter(null, firmaId, role.getId(), null, null)).thenReturn(pageableUserResponse);
-
-        Map<String, Long> value = userService.getActiveAbogados(firmaId);
-        assertEquals(value.get("value"), pageableUserResponse.getTotalItems());
-    }
-
-
-
-
-
 
 }

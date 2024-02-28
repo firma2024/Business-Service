@@ -1,4 +1,4 @@
-package com.firma.business.service.data.impl;
+package com.firma.business.implData;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.model.Rol;
@@ -7,7 +7,7 @@ import com.firma.business.model.TipoDocumento;
 import com.firma.business.model.Usuario;
 import com.firma.business.payload.request.UserDataRequest;
 import com.firma.business.payload.response.PageableUserResponse;
-import com.firma.business.service.data.intf.IUserDataService;
+import com.firma.business.intfData.IUserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

@@ -1,10 +1,10 @@
-package com.firma.business.service.integration.impl;
+package com.firma.business.implIntegration;
 
 import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.payload.request.ActuacionEmailRequest;
 import com.firma.business.payload.request.ActuacionRequest;
 import com.firma.business.payload.request.FindProcessRequest;
-import com.firma.business.service.integration.intf.IActuacionIntegrationService;
+import com.firma.business.intfIntegration.IActuacionIntegrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -41,7 +41,7 @@ public class ActuacionIntegrationService implements IActuacionIntegrationService
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
         catch (Exception e) {
-            throw new ErrorIntegrationServiceException(e.getMessage());
+            throw new ErrorIntegrationServiceException(e.getMessage(), 3);
         }
     }
 
@@ -63,7 +63,7 @@ public class ActuacionIntegrationService implements IActuacionIntegrationService
             return List.of(responseEntity.getBody());
         }
         catch (Exception e) {
-            throw new ErrorIntegrationServiceException(e.getMessage());
+            throw new ErrorIntegrationServiceException(e.getMessage(), 3);
         }
     }
 }

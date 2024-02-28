@@ -27,7 +27,7 @@ public class SecurityConfig {
             throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests( auth -> {
-            auth.requestMatchers("/api/business/firma/hi").permitAll();
+            auth.requestMatchers("/api/business/process/**").permitAll();
             auth.requestMatchers("/api/business/user/add/abogado").permitAll();
             auth.requestMatchers("/api/business/user/add/admin").permitAll();
             auth.requestMatchers("/api/business/user/add/jefe").permitAll();

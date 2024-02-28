@@ -1,4 +1,4 @@
-package com.firma.business.service.integration.intf;
+package com.firma.business.intfIntegration;
 
 import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.payload.request.ActuacionEmailRequest;

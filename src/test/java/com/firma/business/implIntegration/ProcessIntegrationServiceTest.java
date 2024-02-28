@@ -1,10 +1,8 @@
-package com.firma.business.service.integration.impl;
+package com.firma.business.implIntegration;
 
 import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.payload.request.ProcessRequest;
 import com.firma.business.payload.response.DespachoResponse;
-import com.firma.business.service.integration.intf.IProcessIntegrationService;
-import org.apache.coyote.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

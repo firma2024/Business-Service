@@ -1,8 +1,8 @@
-package com.firma.business.service.data.impl;
+package com.firma.business.implData;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.response.ActuacionDocumentResponse;
-import com.firma.business.service.data.intf.IStorageDataService;
+import com.firma.business.intfData.IStorageDataService;
 import com.firma.business.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

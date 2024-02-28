@@ -5,11 +5,12 @@ import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.model.*;
 import com.firma.business.payload.request.*;
 import com.firma.business.payload.response.*;
-import com.firma.business.service.data.intf.IProcessDataService;
-import com.firma.business.service.integration.intf.IProcessIntegrationService;
+import com.firma.business.intfData.IProcessDataService;
+import com.firma.business.intfIntegration.IProcessIntegrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,12 @@ public class ProcessService {
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private Logger logger = LoggerFactory.getLogger(ProcessService.class);
 
+    @Value("${api.estadoactuacion.visto}")
+    private String estadoVisto;
+
+    @Value("${api.estadoproceso.activo")
+    private String estadoActivo;
+
 
     public MessageResponse saveProcess(ProcessRequest processRequest) throws ErrorDataServiceException {
 
@@ -57,7 +64,7 @@ public class ProcessService {
 
         LocalDateTime dateRadicado = LocalDateTime.parse(processRequest.getFechaRadicacion(), formatterTime);
 
-        EstadoProceso estadoProceso = processDataService.findEstadoProcesoByNombre("Activo");
+        EstadoProceso estadoProceso = processDataService.findEstadoProcesoByNombre(estadoActivo);
 
         Proceso newProceso = Proceso.builder()
                 .radicado(processRequest.getNumeroRadicado())
@@ -73,7 +80,7 @@ public class ProcessService {
                 .firma(empleado.getFirma())
                 .build();
 
-        EstadoActuacion estadoActuacion = actuacionService.findEstadoActuacionByName("Visto");
+        EstadoActuacion estadoActuacion = actuacionService.findEstadoActuacionByName(estadoVisto);
 
         List<Actuacion> actuaciones = new ArrayList<>();
 
@@ -293,7 +300,7 @@ public class ProcessService {
     public void findByRadicado(String numeroRadicado) throws ErrorDataServiceException {
         Proceso p = processDataService.findByRadicado(numeroRadicado);
         if (p != null) {
-            throw new ErrorDataServiceException(String.format("El proceso con el radicado %s ya existe", p.getRadicado()));
+            throw new ErrorDataServiceException(String.format("El proceso con el radicado %s ya existe", p.getRadicado()), 409);
         }
     }
 

@@ -1,14 +1,15 @@
-package com.firma.business.service.integration.impl;
+package com.firma.business.implIntegration;
 
 import com.firma.business.exception.ErrorIntegrationServiceException;
-import com.firma.business.model.Proceso;
+import com.firma.business.intfIntegration.IProcessIntegrationService;
 import com.firma.business.payload.response.DespachoResponse;
 import com.firma.business.payload.request.ProcessRequest;
-import com.firma.business.service.integration.intf.IProcessIntegrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -28,8 +29,8 @@ public class ProcessIntegrationService implements IProcessIntegrationService {
             );
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorIntegrationServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorIntegrationServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -43,8 +44,8 @@ public class ProcessIntegrationService implements IProcessIntegrationService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorIntegrationServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorIntegrationServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -58,8 +59,8 @@ public class ProcessIntegrationService implements IProcessIntegrationService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorIntegrationServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorIntegrationServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 }

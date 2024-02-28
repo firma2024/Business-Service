@@ -4,7 +4,7 @@ import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.response.ActuacionDocumentResponse;
 import com.firma.business.payload.response.FileResponse;
 import com.firma.business.payload.response.MessageResponse;
-import com.firma.business.service.data.intf.IStorageDataService;
+import com.firma.business.intfData.IStorageDataService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

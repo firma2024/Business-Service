@@ -7,9 +7,9 @@ import com.firma.business.payload.request.ActuacionEmailRequest;
 import com.firma.business.payload.request.ActuacionRequest;
 import com.firma.business.payload.request.FindProcessRequest;
 import com.firma.business.payload.response.*;
-import com.firma.business.service.data.intf.IActuacionDataService;
-import com.firma.business.service.data.intf.IProcessDataService;
-import com.firma.business.service.integration.intf.IActuacionIntegrationService;
+import com.firma.business.intfData.IActuacionDataService;
+import com.firma.business.intfData.IProcessDataService;
+import com.firma.business.intfIntegration.IActuacionIntegrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +38,16 @@ public class ActuacionService {
     @Value("${api.presentation.url}")
     private String apiPresentationUrl;
 
+    @Value("${api.estadoactuacion.noVisto}")
+    private String estadoActuacionNoVisto;
+
+    @Value("${api.estadoactuacion.visto}")
+    private String estadoVisto;
+
 
 
     public MessageResponse saveActuaciones(List<ActuacionRequest> actuaciones) throws ErrorDataServiceException {
-        EstadoActuacion estadoActuacion = actuacionDataService.findEstadoActuacionByName("No Visto");
+        EstadoActuacion estadoActuacion = actuacionDataService.findEstadoActuacionByName(estadoActuacionNoVisto);
         List<Actuacion> actuacionesList = new ArrayList<>();
         for (ActuacionRequest ac : actuaciones){
             Proceso proceso = processDataService.findByRadicado(ac.getProceso());
@@ -213,7 +219,7 @@ public class ActuacionService {
 
     public MessageResponse updateActuacion(Integer actionId) throws ErrorDataServiceException {
         Actuacion actuacion = actuacionDataService.getActuacion(actionId);
-        EstadoActuacion es = actuacionDataService.findEstadoActuacionByName("Visto");
+        EstadoActuacion es = actuacionDataService.findEstadoActuacionByName(estadoVisto);
         actuacion.setEstadoactuacion(es);
 
         return new MessageResponse(actuacionDataService.updateActuacion(actuacion));

@@ -1,11 +1,10 @@
-package com.firma.business.service.data.intf;
+package com.firma.business.intfData;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.model.Rol;
 import com.firma.business.model.TipoAbogado;
 import com.firma.business.model.TipoDocumento;
 import com.firma.business.model.Usuario;
-import com.firma.business.payload.response.PageableResponse;
 import com.firma.business.payload.request.UserDataRequest;
 import com.firma.business.payload.response.PageableUserResponse;
 
