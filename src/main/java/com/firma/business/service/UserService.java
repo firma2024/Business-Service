@@ -237,7 +237,7 @@ public class UserService {
         return Map.of("value", pageableResponse.getTotalItems());
     }
 
-    public String checkInsertUser(UserRequest userRequest) throws ErrorDataServiceException {
-        return userDataService.checkInsertUser(userRequest);
+    public MessageResponse checkInsertUser(UserRequest userRequest) throws ErrorDataServiceException {
+        return new MessageResponse(userDataService.checkInsertUser(userRequest));
     }
 }

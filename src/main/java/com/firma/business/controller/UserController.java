@@ -6,6 +6,7 @@ import com.firma.business.model.TipoDocumento;
 import com.firma.business.payload.request.UserAbogadoUpdateRequest;
 import com.firma.business.payload.request.UserJefeUpdateRequest;
 import com.firma.business.payload.request.UserRequest;
+import com.firma.business.payload.response.MessageResponse;
 import com.firma.business.payload.response.PageableResponse;
 import com.firma.business.payload.response.UserResponse;
 import com.firma.business.service.UserService;
@@ -36,9 +37,9 @@ public class UserController {
             return new ResponseEntity<>(userService.checkInsertUser(userRequest), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
             if (e.getStatusCode() == 409){
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.CONFLICT);
             }
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -50,7 +51,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.saveAbogado(userRequest), HttpStatus.CREATED);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -62,7 +63,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.saveJefe(userRequest), HttpStatus.CREATED);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -74,7 +75,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.saveAdmin(userRequest), HttpStatus.CREATED);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -88,7 +89,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getInfoJefe(userName), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -101,7 +102,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.updateInfoAbogado(userRequest), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
