@@ -236,4 +236,8 @@ public class UserService {
         PageableUserResponse pageableResponse = userDataService.getAbogadosByFirmaFilter( null, firmaId, rol.getId(), null, null);
         return Map.of("value", pageableResponse.getTotalItems());
     }
+
+    public String checkInsertUser(UserRequest userRequest) throws ErrorDataServiceException {
+        return userDataService.checkInsertUser(userRequest);
+    }
 }

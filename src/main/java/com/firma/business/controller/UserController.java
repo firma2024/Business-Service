@@ -1,5 +1,6 @@
 package com.firma.business.controller;
 
+import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.model.TipoAbogado;
 import com.firma.business.model.TipoDocumento;
 import com.firma.business.payload.request.UserAbogadoUpdateRequest;
@@ -25,6 +26,21 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Operation(summary = "Verificar insercion de usuario", description = "Verifica que el usuario no tenga campos ya existentes")
+    @ApiResponse(responseCode = "200", description = "No hay un usuario con esos campos")
+    @ApiResponse(responseCode = "409", description = "Conficto con alguno de los campos")
+    @PostMapping("/check/insert")
+    public ResponseEntity<?> checkInsertUser(@RequestBody UserRequest userRequest) {
+        try {
+            return new ResponseEntity<>(userService.checkInsertUser(userRequest), HttpStatus.OK);
+        } catch (ErrorDataServiceException e) {
+            if (e.getStatusCode() == 409){
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+            }
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @Operation(summary = "Agregar Abogado", description = "Guarda la información del abogado.")
     @ApiResponse(responseCode = "201", description = "Abogado guardado correctamente")

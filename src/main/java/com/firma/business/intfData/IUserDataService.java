@@ -6,6 +6,7 @@ import com.firma.business.model.TipoAbogado;
 import com.firma.business.model.TipoDocumento;
 import com.firma.business.model.Usuario;
 import com.firma.business.payload.request.UserDataRequest;
+import com.firma.business.payload.request.UserRequest;
 import com.firma.business.payload.response.PageableUserResponse;
 
 
@@ -26,4 +27,5 @@ public interface IUserDataService {
     String deleteUser(Integer id) throws ErrorDataServiceException;
     Usuario findUserByUserName(String userName) throws ErrorDataServiceException;
     List<Usuario> findAllAbogadosNames(Integer firmaId) throws ErrorDataServiceException;
+    String checkInsertUser(UserRequest userRequest) throws ErrorDataServiceException;
 }

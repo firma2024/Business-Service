@@ -1,6 +1,5 @@
 package com.firma.business.payload.request;
 
-import com.firma.business.model.Rol;
 import com.firma.business.model.TipoAbogado;
 import com.firma.business.model.TipoDocumento;
 import lombok.*;

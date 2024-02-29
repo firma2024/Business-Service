@@ -6,6 +6,7 @@ import com.firma.business.model.TipoAbogado;
 import com.firma.business.model.TipoDocumento;
 import com.firma.business.model.Usuario;
 import com.firma.business.payload.request.UserDataRequest;
+import com.firma.business.payload.request.UserRequest;
 import com.firma.business.payload.response.PageableUserResponse;
 import com.firma.business.intfData.IUserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,6 +130,27 @@ public class UserDataService implements IUserDataService {
             ResponseEntity<Usuario[]> responseEntity = restTemplate.getForEntity(builder.toUriString(), Usuario[].class);
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
+        }
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
+    public String checkInsertUser(UserRequest userRequest) throws ErrorDataServiceException {
+        try{
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<UserRequest> requestEntity = new HttpEntity<>(userRequest, headers);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    apiUrl + "/user/check/insert",
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
+            );
+            return responseEntity.getBody();
+
         }
         catch (HttpClientErrorException e) {
             throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
