@@ -2,6 +2,7 @@ package com.firma.business.controller;
 
 import com.firma.business.model.Firma;
 import com.firma.business.payload.request.FirmaRequest;
+import com.firma.business.payload.response.MessageResponse;
 import com.firma.business.service.FirmaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,7 +30,7 @@ public class FirmaController {
             System.out.println("hola");
             return ResponseEntity.ok(firmaService.getFirmaByUser(userName));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -42,13 +43,7 @@ public class FirmaController {
         try{
             return ResponseEntity.ok(firmaService.saveFirma(firma));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
-    }
-
-    @GetMapping("/hi")
-    public String hi() {
-        System.out.println("hi");
-        return "hi";
     }
 }

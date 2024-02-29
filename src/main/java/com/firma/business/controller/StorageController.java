@@ -2,6 +2,7 @@ package com.firma.business.controller;
 
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.response.FileResponse;
+import com.firma.business.payload.response.MessageResponse;
 import com.firma.business.service.StorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -48,7 +49,7 @@ public class StorageController {
                     .contentType(MediaType.IMAGE_JPEG)
                     .body(response);
         } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -62,7 +63,7 @@ public class StorageController {
         try {
             return new ResponseEntity<>(storageService.uploadDocument(file, actuacionId), HttpStatus.CREATED);
         } catch (IOException | ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -79,7 +80,7 @@ public class StorageController {
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(response);
         } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -97,7 +98,7 @@ public class StorageController {
                     .header("Content-Disposition",  String.format("attachment; filename=\"%s\"", fileResponse.getFileName()))
                     .body(fileResponse.getFile());
         } catch (IOException | ErrorDataServiceException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -7,6 +7,7 @@ import com.firma.business.payload.request.ActuacionEmailRequest;
 import com.firma.business.payload.request.ActuacionRequest;
 import com.firma.business.payload.request.FindProcessRequest;
 import com.firma.business.payload.response.ActuacionResponse;
+import com.firma.business.payload.response.MessageResponse;
 import com.firma.business.payload.response.PageableResponse;
 import com.firma.business.payload.response.ProcesoResponse;
 import com.firma.business.service.ActuacionService;
@@ -47,7 +48,7 @@ public class ActuacionController {
         try {
             return new ResponseEntity<>(actuacionService.getActuacion(id), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -71,7 +72,7 @@ public class ActuacionController {
         try {
             return new ResponseEntity<>(actuacionService.getActuacionesFilter(procesoId, fechaInicioStr, fechaFinStr, estadoActuacion, page, size), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -94,7 +95,7 @@ public class ActuacionController {
         try {
             return new ResponseEntity<>(actuacionService.getActuacionesByProcesoAbogado(procesoId, fechaInicioStr, fechaFinStr, existeDoc, page, size), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -108,7 +109,7 @@ public class ActuacionController {
         try {
             return new ResponseEntity<>(actuacionService.updateActuacion(actionId), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 }

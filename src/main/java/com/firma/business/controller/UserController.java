@@ -115,7 +115,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.updateInfoJefe(userRequest), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -129,7 +129,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -142,7 +142,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getUserName(name), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -156,7 +156,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getAllAbogadosNames(firmaId), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -180,7 +180,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getAbogadosByFirmaFilter(numProcesosInicial, numProcesosFinal, especialidades, firmaId, page, size), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -194,7 +194,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getInfoAbogado(userName), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -208,7 +208,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getActiveAbogados(firmaId), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -221,7 +221,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getAllTipoDocumento(), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -233,7 +233,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.findAllTipoAbogado(), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 }
