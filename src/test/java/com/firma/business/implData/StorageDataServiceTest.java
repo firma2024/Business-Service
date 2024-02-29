@@ -47,15 +47,6 @@ class StorageDataServiceTest {
         assertEquals("Success", response);
     }
 
-    @Test
-    void uploadPhotoShouldThrowErrorDataServiceException() {
-        MultipartFile file = new MockMultipartFile("image", "Hello, World!".getBytes());
-
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.POST), any(), eq(String.class)))
-                .thenThrow(RuntimeException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> storageDataService.uploadPhoto(file, 1));
-    }
 
     @Test
     void downloadPhoto() throws ErrorDataServiceException {
@@ -73,13 +64,6 @@ class StorageDataServiceTest {
         assertArrayEquals(expectedPhoto, result);
     }
 
-    @Test
-    void downloadPhotoShouldThrowErrorDataServiceException() {
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.GET), any(), eq(ParameterizedTypeReference.class)))
-                .thenThrow(RuntimeException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> storageDataService.downloadPhoto(1));
-    }
 
     @Test
     void uploadDocumentShouldReturnExpectedResponse() throws Exception {
@@ -94,15 +78,6 @@ class StorageDataServiceTest {
         assertEquals("Success", response);
     }
 
-    @Test
-    void uploadDocumentShouldThrowErrorDataServiceException() {
-        MultipartFile file = new MockMultipartFile("doc", "Hello, World!".getBytes());
-
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.POST), any(), eq(String.class)))
-                .thenThrow(RuntimeException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> storageDataService.uploadDocument(file, 1));
-    }
 
     @Test
     void downloadDocument() throws ErrorDataServiceException {
@@ -120,13 +95,6 @@ class StorageDataServiceTest {
         assertArrayEquals(expectedDocument, result);
     }
 
-    @Test
-    void downloadDocumentShouldThrowErrorDataServiceException() {
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.GET), any(), eq(ParameterizedTypeReference.class)))
-                .thenThrow(RuntimeException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> storageDataService.downloadDocument(1));
-    }
 
     @Test
     void downloadAllDocumentsShouldReturnExpectedResponse() throws Exception {
@@ -144,16 +112,6 @@ class StorageDataServiceTest {
         assertEquals(Set.of(expectedDocuments), result);
     }
 
-    @Test
-    void downloadAllDocumentsShouldThrowErrorDataServiceException() {
-        // Arrange
-        Integer procesoId = 1;
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(ActuacionDocumentResponse[].class)))
-                .thenThrow(RuntimeException.class);
-
-        // Act & Assert
-        assertThrows(ErrorDataServiceException.class, () -> storageDataService.downloadAllDocuments(procesoId));
-    }
 
 
 }

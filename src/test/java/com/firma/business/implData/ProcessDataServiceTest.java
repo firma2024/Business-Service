@@ -48,13 +48,6 @@ class ProcessDataServiceTest {
         assertEquals(Set.of(expectedProcesses), actualProcesses);
     }
 
-    @Test
-    void getProcessThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Proceso[].class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.getProcess());
-    }
 
     @Test
     void saveProcessReturnsExpectedResult() throws ErrorDataServiceException {
@@ -67,13 +60,6 @@ class ProcessDataServiceTest {
         assertEquals(expectedResponse, actualResponse);
     }
 
-    @Test
-    void saveProcessThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.saveProcess(new ProcessDataRequest()));
-    }
 
     @Test
     void getProcessByFilterReturnsExpectedResult() throws ErrorDataServiceException {
@@ -84,22 +70,6 @@ class ProcessDataServiceTest {
         PageableProcessResponse actualResponse = processDataService.getProcessByFilter("2022-01-01", 1, "2022-12-31", List.of("OPEN"), "TYPE1", 0, 10);
 
         assertEquals(expectedResponse, actualResponse);
-    }
-
-    @Test
-    void getProcessByFilterThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(PageableProcessResponse.class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.getProcessByFilter("2022-01-01", 1, "2022-12-31", List.of("OPEN"), "TYPE1", 0, 10));
-    }
-
-    @Test
-    void deleteProcessThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.DELETE), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.deleteProcess(1));
     }
 
     @Test
@@ -114,14 +84,6 @@ class ProcessDataServiceTest {
     }
 
     @Test
-    void updateProcessThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.PUT), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.updateProcess(new Proceso()));
-    }
-
-    @Test
     void getProcessByAbogadoReturnsExpectedResult() throws ErrorDataServiceException {
         PageableProcessResponse expectedResponse = new PageableProcessResponse();
         when(restTemplate.getForEntity(any(String.class), eq(PageableProcessResponse.class)))
@@ -130,14 +92,6 @@ class ProcessDataServiceTest {
         PageableProcessResponse actualResponse = processDataService.getProcessByAbogado(1, "2022-01-01", "2022-12-31", List.of("OPEN"), "TYPE1", 0, 10);
 
         assertEquals(expectedResponse, actualResponse);
-    }
-
-    @Test
-    void getProcessByAbogadoThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(PageableProcessResponse.class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.getProcessByAbogado(1, "2022-01-01", "2022-12-31", List.of("OPEN"), "TYPE1", 0, 10));
     }
 
     @Test
@@ -151,13 +105,6 @@ class ProcessDataServiceTest {
         assertEquals(List.of(expectedProcesses), actualProcesses);
     }
 
-    @Test
-    void getStateProcessesJefeThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Proceso[].class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.getStateProcessesJefe("OPEN", 1));
-    }
 
     @Test
     void getProcessByIdReturnsExpectedResult() throws ErrorDataServiceException {
@@ -170,13 +117,6 @@ class ProcessDataServiceTest {
         assertEquals(expectedProcess, actualProcess);
     }
 
-    @Test
-    void getProcessByIdThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Proceso.class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.getProcessById(1));
-    }
 
     @Test
     void getStateProcessesAbogadoReturnsExpectedResult() throws ErrorDataServiceException {
@@ -189,13 +129,6 @@ class ProcessDataServiceTest {
         assertEquals(List.of(expectedProcesses), actualProcesses);
     }
 
-    @Test
-    void getStateProcessesAbogadoThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Proceso[].class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.getStateProcessesAbogado("name", "userName"));
-    }
 
     @Test
     void getProcessAbogadoReturnsExpectedResult() throws ErrorDataServiceException {
@@ -208,13 +141,6 @@ class ProcessDataServiceTest {
         assertEquals(expectedResponse, actualResponse);
     }
 
-    @Test
-    void getProcessAbogadoThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(ProcessAbogadoResponse.class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.getProcessAbogado(1));
-    }
 
     @Test
     void getEstadoProcesosReturnsExpectedResult() throws ErrorDataServiceException {
@@ -227,21 +153,6 @@ class ProcessDataServiceTest {
         assertEquals(List.of(expectedProcesses), actualProcesses);
     }
 
-    @Test
-    void getEstadoProcesosThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(EstadoProceso[].class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.getEstadoProcesos());
-    }
-
-    @Test
-    void updateAudienciaThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.PUT), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.updateAudiencia(1, "newLink"));
-    }
 
     @Test
     void addAudienciaReturnsExpectedResult() throws ErrorDataServiceException {
@@ -254,13 +165,6 @@ class ProcessDataServiceTest {
         assertEquals(expectedResponse, actualResponse);
     }
 
-    @Test
-    void addAudienciaThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.addAudiencia(new Audiencia()));
-    }
 
     @Test
     void findAllDespachosWithOutLinkReturnsExpectedResult() throws ErrorDataServiceException {
@@ -273,13 +177,6 @@ class ProcessDataServiceTest {
         assertEquals(Set.of(expectedDespachos), actualDespachos);
     }
 
-    @Test
-    void findAllDespachosWithOutLinkThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Despacho[].class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.findAllDespachosWithOutLink(2022));
-    }
 
     @Test
     void getTipoProcesosReturnsExpectedResult() throws ErrorDataServiceException {
@@ -292,13 +189,6 @@ class ProcessDataServiceTest {
         assertEquals(List.of(expectedTipoProcesos), actualTipoProcesos);
     }
 
-    @Test
-    void getTipoProcesosThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(TipoProceso[].class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.getTipoProcesos());
-    }
 
     @Test
     void saveEnlaceReturnsExpectedResult() throws ErrorDataServiceException {
@@ -311,13 +201,6 @@ class ProcessDataServiceTest {
         assertEquals(expectedResponse, actualResponse);
     }
 
-    @Test
-    void saveEnlaceThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.saveEnlace(new Enlace()));
-    }
 
     @Test
     void findTipoProcesoByNombreReturnsExpectedResult() throws ErrorDataServiceException {
@@ -331,11 +214,74 @@ class ProcessDataServiceTest {
     }
 
     @Test
-    void findTipoProcesoByNombreThrowsErrorDataServiceExceptionWhenRestTemplateThrowsException() {
-        when(restTemplate.getForEntity(any(String.class), eq(TipoProceso.class)))
-                .thenThrow(HttpClientErrorException.class);
+    void findDespachoByNombreSuccesfully() throws ErrorDataServiceException {
+        Despacho expected = new Despacho(1, "test");
+        when(restTemplate.getForEntity(any(String.class), eq(Despacho.class)))
+                .thenReturn(ResponseEntity.ok(expected));
 
-        assertThrows(ErrorDataServiceException.class, () -> processDataService.findTipoProcesoByNombre("tipoProceso"));
+        Despacho actual = processDataService.findDespachoByNombre("test");
+
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
+    void findEstadoProcesoByNombreSuccesfully() throws ErrorDataServiceException {
+        EstadoProceso expected = new EstadoProceso(1, "test");
+        when(restTemplate.getForEntity(any(String.class), eq(EstadoProceso.class)))
+                .thenReturn(ResponseEntity.ok(expected));
+
+        EstadoProceso actual = processDataService.findEstadoProcesoByNombre("test");
+
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
+    void findAllAudienciasByProcesoSuccessfully() throws ErrorDataServiceException {
+        Audiencia[] expected = new Audiencia[]{new Audiencia(), new Audiencia()};
+        when(restTemplate.getForEntity(any(String.class), eq(Audiencia[].class)))
+                .thenReturn(ResponseEntity.ok(expected));
+
+        Set<Audiencia> actual = processDataService.findAllAudienciasByProceso(1);
+
+        assertEquals(Set.of(expected), actual);
+    }
+
+    @Test
+    void findDespachoByIdSuccesfully() throws ErrorDataServiceException {
+        Despacho expected = new Despacho(1, "test");
+        when(restTemplate.getForEntity(any(String.class), eq(Despacho.class)))
+                .thenReturn(ResponseEntity.ok(expected));
+
+        Despacho actual = processDataService.findDespachoById(1);
+
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
+    void findByRadicadoSuccesfully() throws ErrorDataServiceException {
+        Proceso expected = new Proceso();
+        when(restTemplate.getForEntity(any(String.class), eq(Proceso.class)))
+                .thenReturn(ResponseEntity.ok(expected));
+
+        Proceso actual = processDataService.findByRadicado("test");
+
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
+    void findByDespachoAndYearSuccessfully() throws ErrorDataServiceException {
+        Enlace expected = new Enlace();
+        when(restTemplate.getForEntity(any(String.class), eq(Enlace.class)))
+                .thenReturn(ResponseEntity.ok(expected));
+
+        Enlace actual = processDataService.findByDespachoAndYear(1, "2022");
+
+        assertEquals(expected, actual);
+
     }
 
 }

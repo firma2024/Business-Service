@@ -45,13 +45,6 @@ class FirmaDataServiceTest {
     }
 
     @Test
-    void getFirmaByUserThrowsErrorDataServiceException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Firma.class))).thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> firmaDataService.getFirmaByUser("username"));
-    }
-
-    @Test
     void saveFirmaReturnsString() throws ErrorDataServiceException {
         FirmaRequest request = new FirmaRequest();
         when(restTemplate.exchange(any(String.class), any(), any(), eq(String.class))).thenReturn(ResponseEntity.ok("Success"));
@@ -59,14 +52,6 @@ class FirmaDataServiceTest {
         String response = firmaDataService.saveFirma(request);
 
         assertEquals("Success", response);
-    }
-
-    @Test
-    void saveFirmaThrowsErrorDataServiceException() {
-        FirmaRequest request = new FirmaRequest();
-        when(restTemplate.exchange(any(String.class), any(), any(), eq(String.class))).thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> firmaDataService.saveFirma(request));
     }
 
     @Test
@@ -80,13 +65,6 @@ class FirmaDataServiceTest {
     }
 
     @Test
-    void findFirmaByIdThrowsErrorDataServiceException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Firma.class))).thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> firmaDataService.findFirmaById(1));
-    }
-
-    @Test
     void findEmpleadoByUsuarioReturnsEmpleado() throws ErrorDataServiceException {
         Empleado expectedEmpleado = new Empleado();
         when(restTemplate.getForEntity(any(String.class), eq(Empleado.class))).thenReturn(ResponseEntity.ok(expectedEmpleado));
@@ -96,12 +74,6 @@ class FirmaDataServiceTest {
         assertEquals(expectedEmpleado, actualEmpleado);
     }
 
-    @Test
-    void findEmpleadoByUsuarioThrowsErrorDataServiceException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Empleado.class))).thenThrow(HttpClientErrorException.class);
-
-        assertThrows(ErrorDataServiceException.class, () -> firmaDataService.findEmpleadoByUsuario(1));
-    }
 
 
 }

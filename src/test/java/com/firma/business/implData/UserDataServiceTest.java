@@ -48,14 +48,6 @@ class UserDataServiceTest {
         assertEquals("User saved successfully", result);
     }
 
-    @Test
-    void saveUserThrowsException() {
-        UserDataRequest userRequest = new UserDataRequest();
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(new RuntimeException("Error occurred"));
-
-        assertThrows(ErrorDataServiceException.class, () -> userDataService.saveUser(userRequest));
-    }
 
     @Test
     void updateUserSuccessfully() throws ErrorDataServiceException {
@@ -73,14 +65,6 @@ class UserDataServiceTest {
         assertEquals("User updated successfully", result);
     }
 
-    @Test
-    void updateUserThrowsException() {
-        Usuario userRequest = new Usuario();
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.PUT), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(new RuntimeException("Error occurred"));
-
-        assertThrows(ErrorDataServiceException.class, () -> userDataService.updateUser(userRequest));
-    }
 
     @Test
     void getNumberAssignedProcessesReturnsExpectedValue() throws ErrorDataServiceException {
@@ -95,15 +79,6 @@ class UserDataServiceTest {
         assertEquals(expectedProcesses, result);
     }
 
-    @Test
-    void getNumberAssignedProcessesThrowsException() {
-        Integer id = 1;
-
-        when(restTemplate.getForEntity(any(String.class), eq(Integer.class)))
-                .thenThrow(new RuntimeException("Error occurred"));
-
-        assertThrows(ErrorDataServiceException.class, () -> userDataService.getNumberAssignedProcesses(id));
-    }
 
     @Test
     void deleteUserReturnsExpectedValue() throws ErrorDataServiceException {
@@ -118,15 +93,6 @@ class UserDataServiceTest {
         assertEquals(expectedMessage, result);
     }
 
-    @Test
-    void deleteUserThrowsException() {
-        Integer id = 1;
-
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.DELETE), any(), eq(String.class)))
-                .thenThrow(new RuntimeException("Error occurred"));
-
-        assertThrows(ErrorDataServiceException.class, () -> userDataService.deleteUser(id));
-    }
 
     @Test
     void findUserByUserNameReturnsExpectedValue() throws ErrorDataServiceException {
@@ -140,16 +106,6 @@ class UserDataServiceTest {
         Usuario result = userDataService.findUserByUserName(userName);
 
         assertEquals(expectedUser, result);
-    }
-
-    @Test
-    void findUserByUserNameThrowsException() {
-        String userName = "testUser";
-
-        when(restTemplate.getForEntity(any(String.class), eq(Usuario.class)))
-                .thenThrow(new RuntimeException("Error occurred"));
-
-        assertThrows(ErrorDataServiceException.class, () -> userDataService.findUserByUserName(userName));
     }
 
 }

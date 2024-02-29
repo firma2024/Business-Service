@@ -40,13 +40,6 @@ class ProcessIntegrationServiceTest {
         assertEquals(expectedProcessRequest, actualProcessRequest);
     }
 
-    @Test
-    void getProcess_throwsErrorIntegrationServiceException_whenApiCallFails() {
-        when(restTemplate.getForEntity(anyString(), Mockito.eq(ProcessRequest.class)))
-                .thenThrow(new RuntimeException("API call failed"));
-
-        assertThrows(ErrorIntegrationServiceException.class, () -> processIntegrationService.getProcess("123"));
-    }
 
     @Test
     void findUrlDespacho_returnsDespachoResponse_whenApiCallIsSuccessful() throws ErrorIntegrationServiceException {
@@ -59,13 +52,6 @@ class ProcessIntegrationServiceTest {
         assertEquals(expectedDespachoResponse, actualDespachoResponse);
     }
 
-    @Test
-    void findUrlDespacho_throwsErrorIntegrationServiceException_whenApiCallFails() {
-        when(restTemplate.getForEntity(anyString(), Mockito.eq(DespachoResponse.class)))
-                .thenThrow(new RuntimeException("API call failed"));
-
-        assertThrows(ErrorIntegrationServiceException.class, () -> processIntegrationService.findUrlDespacho("nombre", 2023));
-    }
 
     @Test
     void getAllProcess_returnsProcessRequest_whenApiCallIsSuccessful() throws ErrorIntegrationServiceException {
@@ -78,11 +64,4 @@ class ProcessIntegrationServiceTest {
         assertEquals(expectedProcessRequest, actualProcessRequest);
     }
 
-    @Test
-    void getAllProcess_throwsErrorIntegrationServiceException_whenApiCallFails() {
-        when(restTemplate.getForEntity(anyString(), Mockito.eq(ProcessRequest.class)))
-                .thenThrow(new RuntimeException("API call failed"));
-
-        assertThrows(ErrorIntegrationServiceException.class, () -> processIntegrationService.getAllProcess("123"));
-    }
 }

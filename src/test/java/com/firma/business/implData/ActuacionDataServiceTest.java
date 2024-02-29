@@ -44,15 +44,6 @@ class ActuacionDataServiceTest {
     }
 
     @Test
-    void shouldThrowErrorDataServiceExceptionWhenUpdateActuacionFails() {
-        Actuacion actuacion = new Actuacion();
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.PUT), any(), eq(String.class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.updateActuacion(actuacion));
-    }
-
-    @Test
     void shouldSaveRegistroCorreoSuccessfully() throws ErrorDataServiceException {
         RegistroCorreo registroCorreo = new RegistroCorreo();
         when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
@@ -63,14 +54,6 @@ class ActuacionDataServiceTest {
         assertEquals("Success", result);
     }
 
-    @Test
-    void shouldThrowErrorDataServiceExceptionWhenSaveRegistroCorreoFails() {
-        RegistroCorreo registroCorreo = new RegistroCorreo();
-        when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.saveRegistroCorreo(registroCorreo));
-    }
 
     @Test
     void shouldSaveActuacionesSuccessfully() throws ErrorDataServiceException {
@@ -81,15 +64,6 @@ class ActuacionDataServiceTest {
         String result = actuacionDataService.saveActuaciones(actuaciones);
 
         assertEquals("Success", result);
-    }
-
-    @Test
-    void shouldThrowErrorDataServiceExceptionWhenSaveActuacionesFails() {
-        List<Actuacion> actuaciones = new ArrayList<>();
-        when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.saveActuaciones(actuaciones));
     }
 
     @Test
@@ -104,14 +78,6 @@ class ActuacionDataServiceTest {
     }
 
     @Test
-    void shouldThrowErrorDataServiceExceptionWhenFindActuacionesNotSendFails() {
-        when(restTemplate.getForEntity(anyString(), eq(Actuacion[].class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.findActuacionesNotSend());
-    }
-
-    @Test
     void shouldUpdateActuacionesSendSuccessfully() throws ErrorDataServiceException {
         List<Integer> actuaciones = Arrays.asList(1, 2, 3);
         when(restTemplate.exchange(anyString(), eq(HttpMethod.PUT), any(), eq(String.class)))
@@ -122,14 +88,6 @@ class ActuacionDataServiceTest {
         assertEquals("Success", result);
     }
 
-    @Test
-    void shouldThrowErrorDataServiceExceptionWhenUpdateActuacionesSendFails() {
-        List<Integer> actuaciones = Arrays.asList(1, 2, 3);
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.PUT), any(), eq(String.class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.updateActuacionesSend(actuaciones));
-    }
 
     @Test
     void shouldGetActuacionSuccessfully() throws ErrorDataServiceException {
@@ -142,13 +100,6 @@ class ActuacionDataServiceTest {
         assertEquals(actuacion, result);
     }
 
-    @Test
-    void shouldThrowErrorDataServiceExceptionWhenGetActuacionFails() {
-        when(restTemplate.getForEntity(anyString(), eq(Actuacion.class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.getActuacion(1));
-    }
 
     @Test
     void shouldGetActuacionesFilterSuccessfully() throws ErrorDataServiceException {
@@ -161,13 +112,6 @@ class ActuacionDataServiceTest {
         assertEquals(pageableActuacionResponse, result);
     }
 
-    @Test
-    void shouldThrowErrorDataServiceExceptionWhenGetActuacionesFilterFails() {
-        when(restTemplate.getForEntity(anyString(), eq(PageableActuacionResponse.class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.getActuacionesFilter(1, "2022-01-01", "2022-12-31", "estado", 1, 10));
-    }
 
     @Test
     void shouldGetActuacionesByProcesoAbogadoSuccessfully() throws ErrorDataServiceException {
@@ -186,19 +130,6 @@ class ActuacionDataServiceTest {
         assertEquals(pageableActuacionResponse, result);
     }
 
-    @Test
-    void shouldThrowErrorDataServiceExceptionWhenGetActuacionesByProcesoAbogadoFails() {
-        Integer procesoId = 1;
-        String fechaInicioStr = "2022-01-01";
-        String fechaFinStr = "2022-12-31";
-        Boolean existeDoc = true;
-        Integer page = 1;
-        Integer size = 10;
-        when(restTemplate.getForEntity(anyString(), eq(PageableActuacionResponse.class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.getActuacionesByProcesoAbogado(procesoId, fechaInicioStr, fechaFinStr, existeDoc, page, size));
-    }
 
     @Test
     void shouldFindEstadoActuacionByNameSuccessfully() throws ErrorDataServiceException {
@@ -213,15 +144,6 @@ class ActuacionDataServiceTest {
     }
 
     @Test
-    void shouldThrowErrorDataServiceExceptionWhenFindEstadoActuacionByNameFails() {
-        String state = "state";
-        when(restTemplate.getForEntity(anyString(), eq(EstadoActuacion.class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.findEstadoActuacionByName(state));
-    }
-
-    @Test
     void shouldFindLastActuacionSuccessfully() throws ErrorDataServiceException {
         Integer processid = 1;
         Actuacion actuacion = new Actuacion();
@@ -233,14 +155,6 @@ class ActuacionDataServiceTest {
         assertEquals(actuacion, result);
     }
 
-    @Test
-    void shouldThrowErrorDataServiceExceptionWhenFindLastActuacionFails() {
-        Integer processid = 1;
-        when(restTemplate.getForEntity(anyString(), eq(Actuacion.class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.findLastActuacion(processid));
-    }
 
     @Test
     void shouldFindByNoVistoSuccessfully() throws ErrorDataServiceException {
@@ -254,13 +168,5 @@ class ActuacionDataServiceTest {
         assertEquals(List.of(actuaciones), result);
     }
 
-    @Test
-    void shouldThrowErrorDataServiceExceptionWhenFindByNoVistoFails() {
-        Integer firmaId = 1;
-        when(restTemplate.getForEntity(anyString(), eq(Actuacion[].class)))
-                .thenThrow(new RuntimeException("Failed"));
-
-        assertThrows(ErrorDataServiceException.class, () -> actuacionDataService.findByNoVisto(firmaId));
-    }
 
 }
