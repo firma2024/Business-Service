@@ -42,7 +42,7 @@ public class StorageService {
     public FileResponse downloadAllDocuments (Integer processId) throws ErrorDataServiceException, IOException {
         Set<ActuacionDocumentResponse> documents = storageDataService.downloadAllDocuments(processId);
         if (documents.isEmpty()) {
-            throw new ErrorDataServiceException("No se encontraron documentos");
+            throw new ErrorDataServiceException("No se encontraron documentos", 404);
         }
 
         String radicado = null;

@@ -12,6 +12,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,8 +50,11 @@ public class StorageDataService implements IStorageDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+        catch (IOException e) {
+            throw new ErrorDataServiceException(e.getMessage(), 500);
         }
     }
 
@@ -65,8 +69,8 @@ public class StorageDataService implements IStorageDataService {
                     }
             );
             return responseEntity.getBody();
-        } catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        }catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -89,8 +93,8 @@ public class StorageDataService implements IStorageDataService {
             );
             return responseEntity.getBody();
         }
-         catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -106,8 +110,8 @@ public class StorageDataService implements IStorageDataService {
             );
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -125,9 +129,8 @@ public class StorageDataService implements IStorageDataService {
 
             return Set.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
-
     }
 }

@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +46,7 @@ class FirmaDataServiceTest {
 
     @Test
     void getFirmaByUserThrowsErrorDataServiceException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Firma.class))).thenThrow(RuntimeException.class);
+        when(restTemplate.getForEntity(any(String.class), eq(Firma.class))).thenThrow(HttpClientErrorException.class);
 
         assertThrows(ErrorDataServiceException.class, () -> firmaDataService.getFirmaByUser("username"));
     }
@@ -63,7 +64,7 @@ class FirmaDataServiceTest {
     @Test
     void saveFirmaThrowsErrorDataServiceException() {
         FirmaRequest request = new FirmaRequest();
-        when(restTemplate.exchange(any(String.class), any(), any(), eq(String.class))).thenThrow(RuntimeException.class);
+        when(restTemplate.exchange(any(String.class), any(), any(), eq(String.class))).thenThrow(HttpClientErrorException.class);
 
         assertThrows(ErrorDataServiceException.class, () -> firmaDataService.saveFirma(request));
     }
@@ -80,7 +81,7 @@ class FirmaDataServiceTest {
 
     @Test
     void findFirmaByIdThrowsErrorDataServiceException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Firma.class))).thenThrow(RuntimeException.class);
+        when(restTemplate.getForEntity(any(String.class), eq(Firma.class))).thenThrow(HttpClientErrorException.class);
 
         assertThrows(ErrorDataServiceException.class, () -> firmaDataService.findFirmaById(1));
     }
@@ -97,7 +98,7 @@ class FirmaDataServiceTest {
 
     @Test
     void findEmpleadoByUsuarioThrowsErrorDataServiceException() {
-        when(restTemplate.getForEntity(any(String.class), eq(Empleado.class))).thenThrow(RuntimeException.class);
+        when(restTemplate.getForEntity(any(String.class), eq(Empleado.class))).thenThrow(HttpClientErrorException.class);
 
         assertThrows(ErrorDataServiceException.class, () -> firmaDataService.findEmpleadoByUsuario(1));
     }

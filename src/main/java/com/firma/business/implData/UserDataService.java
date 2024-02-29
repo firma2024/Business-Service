@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -43,8 +44,8 @@ public class UserDataService implements IUserDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException("Error usuario no guardado");
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -65,8 +66,8 @@ public class UserDataService implements IUserDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -79,8 +80,8 @@ public class UserDataService implements IUserDataService {
             ResponseEntity<Integer> responseEntity = restTemplate.getForEntity(builder.toUriString(), Integer.class);
 
             return responseEntity.getBody();
-        }catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        }catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -99,8 +100,8 @@ public class UserDataService implements IUserDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
     @Override
@@ -114,8 +115,8 @@ public class UserDataService implements IUserDataService {
             return responseEntity.getBody();
 
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -129,8 +130,8 @@ public class UserDataService implements IUserDataService {
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -155,8 +156,8 @@ public class UserDataService implements IUserDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -167,8 +168,8 @@ public class UserDataService implements IUserDataService {
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -178,8 +179,8 @@ public class UserDataService implements IUserDataService {
             ResponseEntity<Rol> responseEntity = restTemplate.getForEntity(apiUrl + "/user/rol/get/user?username=" +userName, Rol.class);
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -190,8 +191,8 @@ public class UserDataService implements IUserDataService {
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -205,8 +206,8 @@ public class UserDataService implements IUserDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -220,8 +221,8 @@ public class UserDataService implements IUserDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -235,8 +236,8 @@ public class UserDataService implements IUserDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -250,8 +251,8 @@ public class UserDataService implements IUserDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 }

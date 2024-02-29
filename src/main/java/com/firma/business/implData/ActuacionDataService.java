@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -41,8 +42,8 @@ public class ActuacionDataService implements IActuacionDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -53,8 +54,8 @@ public class ActuacionDataService implements IActuacionDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -65,8 +66,8 @@ public class ActuacionDataService implements IActuacionDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -78,8 +79,8 @@ public class ActuacionDataService implements IActuacionDataService {
 
             return Set.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -99,8 +100,8 @@ public class ActuacionDataService implements IActuacionDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -114,8 +115,8 @@ public class ActuacionDataService implements IActuacionDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -144,8 +145,8 @@ public class ActuacionDataService implements IActuacionDataService {
                     PageableActuacionResponse.class);
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -170,8 +171,8 @@ public class ActuacionDataService implements IActuacionDataService {
             ResponseEntity<PageableActuacionResponse> responseEntity = restTemplate.getForEntity(builder.toUriString(), PageableActuacionResponse.class);
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -185,8 +186,8 @@ public class ActuacionDataService implements IActuacionDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -200,8 +201,8 @@ public class ActuacionDataService implements IActuacionDataService {
 
             return responseEntity.getBody();
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 
@@ -215,8 +216,8 @@ public class ActuacionDataService implements IActuacionDataService {
 
             return List.of(Objects.requireNonNull(responseEntity.getBody()));
         }
-        catch (Exception e) {
-            throw new ErrorDataServiceException(e.getMessage());
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
         }
     }
 }
