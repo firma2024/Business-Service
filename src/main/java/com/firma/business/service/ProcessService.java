@@ -114,7 +114,7 @@ public class ProcessService {
                 .actions(actuaciones)
                 .build();
 
-        return new MessageResponse(processDataService.saveProcess(processDataRequest));
+        return new MessageResponse(processDataService.saveProcess(processDataRequest),  null);
 
     }
 
@@ -132,7 +132,7 @@ public class ProcessService {
     }
 
     public MessageResponse deleteProcess(Integer processId) throws ErrorDataServiceException {
-        return new MessageResponse(processDataService.deleteProcess(processId));
+        return new MessageResponse(processDataService.deleteProcess(processId),  null);
     }
 
     public PageableResponse<ProcessJefeResponse> getProcessesByFilter(String fechaInicioStr, Integer firmaId, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
@@ -229,7 +229,7 @@ public class ProcessService {
             process.setEstadoproceso(estadoProceso);
         }
 
-        return new MessageResponse(processDataService.updateProcess(process));
+        return new MessageResponse(processDataService.updateProcess(process),  null);
     }
 
 
@@ -256,7 +256,7 @@ public class ProcessService {
                 .proceso(process)
                 .build();
 
-        return new MessageResponse(processDataService.addAudiencia(newAudiencia));
+        return new MessageResponse(processDataService.addAudiencia(newAudiencia),  null);
     }
 
 
@@ -265,7 +265,7 @@ public class ProcessService {
     }
 
     public MessageResponse updateAudiencia(Integer id, String enlace) throws ErrorDataServiceException {
-        return new MessageResponse(processDataService.updateAudiencia(id, enlace));
+        return new MessageResponse(processDataService.updateAudiencia(id, enlace),  null);
     }
 
     public Set<Despacho> findAllDespachosWithOutLink(Integer year) throws ErrorDataServiceException {
@@ -284,7 +284,7 @@ public class ProcessService {
                 .despacho(despacho)
                 .build();
 
-        return new MessageResponse(processDataService.saveEnlace(enlace));
+        return new MessageResponse(processDataService.saveEnlace(enlace),  null);
     }
 
     public ProcessRequest getProcess(String numberProcess) throws ErrorIntegrationServiceException {

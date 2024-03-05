@@ -29,18 +29,18 @@ public class UserDataService implements IUserDataService {
     private String apiUrl;
 
     @Override
-    public String saveUser(UserDataRequest userRequest) throws ErrorDataServiceException {
+    public Integer saveUser(UserDataRequest userRequest) throws ErrorDataServiceException {
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<UserDataRequest> requestEntity = new HttpEntity<>(userRequest, headers);
 
-            ResponseEntity<String> responseEntity = restTemplate.exchange(
+            ResponseEntity<Integer> responseEntity = restTemplate.exchange(
                     apiUrl + "/user/save",
                     HttpMethod.POST,
                     requestEntity,
-                    String.class
+                    Integer.class
             );
 
             return responseEntity.getBody();

@@ -44,12 +44,12 @@ public class ProcessController {
             return new ResponseEntity<>(processService.getProcess(numberProcess), HttpStatus.OK);
         } catch (ErrorIntegrationServiceException e) {
             if (e.getStatusCode() == 404) {
-                return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.NOT_FOUND);
             }
             if (e.getStatusCode() == 503){
-                return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.SERVICE_UNAVAILABLE);
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(),  null), HttpStatus.SERVICE_UNAVAILABLE);
             }
-            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage(),  null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -68,17 +68,17 @@ public class ProcessController {
 
         }catch (ErrorIntegrationServiceException e) {
             if (e.getStatusCode() == 404) {
-                return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(),null), HttpStatus.NOT_FOUND);
             }
             if (e.getStatusCode() == 503){
-                return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.SERVICE_UNAVAILABLE);
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.SERVICE_UNAVAILABLE);
             }
-            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         } catch (ErrorDataServiceException e) {
             if (e.getStatusCode() == 409){
-                return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.CONFLICT);
             }
-            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -104,7 +104,7 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.getProcessesByFilter(fechaInicioStr, firmaId, fechaFinStr, estadosProceso, tipoProceso, page, size), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 
@@ -129,7 +129,7 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.getProcessesByAbogado(abogadoId, fechaInicioStr, fechaFinStr, estadosProceso, tipoProceso, page, size), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 
@@ -144,7 +144,7 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.getStateProcessesJefe(name, firmaId), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 
@@ -159,7 +159,7 @@ public class ProcessController {
         try{
             return new ResponseEntity<>(processService.getStateProcessesAbogado(name, userName), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 
@@ -173,7 +173,7 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.getJefeProcess(processId), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 
@@ -188,9 +188,9 @@ public class ProcessController {
             return new ResponseEntity<>(processService.deleteProcess(processId), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
             if (e.getStatusCode() == 404){
-                return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -203,7 +203,7 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.updateProcess(process), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 
@@ -217,7 +217,7 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.getProcessAbogado(processId), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 
@@ -230,7 +230,7 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.getEstadoProcesos(), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 
@@ -242,7 +242,7 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.getTipoProcesos(), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 
@@ -258,9 +258,9 @@ public class ProcessController {
             return new ResponseEntity<>(processService.updateAudiencia(id, enlace), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
             if (e.getStatusCode() == 404){
-                return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.NOT_FOUND);
             }
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 
@@ -273,7 +273,7 @@ public class ProcessController {
         try {
             return new ResponseEntity<>(processService.addAudiencia(audiencia), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
         }
     }
 

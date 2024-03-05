@@ -69,7 +69,7 @@ public class ActuacionService {
             }
             actuacionesList.add(actuacion);
         }
-        return new MessageResponse(actuacionDataService.saveActuaciones(actuacionesList));
+        return new MessageResponse(actuacionDataService.saveActuaciones(actuacionesList),  null);
     }
 
     public Set<Actuacion> findActuacionesNotSend() throws ErrorDataServiceException {
@@ -222,7 +222,7 @@ public class ActuacionService {
         EstadoActuacion es = actuacionDataService.findEstadoActuacionByName(estadoVisto);
         actuacion.setEstadoactuacion(es);
 
-        return new MessageResponse(actuacionDataService.updateActuacion(actuacion));
+        return new MessageResponse(actuacionDataService.updateActuacion(actuacion),  null);
     }
 
     @Scheduled(cron = "0 0 7 * * ?")

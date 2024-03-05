@@ -48,7 +48,7 @@ public class ActuacionController {
         try {
             return new ResponseEntity<>(actuacionService.getActuacion(id), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -72,7 +72,7 @@ public class ActuacionController {
         try {
             return new ResponseEntity<>(actuacionService.getActuacionesFilter(procesoId, fechaInicioStr, fechaFinStr, estadoActuacion, page, size), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -95,7 +95,7 @@ public class ActuacionController {
         try {
             return new ResponseEntity<>(actuacionService.getActuacionesByProcesoAbogado(procesoId, fechaInicioStr, fechaFinStr, existeDoc, page, size), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -109,7 +109,7 @@ public class ActuacionController {
         try {
             return new ResponseEntity<>(actuacionService.updateActuacion(actionId), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 }

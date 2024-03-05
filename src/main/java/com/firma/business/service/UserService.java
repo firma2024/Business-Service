@@ -58,7 +58,7 @@ public class UserService {
                 .employee(newEmployee)
                 .build();
 
-        return new MessageResponse(userDataService.saveUser(userDataRequest));
+        return new MessageResponse("Abogado creado", userDataService.saveUser(userDataRequest));
     }
 
     public MessageResponse saveJefe(UserRequest userRequest) throws ErrorDataServiceException {
@@ -85,7 +85,7 @@ public class UserService {
                 .employee(newEmployee)
                 .build();
 
-        return new MessageResponse( userDataService.saveUser(userDataRequest));
+        return new MessageResponse("Jefe creado", userDataService.saveUser(userDataRequest));
     }
 
     public MessageResponse saveAdmin(UserRequest userRequest) throws ErrorDataServiceException {
@@ -105,7 +105,7 @@ public class UserService {
                 .user(newUser)
                 .build();
 
-        return new MessageResponse(userDataService.saveUser(userDataRequest));
+        return new MessageResponse("Admin creado", userDataService.saveUser(userDataRequest));
     }
 
     public MessageResponse updateInfoAbogado(UserAbogadoUpdateRequest userRequest) throws ErrorDataServiceException {
@@ -115,7 +115,7 @@ public class UserService {
         user.setTelefono(userRequest.getTelefono());
         user.setIdentificacion(userRequest.getIdentificacion());
         user.setEspecialidadesAbogado(userRequest.getEspecialidades());
-        return new MessageResponse(userDataService.updateUser(user));
+        return new MessageResponse(userDataService.updateUser(user), null);
     }
 
     public MessageResponse updateInfoJefe(UserJefeUpdateRequest userRequest) throws ErrorDataServiceException {
@@ -125,7 +125,7 @@ public class UserService {
         user.setCorreo(userRequest.getCorreo());
         user.setTelefono(userRequest.getTelefono());
         user.setIdentificacion(userRequest.getIdentificacion());
-        return new MessageResponse(userDataService.updateUser(user));
+        return new MessageResponse(userDataService.updateUser(user), null);
     }
 
     public UserResponse getInfoJefe(String userName) throws ErrorDataServiceException {
@@ -165,7 +165,7 @@ public class UserService {
             }
         }
 
-        return new MessageResponse(userDataService.deleteUser(id));
+        return new MessageResponse(userDataService.deleteUser(id),  null);
     }
 
     public UserResponse getUserName(String userName) throws ErrorDataServiceException {
@@ -238,6 +238,6 @@ public class UserService {
     }
 
     public MessageResponse checkInsertUser(UserRequest userRequest) throws ErrorDataServiceException {
-        return new MessageResponse(userDataService.checkInsertUser(userRequest));
+        return new MessageResponse(userDataService.checkInsertUser(userRequest),  null);
     }
 }

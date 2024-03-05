@@ -30,7 +30,7 @@ public class FirmaController {
             System.out.println("hola");
             return ResponseEntity.ok(firmaService.getFirmaByUser(userName));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -43,7 +43,7 @@ public class FirmaController {
         try{
             return ResponseEntity.ok(firmaService.saveFirma(firma));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 }

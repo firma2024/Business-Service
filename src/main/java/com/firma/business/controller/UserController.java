@@ -37,9 +37,9 @@ public class UserController {
             return new ResponseEntity<>(userService.checkInsertUser(userRequest), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
             if (e.getStatusCode() == 409){
-                return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new MessageResponse(e.getMessage(),  null), HttpStatus.CONFLICT);
             }
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(),  null));
         }
     }
 
@@ -51,7 +51,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.saveAbogado(userRequest), HttpStatus.CREATED);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -63,7 +63,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.saveJefe(userRequest), HttpStatus.CREATED);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -75,7 +75,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.saveAdmin(userRequest), HttpStatus.CREATED);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -89,7 +89,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getInfoJefe(userName), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -102,7 +102,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.updateInfoAbogado(userRequest), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -115,7 +115,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.updateInfoJefe(userRequest), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -129,7 +129,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -142,7 +142,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getUserName(name), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -156,7 +156,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getAllAbogadosNames(firmaId), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -180,7 +180,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getAbogadosByFirmaFilter(numProcesosInicial, numProcesosFinal, especialidades, firmaId, page, size), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -194,7 +194,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getInfoAbogado(userName), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -208,7 +208,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getActiveAbogados(firmaId), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -221,7 +221,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getAllTipoDocumento(), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 
@@ -233,7 +233,7 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.findAllTipoAbogado(), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
 }

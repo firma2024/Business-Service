@@ -20,7 +20,7 @@ public interface IUserDataService {
     TipoDocumento findTipoDocumendoByName(String tipoDocumento)throws ErrorDataServiceException;
     Rol findRolByName(String name) throws ErrorDataServiceException;
     TipoAbogado findTipoAbogadoByName(String specialty)throws ErrorDataServiceException;
-    String saveUser(UserDataRequest userDataRequest)throws ErrorDataServiceException;
+    Integer saveUser(UserDataRequest userDataRequest)throws ErrorDataServiceException;
     Usuario findUserById(Integer id)throws ErrorDataServiceException;
     String updateUser(Usuario user) throws ErrorDataServiceException;
     Integer getNumberAssignedProcesses(Integer id)throws ErrorDataServiceException;

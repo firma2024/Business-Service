@@ -49,7 +49,7 @@ public class StorageController {
                     .contentType(MediaType.IMAGE_JPEG)
                     .body(response);
         } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -63,7 +63,7 @@ public class StorageController {
         try {
             return new ResponseEntity<>(storageService.uploadDocument(file, actuacionId), HttpStatus.CREATED);
         } catch (IOException | ErrorDataServiceException e) {
-            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -80,7 +80,7 @@ public class StorageController {
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(response);
         } catch (ErrorDataServiceException e) {
-            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -98,7 +98,7 @@ public class StorageController {
                     .header("Content-Disposition",  String.format("attachment; filename=\"%s\"", fileResponse.getFileName()))
                     .body(fileResponse.getFile());
         } catch (IOException | ErrorDataServiceException e) {
-            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
 }

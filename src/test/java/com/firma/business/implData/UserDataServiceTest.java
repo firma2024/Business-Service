@@ -38,14 +38,14 @@ class UserDataServiceTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<UserDataRequest> requestEntity = new HttpEntity<>(userRequest, headers);
 
-        ResponseEntity<String> responseEntity = ResponseEntity.ok("User saved successfully");
+        ResponseEntity<Integer> responseEntity = ResponseEntity.ok(1);
 
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.POST), eq(requestEntity), eq(String.class)))
+        when(restTemplate.exchange(any(String.class), eq(HttpMethod.POST), eq(requestEntity), eq(Integer.class)))
                 .thenReturn(responseEntity);
 
-        String result = userDataService.saveUser(userRequest);
+        Integer result = userDataService.saveUser(userRequest);
 
-        assertEquals("User saved successfully", result);
+        assertEquals(1, result);
     }
 
 

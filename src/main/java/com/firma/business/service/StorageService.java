@@ -24,7 +24,7 @@ public class StorageService {
     private IStorageDataService storageDataService;
 
     public MessageResponse uploadPhoto(MultipartFile file, Integer usuarioId) throws IOException, ErrorDataServiceException {
-        return new MessageResponse(storageDataService.uploadPhoto(file, usuarioId));
+        return new MessageResponse(storageDataService.uploadPhoto(file, usuarioId),  null);
     }
 
     public byte [] downloadPhoto(Integer usuarioId) throws ErrorDataServiceException {
@@ -32,7 +32,7 @@ public class StorageService {
     }
 
     public MessageResponse uploadDocument(MultipartFile file, Integer actuacionId) throws ErrorDataServiceException, IOException {
-        return new MessageResponse(storageDataService.uploadDocument(file, actuacionId));
+        return new MessageResponse(storageDataService.uploadDocument(file, actuacionId),  null);
     }
 
     public byte [] downloadDocument(Integer actuacionId) throws ErrorDataServiceException {

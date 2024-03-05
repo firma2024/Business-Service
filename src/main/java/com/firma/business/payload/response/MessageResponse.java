@@ -9,4 +9,5 @@ import lombok.*;
 @Builder
 public class MessageResponse {
     private String message;
+    private Integer value;
 }

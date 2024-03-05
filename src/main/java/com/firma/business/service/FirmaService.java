@@ -20,7 +20,7 @@ public class FirmaService {
     }
 
     public MessageResponse saveFirma(FirmaRequest firma) throws ErrorDataServiceException {
-        return new MessageResponse(firmaDataService.saveFirma(firma));
+        return new MessageResponse(firmaDataService.saveFirma(firma),  null);
     }
 
     public Firma findFirmaById(Integer firmaId) throws ErrorDataServiceException {
