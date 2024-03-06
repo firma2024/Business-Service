@@ -240,4 +240,17 @@ public class UserService {
     public MessageResponse checkInsertUser(UserRequest userRequest) throws ErrorDataServiceException {
         return new MessageResponse(userDataService.checkInsertUser(userRequest),  null);
     }
+
+    public UserResponse getAbogado(Integer id) throws ErrorDataServiceException {
+        Usuario user = userDataService.findUserById(id);
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .nombres(user.getNombres())
+                .correo(user.getCorreo())
+                .telefono(user.getTelefono())
+                .identificacion(user.getIdentificacion())
+                .especialidades(user.getEspecialidadesAbogado())
+                .build();
+    }
 }

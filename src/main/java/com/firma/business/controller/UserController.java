@@ -189,14 +189,24 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Retorna valores de usuario", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener la información del abogado")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'JEFE')")
-    @GetMapping("/get/abogado")
-    public ResponseEntity<?> getAbogado(@RequestParam String userName) {
+    @GetMapping("/get/info/abogado")
+    public ResponseEntity<?> getInfoAbogado(@RequestParam String userName) {
         try {
             return new ResponseEntity<>(userService.getInfoAbogado(userName), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
+
+    @GetMapping("/get/abogado")
+    public ResponseEntity<?> getAbogado(@RequestParam Integer id) {
+        try {
+            return new ResponseEntity<>(userService.getAbogado(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
+        }
+    }
+
 
     @Operation(summary = "Obtener abogados activos", description = "Obtiene los abogados activos dado el id de la firma")
     @Parameter(name = "firmaId", description = "Id de la firma", required = true)
