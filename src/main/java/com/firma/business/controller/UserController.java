@@ -197,7 +197,10 @@ public class UserController {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }
-
+    @Operation(summary = "Obtener abogado por id", description = "Obtiene la información del abogado dado el id")
+    @Parameter(name = "id", description = "id del usuario", required = true)
+    @ApiResponse(responseCode = "200", description = "Retorna valores de usuario", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
+    @ApiResponse(responseCode = "400", description = "Error al obtener la información del abogado")
     @GetMapping("/get/abogado")
     public ResponseEntity<?> getAbogado(@RequestParam Integer id) {
         try {
