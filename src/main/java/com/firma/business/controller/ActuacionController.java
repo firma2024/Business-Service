@@ -48,6 +48,9 @@ public class ActuacionController {
         try {
             return new ResponseEntity<>(actuacionService.getActuacion(id), HttpStatus.OK);
         } catch (ErrorDataServiceException e) {
+            if(e.getStatusCode() == 404){
+                return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage(), null));
+            }
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
     }

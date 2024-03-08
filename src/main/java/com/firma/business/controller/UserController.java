@@ -188,7 +188,7 @@ public class UserController {
     @Parameter(name = "userName", description = "Nombre de usuario", required = true)
     @ApiResponse(responseCode = "200", description = "Retorna valores de usuario", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener la información del abogado")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'JEFE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ABOGADO')")
     @GetMapping("/get/info/abogado")
     public ResponseEntity<?> getInfoAbogado(@RequestParam String userName) {
         try {

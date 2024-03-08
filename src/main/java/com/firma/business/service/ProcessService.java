@@ -40,7 +40,7 @@ public class ProcessService {
     @Value("${api.estadoactuacion.visto}")
     private String estadoVisto;
 
-    @Value("${api.estadoproceso.activo")
+    @Value("${api.estadoproceso.activo}")
     private String estadoActivo;
 
 

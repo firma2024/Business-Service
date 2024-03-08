@@ -100,6 +100,8 @@ public class ActuacionService {
             DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("yyyy");
             String year = yearFormatter.format(actuacion.getFechaactuacion());
             Enlace e = processDataService.findByDespachoAndYear(actuacion.getProceso().getDespacho().getId(), year);
+            if (e == null)
+                throw new ErrorDataServiceException("No se encontro el enlace para el despacho", 404);
             link = e.getUrl();
         }
 
@@ -275,7 +277,7 @@ public class ActuacionService {
                         .fechaActuacion(actuacion.getFechaactuacion().format(formatter))
                         .emailAbogado(actuacion.getProceso().getEmpleado().getUsuario().getCorreo())
                         .nameAbogado(actuacion.getProceso().getEmpleado().getUsuario().getNombres())
-                        .link(String.format("%s/actuacion/?id=%d", apiPresentationUrl, actuacion.getId()))
+                        .link(String.format("%s/infoaction?id=%d", apiPresentationUrl, actuacion.getId()))
                         .build();
 
                 actuacionesEmail.add(actuacionEmail);
