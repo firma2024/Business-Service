@@ -224,7 +224,6 @@ public class ProcessController {
     @Operation(summary = "Obtiene todos los estados de los procesos", description = "Obtiene todos los estados de los procesos")
     @ApiResponse(responseCode = "200", description = "Lista de estado de proceeso", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = EstadoProceso.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener los estados de los procesos")
-    @PreAuthorize("hasAnyAuthority('ADMIN' ,'JEFE')")
     @GetMapping("/estadoProceso/get/all")
     public ResponseEntity<?> getAllEstadoProcesos(){
         try {
