@@ -116,6 +116,7 @@ public class ActuacionService {
                 .fechaActuacion(actuacion.getFechaactuacion().format(formatter))
                 .fechaRegistro(actuacion.getFecharegistro().format(formatter))
                 .link(link)
+                .estado(actuacion.getEstadoactuacion().getNombre())
                 .build();
 
         if (actuacion.getFechainicia() != null && actuacion.getFechafinaliza() != null){
@@ -227,7 +228,8 @@ public class ActuacionService {
         return new MessageResponse(actuacionDataService.updateActuacion(actuacion),  null);
     }
 
-    @Scheduled(cron = "0 0 7 * * ?")
+    //@Scheduled(cron = "0 0 7 * * ?")
+    @Scheduled(fixedRate = 3600000)
     public void findNewActuaciones() {
         try {
             loggerService.info("Buscando actuaciones nuevas");
@@ -257,7 +259,8 @@ public class ActuacionService {
         }
     }
 
-    @Scheduled(cron = "0 0/30 7-9 * * ?") //rango de 7:00 am a 9:00 am cada 30 minutos
+    //@Scheduled(cron = "0 0/30 7-9 * * ?") //rango de 7:00 am a 9:00 am cada 30 minutos
+    @Scheduled(fixedRate = 3600000)
     public void sendEmailNewActuacion() {
         try {
             loggerService.info("Enviando correos de actuaciones");
@@ -277,8 +280,11 @@ public class ActuacionService {
                         .fechaActuacion(actuacion.getFechaactuacion().format(formatter))
                         .emailAbogado(actuacion.getProceso().getEmpleado().getUsuario().getCorreo())
                         .nameAbogado(actuacion.getProceso().getEmpleado().getUsuario().getNombres())
-                        .link(String.format("%s/infoaction?id=%d", apiPresentationUrl, actuacion.getId()))
+                        .link(String.format("%s/infoactionbroker?id=%d", apiPresentationUrl, actuacion.getId()))
                         .build();
+                if (actuacionEmail.getAnotacion() == null){
+                    actuacionEmail.setAnotacion(" ");
+                }
 
                 actuacionesEmail.add(actuacionEmail);
             }
