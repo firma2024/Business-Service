@@ -207,14 +207,14 @@ public class ActuacionDataService implements IActuacionDataService {
     }
 
     @Override
-    public List<Actuacion> findByNoVisto(Integer firmaId) throws ErrorDataServiceException {
+    public List<Actuacion> findByNoVisto(Integer procesoId) throws ErrorDataServiceException {
         try {
 
             ResponseEntity<Actuacion[]> responseEntity = restTemplate.getForEntity(
-                    apiUrl + "/actuacion/get/byNoVisto?firmaId=" + firmaId,
+                    apiUrl + "/actuacion/get/byNoVisto?procesoId=" + procesoId,
                     Actuacion[].class);
 
-            return List.of(Objects.requireNonNull(responseEntity.getBody()));
+            return List.of(responseEntity.getBody());
         }
         catch (HttpClientErrorException e) {
             throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());

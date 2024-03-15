@@ -142,7 +142,7 @@ public class ProcessService {
 
         for (Proceso proceso : pageableResponse.getData()) {
             boolean estado = false;
-            List<Actuacion> actuaciones = actuacionService.findByNoVisto(proceso.getFirma().getId());
+            List<Actuacion> actuaciones = actuacionService.findByNoVisto(proceso.getId());
             if (!actuaciones.isEmpty()) {
                 estado = true;
             }

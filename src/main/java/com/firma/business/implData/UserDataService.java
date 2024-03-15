@@ -158,6 +158,17 @@ public class UserDataService implements IUserDataService {
     }
 
     @Override
+    public List<Usuario> getAbogadosByFirma(Integer firmaId) throws ErrorDataServiceException {
+        try{
+            ResponseEntity<Usuario[]> responseEntity = restTemplate.getForEntity(apiUrl + "/user/jefe/abogados?firmaId=" + firmaId, Usuario[].class);
+            return List.of(Objects.requireNonNull(responseEntity.getBody()));
+        }
+        catch (HttpClientErrorException e) {
+            throw new ErrorDataServiceException(e.getResponseBodyAsString(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
     public PageableUserResponse getAbogadosByFirmaFilter(List<String> especialidades, Integer firmaId, Integer roleId, Integer page, Integer size) throws ErrorDataServiceException {
         try{
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl + "/user/jefe/abogados/filter")

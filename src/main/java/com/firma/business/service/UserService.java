@@ -231,10 +231,9 @@ public class UserService {
         return userDataService.findAllTipoAbogado();
     }
 
-    public Map<String, Long> getActiveAbogados(Integer firmaId) throws ErrorDataServiceException {
-        Rol rol = userDataService.findRolByName(rolAbogado);
-        PageableUserResponse pageableResponse = userDataService.getAbogadosByFirmaFilter( null, firmaId, rol.getId(), null, null);
-        return Map.of("value", pageableResponse.getTotalItems());
+    public Map<String, Integer> getActiveAbogados(Integer firmaId) throws ErrorDataServiceException {
+        List<Usuario> activeUsers = userDataService.getAbogadosByFirma(firmaId);
+        return Map.of("value", activeUsers.size());
     }
 
     public MessageResponse checkInsertUser(UserRequest userRequest) throws ErrorDataServiceException {

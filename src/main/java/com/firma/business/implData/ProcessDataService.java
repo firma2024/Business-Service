@@ -75,10 +75,12 @@ public class ProcessDataService implements IProcessDataService {
             if (fechaFinStr != null) {
                 builder.queryParam("fechaFinStr", fechaFinStr);
             }
-            if (estadosProceso != null) {
-                builder.queryParam("estadosProceso", estadosProceso);
-            }
             uriRequest = builder.toUriString();
+            if (estadosProceso != null) {
+                for (String str : estadosProceso){
+                    uriRequest+= "&estadosProceso=" + str;
+                }
+            }
             if (tipoProceso != null) {
                 uriRequest+= "&tipoProceso=" + tipoProceso;
             }
@@ -107,10 +109,12 @@ public class ProcessDataService implements IProcessDataService {
             if (fechaFinStr != null) {
                 builder.queryParam("fechaFinStr", fechaFinStr);
             }
-            if (estadosProceso != null) {
-                builder.queryParam("estadosProceso", estadosProceso);
-            }
             uriRequest = builder.toUriString();
+            if (estadosProceso != null) {
+                for (String str : estadosProceso){
+                    uriRequest+= "&estadosProceso=" + str;
+                }
+            }
             if (tipoProceso != null) {
                 uriRequest+= "&tipoProceso=" + tipoProceso;
             }

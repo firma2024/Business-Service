@@ -24,4 +24,5 @@ public class ActuacionResponse {
     private String nameAbogado;
     private String link;
     private String estado;
+    private Integer processId;
 }

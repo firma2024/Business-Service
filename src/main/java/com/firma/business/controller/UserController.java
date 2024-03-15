@@ -174,7 +174,7 @@ public class UserController {
     public ResponseEntity<?> getAbogadosFilter(@RequestParam(required = false) List<String> especialidades,
                                                @RequestParam Integer firmaId,
                                                @RequestParam(defaultValue = "0") Integer numProcesosInicial,
-                                               @RequestParam(defaultValue = "5") Integer numProcesosFinal,
+                                               @RequestParam(defaultValue = "1000") Integer numProcesosFinal,
                                                @RequestParam(defaultValue = "0") Integer page,
                                                @RequestParam(defaultValue = "10") Integer size) {
         try {

@@ -28,4 +28,6 @@ public interface IUserDataService {
     Usuario findUserByUserName(String userName) throws ErrorDataServiceException;
     List<Usuario> findAllAbogadosNames(Integer firmaId) throws ErrorDataServiceException;
     String checkInsertUser(UserRequest userRequest) throws ErrorDataServiceException;
+
+    List<Usuario> getAbogadosByFirma(Integer firmaId) throws ErrorDataServiceException;
 }
