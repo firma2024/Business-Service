@@ -25,4 +25,5 @@ public class ActuacionResponse {
     private String link;
     private String estado;
     private Integer processId;
+    private String username;
 }

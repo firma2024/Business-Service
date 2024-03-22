@@ -116,6 +116,7 @@ public class ActuacionService {
                 .fechaActuacion(actuacion.getFechaactuacion().format(formatter))
                 .fechaRegistro(actuacion.getFecharegistro().format(formatter))
                 .link(link)
+                .username(actuacion.getProceso().getEmpleado().getUsuario().getUsername())
                 .estado(actuacion.getEstadoactuacion().getNombre())
                 .processId(actuacion.getProceso().getId())
                 .build();
