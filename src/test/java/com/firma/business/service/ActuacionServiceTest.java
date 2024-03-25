@@ -125,6 +125,7 @@ class ActuacionServiceTest {
                 .fecharegistro(LocalDate.now())
                 .fechainicia(LocalDate.now())
                 .fechafinaliza(LocalDate.now())
+                .estadoactuacion(EstadoActuacion.builder().nombre("Visto").build())
                 .build();
         Enlace en = Enlace.builder()
                 .url("test.com")

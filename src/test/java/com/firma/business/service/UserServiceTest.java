@@ -60,14 +60,15 @@ class UserServiceTest {
         tp.setNombre("Familia");
 
         Firma firma = new Firma(1, "test", "casa");
+        Integer idReturn = 1;
 
         when(userDataService.findRolByName("ABOGADO")).thenReturn(rol);
         when(firmaService.findFirmaById(1)).thenReturn(firma);
-        when(userDataService.saveUser(any())).thenReturn("User saved successfully");
+        when(userDataService.saveUser(any())).thenReturn(idReturn);
 
         MessageResponse result = userService.saveAbogado(userRequest);
 
-        assertEquals("User saved successfully", result.getMessage());
+        assertEquals(1, result.getValue());
     }
 
     @Test
@@ -80,17 +81,18 @@ class UserServiceTest {
         userRequest.setTelefono(new BigInteger("1234567890"));
         userRequest.setIdentificacion(new BigInteger("123456789"));
         userRequest.setFirmaId(1);
+        Integer idReturn = 1;
 
         Rol rol = new Rol();
         rol.setNombre("JEFE");
         Firma firma = new Firma(1, "test", "casa");
         when(userDataService.findRolByName("JEFE")).thenReturn(rol);
         when(firmaService.findFirmaById(1)).thenReturn(firma);
-        when(userDataService.saveUser(any())).thenReturn("User saved successfully");
+        when(userDataService.saveUser(any())).thenReturn(idReturn);
 
         MessageResponse result = userService.saveJefe(userRequest);
 
-        assertEquals("User saved successfully", result.getMessage());
+        assertEquals(1, result.getValue());
     }
 
     @Test
@@ -102,13 +104,14 @@ class UserServiceTest {
         userRequest.setUsername("johndoe");
         userRequest.setTelefono(new BigInteger("1234567890"));
         userRequest.setIdentificacion(new BigInteger("123456789"));
+        Integer idReturn = 1;
 
         Rol rol = new Rol(1, "ADMIN");
         when(userDataService.findRolByName("ADMIN")).thenReturn(rol);
-        when(userDataService.saveUser(any())).thenReturn("User saved successfully");
+        when(userDataService.saveUser(any())).thenReturn(idReturn);
         MessageResponse result = userService.saveAdmin(userRequest);
 
-        assertEquals("User saved successfully", result.getMessage());
+        assertEquals(1, result.getValue());
 
     }
 
