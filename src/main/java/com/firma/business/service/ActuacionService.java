@@ -116,7 +116,9 @@ public class ActuacionService {
                 .fechaActuacion(actuacion.getFechaactuacion().format(formatter))
                 .fechaRegistro(actuacion.getFecharegistro().format(formatter))
                 .link(link)
+                .username(actuacion.getProceso().getEmpleado().getUsuario().getUsername())
                 .estado(actuacion.getEstadoactuacion().getNombre())
+                .processId(actuacion.getProceso().getId())
                 .build();
 
         if (actuacion.getFechainicia() != null && actuacion.getFechafinaliza() != null){
@@ -216,8 +218,8 @@ public class ActuacionService {
         return processResponse;
     }
 
-    public List<Actuacion> findByNoVisto(Integer firmaId) throws ErrorDataServiceException {
-        return actuacionDataService.findByNoVisto(firmaId);
+    public List<Actuacion> findByNoVisto(Integer procesoId) throws ErrorDataServiceException {
+        return actuacionDataService.findByNoVisto(procesoId);
     }
 
     public MessageResponse updateActuacion(Integer actionId) throws ErrorDataServiceException {
@@ -280,7 +282,7 @@ public class ActuacionService {
                         .fechaActuacion(actuacion.getFechaactuacion().format(formatter))
                         .emailAbogado(actuacion.getProceso().getEmpleado().getUsuario().getCorreo())
                         .nameAbogado(actuacion.getProceso().getEmpleado().getUsuario().getNombres())
-                        .link(String.format("%s/infoactionbroker?id=%d", apiPresentationUrl, actuacion.getId()))
+                        .link(String.format("%sinfoactionbroker?id=%d", apiPresentationUrl, actuacion.getId()))
                         .build();
                 if (actuacionEmail.getAnotacion() == null){
                     actuacionEmail.setAnotacion(" ");

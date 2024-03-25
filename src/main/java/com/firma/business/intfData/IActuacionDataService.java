@@ -20,5 +20,5 @@ public interface IActuacionDataService {
     PageableActuacionResponse getActuacionesByProcesoAbogado(Integer procesoId, String fechaInicioStr, String fechaFinStr, Boolean existeDoc, Integer page, Integer size) throws ErrorDataServiceException;
     EstadoActuacion findEstadoActuacionByName(String state) throws ErrorDataServiceException;
     Actuacion findLastActuacion(Integer processid) throws ErrorDataServiceException;
-    List<Actuacion> findByNoVisto(Integer firmaId) throws ErrorDataServiceException;
+    List<Actuacion> findByNoVisto(Integer procesoId) throws ErrorDataServiceException;
 }

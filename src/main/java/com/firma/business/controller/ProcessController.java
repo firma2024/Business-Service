@@ -80,7 +80,6 @@ public class ProcessController {
             }
             return new ResponseEntity<>(new MessageResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
-
     }
 
     @Operation(summary = "Filtrar procesos por firma para el jefe", description = "Filtra los procesos por firma para el jefe, en caso de no adjuntar nungun filtro lista todos los procesos")
