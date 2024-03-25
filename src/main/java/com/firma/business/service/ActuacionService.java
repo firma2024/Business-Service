@@ -7,12 +7,14 @@ import com.firma.business.payload.request.ActuacionEmailRequest;
 import com.firma.business.payload.request.ActuacionRequest;
 import com.firma.business.payload.request.FindProcessRequest;
 import com.firma.business.payload.response.*;
-import com.firma.business.service.data.intf.IActuacionDataService;
-import com.firma.business.service.data.intf.IProcessDataService;
-import com.firma.business.service.integration.intf.IActuacionIntegrationService;
+import com.firma.business.intfData.IActuacionDataService;
+import com.firma.business.intfData.IProcessDataService;
+import com.firma.business.intfIntegration.IActuacionIntegrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,14 +32,22 @@ public class ActuacionService {
     private IActuacionDataService actuacionDataService;
     @Autowired
     private IActuacionIntegrationService actuacionIntegrationService;
-    @Autowired
-    private FirmaService firmaService;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private Logger loggerService = LoggerFactory.getLogger(ActuacionService.class);
 
+    @Value("${api.presentation.url}")
+    private String apiPresentationUrl;
 
-    public String saveActuaciones(List<ActuacionRequest> actuaciones) throws ErrorDataServiceException {
-        EstadoActuacion estadoActuacion = actuacionDataService.findEstadoActuacionByName("No Visto");
+    @Value("${api.estadoactuacion.noVisto}")
+    private String estadoActuacionNoVisto;
+
+    @Value("${api.estadoactuacion.visto}")
+    private String estadoVisto;
+
+
+
+    public MessageResponse saveActuaciones(List<ActuacionRequest> actuaciones) throws ErrorDataServiceException {
+        EstadoActuacion estadoActuacion = actuacionDataService.findEstadoActuacionByName(estadoActuacionNoVisto);
         List<Actuacion> actuacionesList = new ArrayList<>();
         for (ActuacionRequest ac : actuaciones){
             Proceso proceso = processDataService.findByRadicado(ac.getProceso());
@@ -59,7 +69,7 @@ public class ActuacionService {
             }
             actuacionesList.add(actuacion);
         }
-        return actuacionDataService.saveActuaciones(actuacionesList);
+        return new MessageResponse(actuacionDataService.saveActuaciones(actuacionesList),  null);
     }
 
     public Set<Actuacion> findActuacionesNotSend() throws ErrorDataServiceException {
@@ -90,6 +100,8 @@ public class ActuacionService {
             DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("yyyy");
             String year = yearFormatter.format(actuacion.getFechaactuacion());
             Enlace e = processDataService.findByDespachoAndYear(actuacion.getProceso().getDespacho().getId(), year);
+            if (e == null)
+                throw new ErrorDataServiceException("No se encontro el enlace para el despacho", 404);
             link = e.getUrl();
         }
 
@@ -104,6 +116,9 @@ public class ActuacionService {
                 .fechaActuacion(actuacion.getFechaactuacion().format(formatter))
                 .fechaRegistro(actuacion.getFecharegistro().format(formatter))
                 .link(link)
+                .username(actuacion.getProceso().getEmpleado().getUsuario().getUsername())
+                .estado(actuacion.getEstadoactuacion().getNombre())
+                .processId(actuacion.getProceso().getId())
                 .build();
 
         if (actuacion.getFechainicia() != null && actuacion.getFechafinaliza() != null){
@@ -203,15 +218,84 @@ public class ActuacionService {
         return processResponse;
     }
 
-    public List<Actuacion> findByNoVisto(Integer firmaId) throws ErrorDataServiceException {
-        return actuacionDataService.findByNoVisto(firmaId);
+    public List<Actuacion> findByNoVisto(Integer procesoId) throws ErrorDataServiceException {
+        return actuacionDataService.findByNoVisto(procesoId);
     }
 
-    public String updateActuacion(Integer actionId) throws ErrorDataServiceException {
+    public MessageResponse updateActuacion(Integer actionId) throws ErrorDataServiceException {
         Actuacion actuacion = actuacionDataService.getActuacion(actionId);
-        EstadoActuacion es = actuacionDataService.findEstadoActuacionByName("Visto");
+        EstadoActuacion es = actuacionDataService.findEstadoActuacionByName(estadoVisto);
         actuacion.setEstadoactuacion(es);
 
-        return actuacionDataService.updateActuacion(actuacion);
+        return new MessageResponse(actuacionDataService.updateActuacion(actuacion),  null);
+    }
+
+    //@Scheduled(cron = "0 0 7 * * ?")
+    @Scheduled(fixedRate = 3600000)
+    public void findNewActuaciones() {
+        try {
+            loggerService.info("Buscando actuaciones nuevas");
+            List<ProcesoResponse> process = this.getAllProcess();
+            List<FindProcessRequest> processFind = new ArrayList<>();
+
+            for (ProcesoResponse procesoResponse : process) {
+                FindProcessRequest ac = FindProcessRequest.builder()
+                        .number_process(procesoResponse.getNumeroProceso())
+                        .file_number(procesoResponse.getNumeroRadicado())
+                        .date(procesoResponse.getFechaUltimaActuacion())
+                        .build();
+
+                processFind.add(ac);
+            }
+            List<ActuacionRequest> actuaciones = actuacionIntegrationService.findNewActuacion(processFind);
+
+            if (actuaciones.isEmpty()) {
+                loggerService.info("No hay actuaciones nuevas");
+                return;
+            }
+
+            loggerService.info(this.saveActuaciones(actuaciones).getMessage());
+
+        } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
+            loggerService.error(e.getMessage());
+        }
+    }
+
+    //@Scheduled(cron = "0 0/30 7-9 * * ?") //rango de 7:00 am a 9:00 am cada 30 minutos
+    @Scheduled(fixedRate = 3600000)
+    public void sendEmailNewActuacion() {
+        try {
+            loggerService.info("Enviando correos de actuaciones");
+            Set<Actuacion> actuaciones = actuacionDataService.findActuacionesNotSend();
+            if (actuaciones.isEmpty()) {
+                loggerService.info("No hay actuaciones para enviar");
+                return;
+            }
+
+            List<ActuacionEmailRequest> actuacionesEmail = new ArrayList<>();
+            for (Actuacion actuacion : actuaciones) {
+                ActuacionEmailRequest actuacionEmail = ActuacionEmailRequest.builder()
+                        .id(actuacion.getId())
+                        .actuacion(actuacion.getActuacion())
+                        .radicado(actuacion.getProceso().getRadicado())
+                        .anotacion(actuacion.getAnotacion())
+                        .fechaActuacion(actuacion.getFechaactuacion().format(formatter))
+                        .emailAbogado(actuacion.getProceso().getEmpleado().getUsuario().getCorreo())
+                        .nameAbogado(actuacion.getProceso().getEmpleado().getUsuario().getNombres())
+                        .link(String.format("%sinfoactionbroker?id=%d", apiPresentationUrl, actuacion.getId()))
+                        .build();
+                if (actuacionEmail.getAnotacion() == null){
+                    actuacionEmail.setAnotacion(" ");
+                }
+
+                actuacionesEmail.add(actuacionEmail);
+            }
+            List<Integer> actSend = actuacionIntegrationService.sendEmailActuacion(actuacionesEmail);
+
+            actuacionDataService.updateActuacionesSend(actSend);
+
+        } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
+            loggerService.error(e.getMessage());
+        }
     }
 }

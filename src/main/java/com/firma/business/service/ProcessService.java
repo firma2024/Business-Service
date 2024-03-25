@@ -5,14 +5,16 @@ import com.firma.business.exception.ErrorIntegrationServiceException;
 import com.firma.business.model.*;
 import com.firma.business.payload.request.*;
 import com.firma.business.payload.response.*;
-import com.firma.business.service.data.intf.IProcessDataService;
-import com.firma.business.service.integration.intf.IProcessIntegrationService;
+import com.firma.business.intfData.IProcessDataService;
+import com.firma.business.intfIntegration.IProcessIntegrationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -33,9 +35,16 @@ public class ProcessService {
     private FirmaService firmaService;
     private DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private Logger logger = LoggerFactory.getLogger(ProcessService.class);
+
+    @Value("${api.estadoactuacion.visto}")
+    private String estadoVisto;
+
+    @Value("${api.estadoproceso.activo}")
+    private String estadoActivo;
 
 
-    public String saveProcess(ProcessRequest processRequest) throws ErrorDataServiceException {
+    public MessageResponse saveProcess(ProcessRequest processRequest) throws ErrorDataServiceException {
 
         Empleado empleado = firmaService.findEmpleadoByUsuario(processRequest.getIdAbogado());
 
@@ -55,7 +64,7 @@ public class ProcessService {
 
         LocalDateTime dateRadicado = LocalDateTime.parse(processRequest.getFechaRadicacion(), formatterTime);
 
-        EstadoProceso estadoProceso = processDataService.findEstadoProcesoByNombre("Activo");
+        EstadoProceso estadoProceso = processDataService.findEstadoProcesoByNombre(estadoActivo);
 
         Proceso newProceso = Proceso.builder()
                 .radicado(processRequest.getNumeroRadicado())
@@ -71,7 +80,7 @@ public class ProcessService {
                 .firma(empleado.getFirma())
                 .build();
 
-        EstadoActuacion estadoActuacion = actuacionService.findEstadoActuacionByName("Visto");
+        EstadoActuacion estadoActuacion = actuacionService.findEstadoActuacionByName(estadoVisto);
 
         List<Actuacion> actuaciones = new ArrayList<>();
 
@@ -105,7 +114,7 @@ public class ProcessService {
                 .actions(actuaciones)
                 .build();
 
-        return processDataService.saveProcess(processDataRequest);
+        return new MessageResponse(processDataService.saveProcess(processDataRequest),  null);
 
     }
 
@@ -122,8 +131,8 @@ public class ProcessService {
                 .build();
     }
 
-    public String deleteProcess(Integer processId) throws ErrorDataServiceException {
-        return processDataService.deleteProcess(processId);
+    public MessageResponse deleteProcess(Integer processId) throws ErrorDataServiceException {
+        return new MessageResponse(processDataService.deleteProcess(processId),  null);
     }
 
     public PageableResponse<ProcessJefeResponse> getProcessesByFilter(String fechaInicioStr, Integer firmaId, String fechaFinStr, List<String> estadosProceso, String tipoProceso, Integer page, Integer size) throws ErrorDataServiceException {
@@ -133,7 +142,7 @@ public class ProcessService {
 
         for (Proceso proceso : pageableResponse.getData()) {
             boolean estado = false;
-            List<Actuacion> actuaciones = actuacionService.findByNoVisto(proceso.getFirma().getId());
+            List<Actuacion> actuaciones = actuacionService.findByNoVisto(proceso.getId());
             if (!actuaciones.isEmpty()) {
                 estado = true;
             }
@@ -207,7 +216,7 @@ public class ProcessService {
                 .build();
     }
 
-    public String updateProcess(ProcessUpdateRequest processRequest) throws ErrorDataServiceException {
+    public MessageResponse updateProcess(ProcessUpdateRequest processRequest) throws ErrorDataServiceException {
         Proceso process = processDataService.getProcessById(processRequest.getId());
 
         if (processRequest.getIdAbogado() != null) {
@@ -220,7 +229,7 @@ public class ProcessService {
             process.setEstadoproceso(estadoProceso);
         }
 
-        return processDataService.updateProcess(process);
+        return new MessageResponse(processDataService.updateProcess(process),  null);
     }
 
 
@@ -239,7 +248,7 @@ public class ProcessService {
         );
     }
 
-    public String addAudiencia(AudienciaRequest audiencia) throws ErrorDataServiceException {
+    public MessageResponse addAudiencia(AudienciaRequest audiencia) throws ErrorDataServiceException {
         Proceso process = processDataService.getProcessById(audiencia.getProcesoid());
         Audiencia newAudiencia = Audiencia.builder()
                 .enlace(audiencia.getEnlace())
@@ -247,7 +256,7 @@ public class ProcessService {
                 .proceso(process)
                 .build();
 
-        return processDataService.addAudiencia(newAudiencia);
+        return new MessageResponse(processDataService.addAudiencia(newAudiencia),  null);
     }
 
 
@@ -255,8 +264,8 @@ public class ProcessService {
         return processDataService.getEstadoProcesos();
     }
 
-    public String updateAudiencia(Integer id, String enlace) throws ErrorDataServiceException {
-        return processDataService.updateAudiencia(id, enlace);
+    public MessageResponse updateAudiencia(Integer id, String enlace) throws ErrorDataServiceException {
+        return new MessageResponse(processDataService.updateAudiencia(id, enlace),  null);
     }
 
     public Set<Despacho> findAllDespachosWithOutLink(Integer year) throws ErrorDataServiceException {
@@ -267,7 +276,7 @@ public class ProcessService {
         return processDataService.getTipoProcesos();
     }
 
-    public String saveEnlace(EnlaceRequest enlaceRequest) throws ErrorDataServiceException {
+    public MessageResponse saveEnlace(EnlaceRequest enlaceRequest) throws ErrorDataServiceException {
         Despacho despacho = processDataService.findDespachoById(enlaceRequest.getDespachoid());
         Enlace enlace = Enlace.builder()
                 .url(enlaceRequest.getUrl())
@@ -275,16 +284,14 @@ public class ProcessService {
                 .despacho(despacho)
                 .build();
 
-        return processDataService.saveEnlace(enlace);
+        return new MessageResponse(processDataService.saveEnlace(enlace),  null);
     }
 
     public ProcessRequest getProcess(String numberProcess) throws ErrorIntegrationServiceException {
         return processIntegrationService.getProcess(numberProcess);
     }
 
-    public DespachoResponse findUrlDespacho(String nombre) throws ErrorIntegrationServiceException {
-        return processIntegrationService.findUrlDespacho(nombre);
-    }
+
 
     public ProcessRequest getAllProcess(String numberProcess) throws ErrorIntegrationServiceException {
         return processIntegrationService.getAllProcess(numberProcess);
@@ -293,7 +300,30 @@ public class ProcessService {
     public void findByRadicado(String numeroRadicado) throws ErrorDataServiceException {
         Proceso p = processDataService.findByRadicado(numeroRadicado);
         if (p != null) {
-            throw new ErrorDataServiceException(String.format("El proceso con el radicado %s ya existe", p.getRadicado()));
+            throw new ErrorDataServiceException(String.format("El proceso con el radicado %s ya existe", p.getRadicado()), 409);
+        }
+    }
+
+    @Scheduled(fixedRate = 600000)
+    public void updateDespachoEnlace(){
+        try {
+            logger.info("Buscando enlaces de despachos");
+            Set<DespachoFecha> despachosFecha = processDataService.findAllDespachosWithDateActuacion();
+            for(DespachoFecha despachoFecha : despachosFecha){
+                Enlace enlace = processDataService.findByDespachoAndYear(despachoFecha.getDespachoId(), String.valueOf(despachoFecha.getYear()));
+                if (enlace == null){
+                    logger.info(despachoFecha.getNombre());
+                    DespachoResponse url = processIntegrationService.findUrlDespacho(despachoFecha.getNombre(), despachoFecha.getYear());
+                    EnlaceRequest en = EnlaceRequest.builder()
+                            .url(url.getUrl_despacho())
+                            .despachoid(despachoFecha.getDespachoId())
+                            .fechaconsulta(LocalDate.now().withYear(despachoFecha.getYear()))
+                            .build();
+                    logger.info(this.saveEnlace(en).getMessage());
+                }
+            }
+        } catch (ErrorDataServiceException | ErrorIntegrationServiceException e) {
+            logger.error(e.getMessage());
         }
     }
 }

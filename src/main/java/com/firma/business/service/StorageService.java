@@ -3,7 +3,8 @@ package com.firma.business.service;
 import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.payload.response.ActuacionDocumentResponse;
 import com.firma.business.payload.response.FileResponse;
-import com.firma.business.service.data.intf.IStorageDataService;
+import com.firma.business.payload.response.MessageResponse;
+import com.firma.business.intfData.IStorageDataService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,16 +23,16 @@ public class StorageService {
     @Autowired
     private IStorageDataService storageDataService;
 
-    public String uploadPhoto(MultipartFile file, Integer usuarioId) throws IOException, ErrorDataServiceException {
-        return storageDataService.uploadPhoto(file, usuarioId);
+    public MessageResponse uploadPhoto(MultipartFile file, Integer usuarioId) throws IOException, ErrorDataServiceException {
+        return new MessageResponse(storageDataService.uploadPhoto(file, usuarioId),  null);
     }
 
     public byte [] downloadPhoto(Integer usuarioId) throws ErrorDataServiceException {
         return storageDataService.downloadPhoto(usuarioId);
     }
 
-    public String uploadDocument(MultipartFile file, Integer actuacionId) throws ErrorDataServiceException, IOException {
-        return storageDataService.uploadDocument(file, actuacionId);
+    public MessageResponse uploadDocument(MultipartFile file, Integer actuacionId) throws ErrorDataServiceException, IOException {
+        return new MessageResponse(storageDataService.uploadDocument(file, actuacionId),  null);
     }
 
     public byte [] downloadDocument(Integer actuacionId) throws ErrorDataServiceException {
@@ -41,7 +42,7 @@ public class StorageService {
     public FileResponse downloadAllDocuments (Integer processId) throws ErrorDataServiceException, IOException {
         Set<ActuacionDocumentResponse> documents = storageDataService.downloadAllDocuments(processId);
         if (documents.isEmpty()) {
-            throw new ErrorDataServiceException("No se encontraron documentos");
+            throw new ErrorDataServiceException("No se encontraron documentos", 404);
         }
 
         String radicado = null;

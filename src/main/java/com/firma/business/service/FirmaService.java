@@ -4,7 +4,8 @@ import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.model.Empleado;
 import com.firma.business.model.Firma;
 import com.firma.business.payload.request.FirmaRequest;
-import com.firma.business.service.data.intf.IFirmaDataService;
+import com.firma.business.payload.response.MessageResponse;
+import com.firma.business.intfData.IFirmaDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +19,8 @@ public class FirmaService {
         return firmaDataService.getFirmaByUser(username);
     }
 
-    public String saveFirma(FirmaRequest firma) throws ErrorDataServiceException {
-        return firmaDataService.saveFirma(firma);
+    public MessageResponse saveFirma(FirmaRequest firma) throws ErrorDataServiceException {
+        return new MessageResponse(firmaDataService.saveFirma(firma),  null);
     }
 
     public Firma findFirmaById(Integer firmaId) throws ErrorDataServiceException {

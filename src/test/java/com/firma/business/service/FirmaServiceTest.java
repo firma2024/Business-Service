@@ -4,7 +4,8 @@ import com.firma.business.exception.ErrorDataServiceException;
 import com.firma.business.model.Empleado;
 import com.firma.business.model.Firma;
 import com.firma.business.payload.request.FirmaRequest;
-import com.firma.business.service.data.intf.IFirmaDataService;
+import com.firma.business.payload.response.MessageResponse;
+import com.firma.business.intfData.IFirmaDataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -45,8 +46,8 @@ class FirmaServiceTest {
                 .build();
 
         when(firmaDataService.saveFirma(firmaRequest)).thenReturn("Firma guardada");
-        String response = firmaService.saveFirma(firmaRequest);
-        assertEquals ("Firma guardada", response);
+        MessageResponse response = firmaService.saveFirma(firmaRequest);
+        assertEquals ("Firma guardada", response.getMessage());
     }
 
     @Test

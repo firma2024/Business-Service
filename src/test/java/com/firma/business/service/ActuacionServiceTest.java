@@ -7,9 +7,9 @@ import com.firma.business.payload.request.ActuacionEmailRequest;
 import com.firma.business.payload.request.ActuacionRequest;
 import com.firma.business.payload.request.FindProcessRequest;
 import com.firma.business.payload.response.*;
-import com.firma.business.service.data.intf.IActuacionDataService;
-import com.firma.business.service.data.intf.IProcessDataService;
-import com.firma.business.service.integration.intf.IActuacionIntegrationService;
+import com.firma.business.intfData.IActuacionDataService;
+import com.firma.business.intfData.IProcessDataService;
+import com.firma.business.intfIntegration.IActuacionIntegrationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -65,9 +65,9 @@ class ActuacionServiceTest {
         when(processDataService.findByRadicado("123123123123")).thenReturn(process);
         when(actuacionDataService.saveActuaciones(any())).thenReturn("Actuaciones almacenadas");
 
-        String response = actuacionService.saveActuaciones(actuacionRequestList);
+        MessageResponse response = actuacionService.saveActuaciones(actuacionRequestList);
 
-        assertEquals("Actuaciones almacenadas", response);
+        assertEquals("Actuaciones almacenadas", response.getMessage());
     }
 
     @Test
@@ -269,9 +269,9 @@ class ActuacionServiceTest {
         when(actuacionDataService.findEstadoActuacionByName("Visto")).thenReturn(es);
         when(actuacionDataService.updateActuacion(ac)).thenReturn("Actuacion actualizada");
 
-        String response = actuacionService.updateActuacion(actuacionId);
+        MessageResponse response = actuacionService.updateActuacion(actuacionId);
         assertDoesNotThrow(() -> actuacionService.updateActuacion(actuacionId));
-        assertEquals("Actuacion actualizada", response);
+        assertEquals("Actuacion actualizada", response.getMessage());
 
     }
 }

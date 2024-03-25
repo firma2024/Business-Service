@@ -1,7 +1,12 @@
 package com.firma.business.exception;
 
+import lombok.Getter;
+
+@Getter
 public class ErrorDataServiceException extends Exception{
-    public ErrorDataServiceException(String message) {
+    private int statusCode;
+    public ErrorDataServiceException(String message, int statusCode) {
         super(message);
+        this.statusCode = statusCode;
     }
 }
