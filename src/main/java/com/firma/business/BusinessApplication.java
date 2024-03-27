@@ -8,6 +8,13 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableScheduling
+@SecurityScheme(
+        name = "Keycloak"
+        , openIdConnectUrl = "${authServerUrl}/realms/${realm}/.well-known/openid-configuration"
+        , scheme = "bearer"
+        , type = SecuritySchemeType.OPENIDCONNECT
+        , in = SecuritySchemeIn.HEADER
+)
 public class BusinessApplication {
 
     public static void main(String[] args) {
