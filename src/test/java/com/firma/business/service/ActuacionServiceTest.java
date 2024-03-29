@@ -103,6 +103,10 @@ class ActuacionServiceTest {
     @Test
     void getActuacion() throws ErrorDataServiceException {
         Integer actuacionId = 2;
+        Usuario us = Usuario.builder()
+                .username("test").build();
+        Empleado emp = Empleado.builder()
+                .usuario(us).build();
         Despacho despacho = Despacho.builder()
                 .id(1)
                 .build();
@@ -113,6 +117,7 @@ class ActuacionServiceTest {
                 .sujetos("test")
                 .despacho(despacho)
                 .tipoproceso(tipoProceso)
+                .empleado(emp)
                 .build();
         Actuacion actuacion = Actuacion.builder()
                 .existedoc(true)
