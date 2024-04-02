@@ -229,7 +229,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Retorna una lista con todos los tipos de documentos", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TipoDocumento.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener los tipos de documentos")
     @GetMapping("/tipoDocumento/get/all")
-//    @PreAuthorize("hasAnyAuthority('ADMIN', 'JEFE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'JEFE')")
     public ResponseEntity<?> getAllTipoDocumento() {
         try {
             return new ResponseEntity<>(userService.getAllTipoDocumento(), HttpStatus.OK);
