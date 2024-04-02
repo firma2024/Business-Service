@@ -115,7 +115,6 @@ public class ProcessService {
                 .build();
 
         return new MessageResponse(processDataService.saveProcess(processDataRequest),  null);
-
     }
 
     public ProcessJefeResponse getJefeProcess(Integer processId) throws ErrorDataServiceException {
@@ -304,7 +303,7 @@ public class ProcessService {
         }
     }
 
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 120000)
     public void updateDespachoEnlace(){
         try {
             logger.info("Buscando enlaces de despachos");
