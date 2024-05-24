@@ -211,6 +211,7 @@ public class UserController {
     }
 
 
+
     @Operation(summary = "Obtener abogados activos", description = "Obtiene los abogados activos dado el id de la firma")
     @Parameter(name = "firmaId", description = "Id de la firma", required = true)
     @ApiResponse(responseCode = "200", description = "Retorna el numero de abogados activos", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Integer.class))})
@@ -229,7 +230,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Retorna una lista con todos los tipos de documentos", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TipoDocumento.class))})
     @ApiResponse(responseCode = "400", description = "Error al obtener los tipos de documentos")
     @GetMapping("/tipoDocumento/get/all")
-    //@PreAuthorize("hasAnyAuthority('ADMIN', 'JEFE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'JEFE')")
     public ResponseEntity<?> getAllTipoDocumento() {
         try {
             return new ResponseEntity<>(userService.getAllTipoDocumento(), HttpStatus.OK);
@@ -248,5 +249,10 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage() , null));
         }
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        return new ResponseEntity<>("Test", HttpStatus.OK);
     }
 }
