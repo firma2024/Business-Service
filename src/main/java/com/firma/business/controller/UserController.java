@@ -253,6 +253,7 @@ public class UserController {
 
     @GetMapping("/test")
     public ResponseEntity<?> test() {
+        System.out.println("Test :)");
         return new ResponseEntity<>("Test", HttpStatus.OK);
     }
 }
